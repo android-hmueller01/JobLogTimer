@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+http://mindofaandroiddev.wordpress.com/2013/12/28/making-the-status-bar-and-navigation-bar-transparent-with-a-listview-on-android-4-4-kitkat/
+-->
+<resources>
+<!--
+        Base application theme for API 19+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml and res/values-v15/styles.xml on API 19+ devices.
+-->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- API 19 theme customizations can go here. -->
+		
+		<!-- Make Status (notification) and Navigation (eg. home button) bar translucent? -->
+		<item name="android:windowTranslucentStatus">false</item>
+		<item name="android:windowTranslucentNavigation">false</item>
+
+        <!-- Overlay Mode of Actionbar -->
+        <item name="android:windowActionBarOverlay">false</item>
+        <!-- Support library compatibility -->
+        <item name="windowActionBarOverlay">false</item>
+		
+		<!--
+		<item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+		<item name="actionBarStyle">@style/AppTheme.ActionBar</item>
+		-->
+    </style>
+
+	<style name="AppTheme.ActionBar" parent="@style/Widget.AppCompat.ActionBar">
+		<item name="background">@android:color/transparent</item>
+		<item name="android:background">@android:color/transparent</item>
+	</style>
+
+</resources>

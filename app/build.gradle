@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
+    /*
+    V7: Android 2.1.x	ECLAIR_MR1
+    V8: Android 2.2.x	FROYO
+    V9:  Android 2.3	GINGERBREAD
+    V11: Android 3.0.x	HONEYCOMB
+    V14: Android 4.0	ICE_CREAM_SANDWICH
+    V16: Android 4.1.x	JELLY_BEAN
+    V19: Android 4.4	KITKAT
+    V21: Android 5.0	LOLLIPOP
+    V22: Android 5.1.1	LOLLIPOP
+    V23: Android 6.0	MARSHMALLOW
+    V24: Android 7.0	NOUGAT
+    V25: Android 7.1.1	NOUGAT
+    V26: Android 8.0    OREO
+    V27: Android 8.1    OREO
+    */
+    defaultConfig {
+        applicationId "de.euhm.jlt"
+        minSdkVersion 14
+        targetSdkVersion 27
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:design:27.0.2'
+}

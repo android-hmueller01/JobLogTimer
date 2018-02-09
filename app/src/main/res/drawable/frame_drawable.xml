@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- used by statistics week view -->
+<shape 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:shape="rectangle" >
+	<solid android:color="@color/sysWhite" />
+   	<stroke android:width="1dip" android:color="@color/frame" />
+</shape>

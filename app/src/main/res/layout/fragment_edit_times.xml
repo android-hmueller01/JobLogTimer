@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <DatePicker
+        android:id="@+id/datePicker1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner" />
+		
+	<View 
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="@color/seperator" />
+		
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TimePicker
+            android:id="@+id/timePickerStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-3dp"
+            android:timePickerMode="spinner" />
+
+		<View 
+			android:layout_height="match_parent"
+			android:layout_width="1dp"
+            android:layout_marginLeft="-10dp"
+			android:background="@color/seperator" />
+
+        <TimePicker
+            android:id="@+id/timePickerEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-10dp"
+            android:timePickerMode="spinner" />
+    </LinearLayout>
+
+</LinearLayout>

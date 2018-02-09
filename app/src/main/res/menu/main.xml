@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_action_filter"
+        android:title="@string/button_filter"
+		android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_start"
+        android:orderInCategory="1"
+        android:title="@string/button_start"
+        android:icon="@drawable/ic_action_start"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_end"
+        android:orderInCategory="1"
+        android:title="@string/button_end"
+        android:icon="@drawable/ic_action_stop"
+		android:visible="false"
+        app:showAsAction="always" />
+<!-- 
+    <item
+    	android:id="@+id/action_more"
+        android:title="@string/button_more"
+    	android:icon="@drawable/ic_action_overflow"
+    	android:orderInCategory="101"
+    	app:showAsAction="always">
+    	<menu>
+    	<item
+        	android:id="@+id/action_filter"
+        	android:title="@string/button_filter"
+        	android:icon="@drawable/ic_action_filter"
+        	app:showAsAction="always|withText" />
+    	<item
+        	android:id="@+id/action_add_times"
+        	android:title="@string/button_add_times"
+        	android:icon="@drawable/ic_action_new"
+        	app:showAsAction="always|withText" />
+   	    <item
+        	android:id="@+id/action_backup"
+        	android:title="@string/button_backup"
+        	android:icon="@drawable/ic_action_download"
+        	app:showAsAction="always|withText" />
+   	    <item
+        	android:id="@+id/action_restore"
+        	android:title="@string/button_restore"
+        	android:icon="@drawable/ic_action_upload"
+        	app:showAsAction="always|withText" />
+   	    <item
+        	android:id="@+id/action_about"
+        	android:title="@string/button_about"
+        	android:icon="@drawable/ic_action_about"
+        	app:showAsAction="always|withText" />
+    	</menu>
+	</item>
+ -->
+</menu>

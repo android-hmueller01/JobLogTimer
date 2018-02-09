@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- layout resource for times view -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/view_times_content1" >
+
+	<RelativeLayout
+        android:id="@+id/view_times_info_line"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+    <TextView
+        android:id="@+id/view_times_info_line_left"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:gravity="left"
+		android:background="@color/sysDkGray"
+		android:textColor="@color/sysWhite"
+        android:text="@string/view_times_info_line_left" />
+    <TextView
+        android:id="@+id/view_times_info_line_middle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:gravity="center"
+		android:textColor="@color/sysWhite"
+        android:text="@string/view_times_info_line_middle" />
+    <TextView
+        android:id="@+id/view_times_info_line_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:gravity="right"
+		android:textColor="@color/sysWhite"
+        android:text="@string/view_times_info_line_right" />
+	</RelativeLayout>
+	
+	<!-- 
+		android:paddingTop="?attr/actionBarSize"
+		android:paddingTop="150dp"
+		android:paddingBottom="0dp"
+		android:clipToPadding="false"
+	-->
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+
+	<TextView
+		android:id="@android:id/empty"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:text="@string/empty_times_list"
+		android:padding="10dip" />
+
+</LinearLayout>

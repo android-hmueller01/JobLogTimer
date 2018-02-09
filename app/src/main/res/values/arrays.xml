@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="warn_before_entries">
+        <item name="0">0 minutes (too late ...)</item>
+        <item name="5">5 minutes</item>
+        <item name="10">10 minutes</item>
+        <item name="15">15 minutes</item>
+    </string-array>
+    <string-array name="warn_before_values">
+        <item name="0">0</item>
+        <item name="5">5</item>
+        <item name="10">10</item>
+        <item name="15">15</item>
+    </string-array>
+   
+</resources>

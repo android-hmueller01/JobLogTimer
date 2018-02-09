@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<!--
+	<Preference
+		android:key="pref_donation_key"
+	    android:title="@string/pref_donate_title"
+	    android:summary="@string/pref_donate_summary">
+		<intent
+			android:action="android.intent.action.VIEW"
+            android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=JGHDP9FQ58LJW" />
+	</Preference>
+-->
+
+    <PreferenceCategory android:title="@string/pref_times_title" >
+        <EditTextPreference
+			android:key="pref_hours_key"
+			android:title="@string/pref_hours_title"
+			android:summary="@string/pref_hours_summary"
+			android:defaultValue="8"
+			android:numeric="decimal"
+			android:maxLength="5" />
+		<EditTextPreference
+			android:key="pref_max_hours_key"
+			android:title="@string/pref_max_hours_title"
+			android:summary="@string/pref_max_hours_summary"
+			android:defaultValue="10"
+			android:numeric="decimal"
+			android:maxLength="4" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_break_title" >
+		<CheckBoxPreference
+			android:key="pref_break_individual_enable_key"
+			android:title="@string/pref_break_individual_enable_title"
+			android:summary="@string/pref_break_individual_enable_summary"
+			android:defaultValue="false" />
+        <EditTextPreference
+			android:key="pref_break_time_key"
+			android:title="@string/pref_break_time_title"
+			android:summary="@string/pref_break_time_summary"
+			android:dependency="pref_break_individual_enable_key"
+			android:defaultValue="50"
+			android:numeric="integer"
+			android:maxLength="2" />
+		<CheckBoxPreference
+			android:key="pref_break_after_hours_enable_key"
+			android:title="@string/pref_break_after_hours_enable_title"
+			android:summary="@string/pref_break_after_hours_enable_summary"
+			android:dependency="pref_break_individual_enable_key"
+			android:defaultValue="false" />
+		<EditTextPreference
+			android:key="pref_break_after_hours_key"
+			android:title="@string/pref_break_after_hours_title"
+			android:summary="@string/pref_break_after_hours_summary"
+			android:dependency="pref_break_after_hours_enable_key"
+			android:defaultValue="6"
+			android:numeric="decimal"
+			android:maxLength="5" />
+		<EditTextPreference
+			android:key="pref_break_atfixtime_key"
+			android:title="@string/pref_break_atfixtime_title"
+			android:summary="@string/pref_break_atfixtime_summary"
+			android:dependency="pref_break_individual_enable_key"
+			android:defaultValue="12"
+			android:numeric="decimal"
+			android:maxLength="5" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_warnings_title" >
+		<CheckBoxPreference
+			android:key="pref_end_hours_warn_key"
+			android:title="@string/pref_end_hours_warn_title"
+			android:summary="@string/pref_end_hours_warn_summary"
+			android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="pref_max_hours_warn_key"
+			android:title="@string/pref_max_hours_warn_title"
+			android:summary="@string/pref_max_hours_warn_summary"
+			android:defaultValue="true" />
+        <ListPreference
+            android:key="pref_max_hours_warn_before_key"
+            android:title="@string/pref_max_hours_warn_before_title"
+            android:summary="@string/pref_max_hours_warn_before_summary"
+			android:dependency="pref_max_hours_warn_key"
+            android:entries="@array/warn_before_entries"
+            android:entryValues="@array/warn_before_values"
+			android:defaultValue="10" />
+			<!-- android:dialogTitle="@string/pref_syncConnectionType" -->
+    </PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_view_title" >
+		<CheckBoxPreference
+			android:key="pref_view_percent_key"
+			android:title="@string/pref_view_percent_title"
+			android:summary="@string/pref_view_percent_summary"
+			android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="pref_widget_update_low_battery_key"
+			android:title="@string/pref_widget_update_low_battery_title"
+			android:summary="@string/pref_widget_update_low_battery_summary"
+			android:defaultValue="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

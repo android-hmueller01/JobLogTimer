@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- from android design guide:
+Cells	Available Size (dp)
+1		40dp
+2		110dp
+n		70 × n − 30
+-->
+<appwidget-provider 
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:minWidth="110dp"
+	android:minHeight="40dp"
+	android:updatePeriodMillis="0" 
+	android:initialLayout="@layout/widget_main"
+	android:previewImage="@drawable/ic_widget_main" >
+    <!-- The formula is pixels = dps * (density / 160), so 1 x 2 cells is equal to 72 dp x 144 dp:
+		ldpi (120): 54 x 108 pixels
+		mdpi (160): 72 x 144 pixels
+		hdpi (240): 108 x 216 pixels
+		xhdpi (320): 144 x 288 pixels 110x40, 165x60 and 220x80
+		xxhdpi (480): 216 x 432 pixels
+
+		New info: pixels = (70dp × n − 30dp) * (density / 160), so 1 x 2 cells is equal to 40 dp x 110 dp:
+		mdpi (160): 40 x 110 pixels
+		hdpi (240): 60 x 165 pixels
+		xhdpi (320): 80 x 220 pixels
+	-->
+</appwidget-provider>

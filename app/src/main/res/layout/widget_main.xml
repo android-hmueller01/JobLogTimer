@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: widget_main.xml 197 2017-01-19 20:20:46Z hmueller $
+** Widget Main Layout **
+see also xml/widget_info.xml
+widget size and guidelines see:
+https://developer.android.com/guide/practices/ui_guidelines/widget_design.html#anatomy_determining_size
+ -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@drawable/widget_background_drawable"
+    android:gravity="top" >
+
+    <ImageView
+        android:id="@+id/widget_button_StartApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="2dp"
+        android:contentDescription="JLT"
+        android:src="@drawable/ic_launcher_color" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/widget_button_StartApp"
+        android:shadowColor="@color/sysBlack"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="1"
+		android:fontFamily="smart-gothic"
+        android:text="@string/app_name"
+        android:textColor="@color/sysWhite"
+        android:textSize="13sp" />
+<!-- android:fontFamily="smart-gothic" -->
+
+    <LinearLayout
+        android:id="@+id/widget_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="8dp"
+        android:gravity="center"
+        android:orientation="vertical" >
+        
+        <TextView
+            android:id="@+id/widget_info_line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_info_line1"
+            android:textColor="@color/sysBlack"
+            android:textSize="@dimen/text_size_small" />
+
+        <TextView
+            android:id="@+id/widget_info_line2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_info_line2"
+            android:textColor="@color/sysBlack"
+            android:textSize="@dimen/text_size_small" />
+	</LinearLayout>
+
+    <ImageButton
+        android:id="@+id/widget_button_start_stop"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@id/widget_button_StartApp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:contentDescription="Start/Stop"
+        android:src="@drawable/ic_action_start" />
+
+    <ProgressBar
+        android:id="@+id/widget_progress_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:padding="8dp"
+        android:progress="40"
+        android:progressDrawable="@drawable/widget_progress_green_drawable" />
+
+    <ProgressBar
+        android:id="@+id/widget_progress_bar_yellow"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:padding="8dp"
+        android:progress="100"
+        android:progressDrawable="@drawable/widget_progress_yellow_drawable"
+        android:visibility="invisible" />
+
+    <ProgressBar
+        android:id="@+id/widget_progress_bar_red"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:padding="8dp"
+        android:progress="100"
+        android:progressDrawable="@drawable/widget_progress_red_drawable"
+        android:visibility="invisible" />
+</RelativeLayout>

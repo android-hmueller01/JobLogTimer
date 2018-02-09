@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: AndroidManifest.xml 202 2017-10-20 07:30:33Z hmueller $ -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.euhm.jlt"
+    android:versionCode="11"
+    android:versionName="0.13" >
+
+    <!-- needed to re-register the alarms after reboot -->   
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- needed to write database backup files -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_color"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+    	android:name="de.euhm.jlt.CustomApplication" >
+        <activity
+            android:name="de.euhm.jlt.MainActivity"
+            android:label="@string/title_activity_main" >
+
+            <!--
+            android:launchMode="singleTop"
+            ActionBar 'up' button destroys parent activity, 'back' does not
+			use: android:launchMode="singleTop"
+			Reference : http://developer.android.com/guide/topics/manifest/activity-element.html
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+             <intent-filter>
+                <action android:name="de.euhm.jlt.RECREATE" />
+                <action android:name="de.euhm.jlt.UPDATE_VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+     	</activity>
+		
+		<service android:name="de.euhm.jlt.services.AlarmWorkNormalService" />
+		<service android:name="de.euhm.jlt.services.AlarmWorkMaxService" />
+		<service android:name="de.euhm.jlt.services.StartWorkService" />
+		<service android:name="de.euhm.jlt.services.EndWorkService" />
+
+		<receiver
+		    android:name="de.euhm.jlt.MainWidgetProvider"
+            android:label="@string/app_name" >
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="de.euhm.jlt.ACTION_UPDATE_WIDGET" />
+			</intent-filter>
+			<meta-data
+			    android:name="android.appwidget.provider"
+				android:resource="@xml/widget_info" />
+		</receiver>
+		<receiver android:name="de.euhm.jlt.receivers.PowerStateChangedReceiver">
+  			<intent-filter>
+    			<action android:name="android.intent.action.BATTERY_LOW"/>
+    			<action android:name="android.intent.action.BATTERY_OKAY"/>
+  			</intent-filter>
+		</receiver>
+		<receiver android:name="de.euhm.jlt.receivers.OnBootReceiver">
+    		<intent-filter>
+        		<action android:name="android.intent.action.BOOT_COMPLETED"/>
+    		</intent-filter>
+		</receiver>
+	</application>
+</manifest>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JobLogTimer</string>
+    <string name="title_activity_main">@string/app_name</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <!-- drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="drawer_database">Database</string>
+    <string name="button_backup">Backup</string>
+    <string name="button_restore">Restore</string>
+    <string name="button_add_times">Manually add times</string>
+    <string name="button_about">About</string>
+
+    <!-- main actionbar tabs -->
+    <string name="tab_main">START</string>
+    <string name="tab_view"></string> <!-- using icon only -->
+    <string name="tab_settings"></string> <!-- using icon only -->
+    
+    <!-- actionbar buttons -->
+    <string name="button_start">Start work</string>
+    <string name="button_end">End work</string>
+    <string name="button_more">More &#8230;</string>
+    <string name="button_filter">Filter</string>
+
+    <!-- buttons -->
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_clear">Clear</string>
+    
+    <!-- Main / start fragment -->
+    <string name="date_text">Date</string>
+    <string name="start_text">Start</string>
+    <string name="start_time_set">Set start time</string>
+    <string name="end_text">End</string>
+    <string name="end_time_set">Set end time</string>
+    <string name="work_started">Work started.</string>
+    <string name="work_ended">Work ended.</string>
+    <string name="work_not_started">Work not started.</string>
+	
+    <string name="work_time_end_notif_text">Normal work time is over</string>
+    <string name="work_time_end_ticker">Work time is over</string>
+    <string name="work_time_max_notif_text">Maximal work time is over!!!</string>
+    <string name="work_time_max_ticker">Maximal work time is over. Go home!!!</string>
+
+    <string name="stats_statistics_text">Statistics</string>
+    <string name="time_worked_text">Worked</string>
+    <string name="time_overtime_text">(Overtime)</string>
+    <string name="stats_weekly_text">Week (%1$d)</string>
+    <string name="stats_monthly_text">Month (%1$s)</string>
+
+    <string name="week_table_mo_text">Mo</string>
+    <string name="week_table_tu_text">Tu</string>
+    <string name="week_table_we_text">We</string>
+    <string name="week_table_th_text">Th</string>
+    <string name="week_table_fr_text">Fr</string>
+	
+    <!-- view fragment -->
+    <string name="empty_times_list">No entries available.</string>
+    <string name="view_times_info_line_left">#%1$d</string>
+    <string name="view_times_info_line_middle">%1$s - %2$s</string>
+    <string name="view_times_info_line_right">%1$s (%2$s)</string>
+    <string name="view_times_info_line_filter_active">(F)</string>
+    <string name="database_add_positive_result">Data added</string>
+    <string name="database_update_positive_result">Data updated</string>
+    <string name="database_delete_positive_result">Data deleted</string>
+
+    <!-- filter fragment -->
+    <string name="title_filter">Select month to filter</string>
+
+    <!-- preferences / settings fragment -->
+    <string name="pref_donate_title">Donate to support development</string>
+    <string name="pref_donate_summary">If you like this app, please consider making a donation. Thanks!</string>
+
+    <string name="pref_times_title">Times</string>
+    <string name="pref_hours_title">Hours per day</string>
+    <string name="pref_hours_summary">Set the normal work hours per day</string>
+    <string name="pref_max_hours_title">Maximum hours per day</string>
+    <string name="pref_max_hours_summary">Set the maximum hours per day you are allowed to work</string>
+	
+    <string name="pref_break_title">Break settings</string>
+    <string name="pref_break_individual_enable_title">Individual break settings</string>
+	<string name="pref_break_individual_enable_summary">or break by German law\n(30 min. after 6 h, 45 min. after 9 h)</string>
+    <string name="pref_break_time_title">Break time</string>
+    <string name="pref_break_time_summary">Set the break time in minutes</string>
+	<string name="pref_break_after_hours_enable_title">Break after fix hours</string>
+	<string name="pref_break_after_hours_enable_summary">or at a fix time if unchecked</string>
+	<string name="pref_break_after_hours_title">Hours to break</string>
+	<string name="pref_break_after_hours_summary">Fix hours after that break starts</string>
+	<string name="pref_break_atfixtime_title">Start time of break</string>
+	<string name="pref_break_atfixtime_summary">Fix time when break starts</string>
+	
+    <string name="pref_warnings_title">Notifications</string>
+	<string name="pref_end_hours_warn_title">Warn normal work time end</string>
+    <string name="pref_end_hours_warn_summary"></string>
+	<string name="pref_max_hours_warn_title">Warn maximum work time</string>
+    <string name="pref_max_hours_warn_summary"></string>
+    <string name="pref_max_hours_warn_before_title">Minutes before max. time</string>
+    <string name="pref_max_hours_warn_before_summary">Warn selected minutes before maximum work time is over</string>
+
+    <string name="pref_view_title">User Interface</string>
+	<string name="pref_view_percent_title">Start page: View percentage</string>
+    <string name="pref_view_percent_summary">of done work or hours to work</string>
+	<string name="pref_widget_update_low_battery_title">Widget update on low battery</string>
+    <string name="pref_widget_update_low_battery_summary">Disable to save energy under low battery condition.</string>
+
+    <string name="confirm_restore">Replace internal database with backup data from\n%s?</string>
+
+    <!-- about fragment -->
+    <string name="title_about">About</string>
+    <string name="about_version">Version&#160;</string>
+    <string name="about_author">Holger Müller</string>
+    <string name="about_license">Apache License 2.0</string>
+    <string name="about_url">http://holger.euhm.de</string>
+
+    <!-- widget -->
+    <string name="widget_info_line1">press</string>
+    <string name="widget_info_line2">start&#8230;</string>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--
+Android Action Bar Style Generator
+http://jgilfelt.github.io/android-actionbarstylegenerator
+-->
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        parent="Theme.AppCompat.Light"
+        parent="Theme.AppCompat.Light.DarkActionBar"
+        parent="Theme.Sherlock.Light.DarkActionBar"
+        parent="android:Theme.Holo.Light.DarkActionBar"
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+        <!-- theme UI controls like checkboxes and text fields -->
+		<item name="colorAccent">@color/accent</item>
+		<!-- colorPrimaryDark goes behind the status bar, which is then darkened by the overlay -->
+		<!-- <item name="colorPrimaryDark">@color/sysGreen</item> -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+	<!-- ThemeOverlay.AppCompat.Dark.ActionBar" makes the text and the icons in the AppBar white. -->
+	<style name="AppTheme.AppBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+		<item name="android:background">@color/toolbar</item>
+	</style>
+
+	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
+
+	<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" >
+		<item name="android:background">@color/popup</item>
+	</style>
+</resources>

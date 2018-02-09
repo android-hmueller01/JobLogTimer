@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <issue id="HardcodedText" severity="ignore" />
+    <issue id="UnusedAttribute">
+        <ignore path="res/layout/widget_main.xml" />
+    </issue>
+</lint>
