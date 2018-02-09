@@ -103,8 +103,8 @@ V0.1: versionCode 1, 04.12.2014 Mr
 
 # References
 
-Icon generator used: http://romannurik.github.io/AndroidAssetStudio
+Icon generator: http://romannurik.github.io/AndroidAssetStudio
 
-Infos about Support library and AppCompat:
-https://android-developers.googleblog.com/2015/05/android-design-support-library.html
-https://android-developers.googleblog.com/2014/10/appcompat-v21-material-design-for-pre.html
+Support library: https://android-developers.googleblog.com/2015/05/android-design-support-library.html
+
+AppCompat: https://android-developers.googleblog.com/2014/10/appcompat-v21-material-design-for-pre.html
