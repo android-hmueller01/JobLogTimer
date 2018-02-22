@@ -1,5 +1,5 @@
-/**
- * $Id: TimesDataSource.java 178 2016-12-09 10:41:22Z hmueller $
+/*
+ * @file TimesDataSource.java
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -8,24 +8,23 @@
  */
 package de.euhm.jlt.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import de.euhm.jlt.dao.Times;
-import de.euhm.jlt.database.JobLogDbHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import de.euhm.jlt.database.JobLogContract.JobLogTimes;
+import de.euhm.jlt.database.JobLogDbHelper;
 
 /**
  * This is the DAO (Data Access Object).
  * It maintains the database connection, supports adding new entries and fetching, updating, deleting data.
  * @author hmueller
- * @version $Rev: 178 $
  */
 public class TimesDataSource {
 	private final String LOG_TAG = TimesDataSource.class.getSimpleName();
@@ -51,7 +50,7 @@ public class TimesDataSource {
 
 	/**
 	 * Open database, if not already opened
-	 * @throws SQLException
+	 * @throws SQLException if the database cannot be opened for writing
 	 */
 	public void open() throws SQLException {
 		// do not reopen, if database already exists
@@ -84,8 +83,7 @@ public class TimesDataSource {
 		// Insert the new row, returning the primary key value of the new row
 		long id = database.insert(JobLogTimes.TABLE_NAME, null, values);
 		// read the data back
-		Times times = getTimes(id);
-		return times;
+		return getTimes(id);
 	}
 
 	public int updateTimes(long id, long timeStart, long timeEnd) {
@@ -116,7 +114,7 @@ public class TimesDataSource {
 	}
 
 	public List<Times> getTimeRangeTimes(long timeStart, long timeEnd, String sort) {
-		List<Times> list = new ArrayList<Times>();
+		List<Times> list = new ArrayList<>();
 		String selection = JobLogTimes.COLUMN_NAME_TIME_START + " BETWEEN " + timeStart + " AND " + timeEnd;
 		String orderBy = JobLogTimes.COLUMN_NAME_TIME_START + " " + sort;
 
@@ -140,7 +138,7 @@ public class TimesDataSource {
 	}
 
 	public List<Times> getAllTimes(String sort) {
-		List<Times> list = new ArrayList<Times>();
+		List<Times> list = new ArrayList<>();
 		String orderBy = JobLogTimes.COLUMN_NAME_TIME_START + " " + sort;
 
 		Cursor cursor = database.query(JobLogTimes.TABLE_NAME, allColumns,

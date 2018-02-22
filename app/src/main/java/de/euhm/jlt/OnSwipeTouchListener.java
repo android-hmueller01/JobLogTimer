@@ -1,5 +1,5 @@
-/**
- * $Id: OnSwipeTouchListener.java 178 2016-12-09 10:41:22Z hmueller $
+/*
+ * @file OnSwipeTouchListener.java
  * 
  * based on Android: How to handle right to left swipe gestures
  * see http://stackoverflow.com/questions/4139288/android-how-to-handle-right-to-left-swipe-gestures
@@ -180,7 +180,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
                 mPreviousUpEvent.recycle();
             }
             // Hold the event we obtained above - listeners may have changed the original.
-            mPreviousUpEvent = MotionEvent.obtain(event);;
+            mPreviousUpEvent = MotionEvent.obtain(event);
 
             // get time between last ACTION_DOWN and current ACTION_UP event
 			long dt = TAB_TIMEOUT;
@@ -200,7 +200,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
 				result = true;
             } else if (Math.abs(deltaX) > mSwipeSlop) {
             	// consider as swipe
-				float toXDelta = 0;
+				float toXDelta;
 				if (x2 > x1) {
 					// left to right swipe action
 					result = onSwipeRight();
@@ -290,7 +290,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
     	private final WeakReference<OnSwipeTouchListener> myClassWeakReference;
 
     	GestureHandler(OnSwipeTouchListener myClassInstance) {
-    	      myClassWeakReference = new WeakReference<OnSwipeTouchListener>(myClassInstance);
+    	      myClassWeakReference = new WeakReference<>(myClassInstance);
     	}
 
         @Override

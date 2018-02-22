@@ -1,5 +1,5 @@
-/**
- * $Id: TimesWork.java 77 2015-02-03 21:17:05Z hmueller $
+/*
+ * @file TimesWork.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -43,9 +43,9 @@ public class TimesWork extends TimeUtil {
 	}
 
 
-	/**
+	/*
 	 * Interface to all data of TimesWork
-	 **/
+	 */
 	/**
 	 * Return <b>true</b> if work is started, otherwise <b>false</b>.
 	 * @return The mWorkStarted.

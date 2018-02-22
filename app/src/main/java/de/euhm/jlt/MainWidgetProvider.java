@@ -1,5 +1,5 @@
-/**
- * $Id: MainWidgetProvider.java 90 2015-02-11 19:38:55Z hmueller $
+/*
+ * @file MainWidgetProvider.java
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -36,8 +36,7 @@ public class MainWidgetProvider extends AppWidgetProvider {
 		PendingIntent pendingIntent;
 		
 		TimesWork timesWork = new TimesWork(context);
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			int currentWidgetId = appWidgetIds[i];
+		for (int currentWidgetId : appWidgetIds) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
 					R.layout.widget_main);
 
@@ -97,7 +96,7 @@ public class MainWidgetProvider extends AppWidgetProvider {
 				AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 				intent = new Intent(Constants.ACTION_UPDATE_WIDGET);
 				pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-		        alarmMgr.cancel(pendingIntent);
+		        if (alarmMgr != null) alarmMgr.cancel(pendingIntent);
 			}
 			// add onClickListener for Main App
 			intent = new Intent(context, MainActivity.class);
@@ -117,7 +116,9 @@ public class MainWidgetProvider extends AppWidgetProvider {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 	    String action = intent.getAction();
-	    if (action.equals(Constants.ACTION_UPDATE_WIDGET) || action.equals(Intent.ACTION_DATE_CHANGED)) {
+	    if (action != null &&
+				(action.equals(Constants.ACTION_UPDATE_WIDGET) ||
+						action.equals(Intent.ACTION_DATE_CHANGED))) {
 	        AppWidgetManager appWM = AppWidgetManager.getInstance(context);
 	        int[] appWidgetIds = appWM.getAppWidgetIds(new ComponentName(context, MainWidgetProvider.class));
 	        this.onUpdate(context, appWM, appWidgetIds);            

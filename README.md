@@ -4,11 +4,12 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
-V0.13: versionCode 11, 09.02.2018 Mr
+V0.13: versionCode 11, 13.02.2018 Mr
 - Migrated project to Android Studio
 - Updated minSdkVersion to 14 and targetSdkVersion to 27 (Android 8.1 / OREO)
 - Switched from Locale.US to Locale.getDefault()
 - Fixed a bug when work started or ended at fix break time (wrong calc)
+- Fixed some (not all) warnings by Android Studio
 
 V0.12: versionCode 10, 18.10.2017 Mr
 - Fixed ic_launcher_bw notification icon for V21 (Lollipop) and later.

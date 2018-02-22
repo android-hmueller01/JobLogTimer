@@ -1,5 +1,5 @@
-/**
- * $Id: SettingsSectionFragment.java 184 2016-12-21 21:32:19Z hmueller $
+/*
+ * @file SettingsSectionFragment.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0

@@ -1,5 +1,5 @@
-/**
- * $Id: Times.java 32 2015-01-16 18:51:50Z hmueller $
+/*
+ * @file Times.java
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -17,16 +17,15 @@ import android.os.Bundle;
  * This class is the model and contains the data we will save in the database and show in the user interface.
  * 
  * @author hmueller
- * @version $Rev: 32 $
  */
 public class Times {
 	private long id;
 	private long timeStart;
 	private long timeEnd;
-	
-	static final String TIMES_ID = "Times_id";
-	static final String TIMES_TIME_START = "Times_timesStart";
-	static final String TIMES_TIME_END = "Times_timeEnd";
+
+	private static final String TIMES_ID = "Times_id";
+	private static final String TIMES_TIME_START = "Times_timesStart";
+	private static final String TIMES_TIME_END = "Times_timeEnd";
 
 	/**
 	 * Instantiate new Times class with values.

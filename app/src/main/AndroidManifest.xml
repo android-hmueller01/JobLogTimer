@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: AndroidManifest.xml 202 2017-10-20 07:30:33Z hmueller $ -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.euhm.jlt"
     android:versionCode="11"

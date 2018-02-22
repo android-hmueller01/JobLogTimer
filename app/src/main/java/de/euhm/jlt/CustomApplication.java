@@ -1,5 +1,5 @@
 /**
- * $Id: CustomApplication.java 78 2015-02-03 21:19:21Z hmueller $
+ * @file CustomApplication.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0

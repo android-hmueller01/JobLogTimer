@@ -1,17 +1,12 @@
-/**
- * $Id: MainActivity.java 196 2017-01-16 16:58:20Z hmueller $
+/*
+ * @file MainActivity.java
  * 
- * Main activity of JobLog
- * based on Google EffectiveNavigation example
+ * Main activity of JobLogTimer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 package de.euhm.jlt;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Locale;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -26,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -39,7 +35,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +47,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Locale;
+
 import de.euhm.jlt.dao.Times;
 import de.euhm.jlt.dao.TimesWork;
 import de.euhm.jlt.database.JobLogContract;
@@ -119,20 +119,11 @@ public class MainActivity extends AppCompatActivity implements
 	 * Register in onCreate() and unregister in onDestroy()!
 	 */
 	private final BroadcastReceiver receiverRecreate = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+		@Override
+		public void onReceive(Context context, Intent intent) {
 			Log.v(LOG_TAG, "Received BroadcastReceiver " + Constants.RECEIVER_RECREATE);
-        	if (Build.VERSION.SDK_INT >= 11) {
-        	    recreate();
-        	} else {
-        	    Intent mainIntent = getIntent();
-        	    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        	    finish();
-        	    overridePendingTransition(0, 0);
-        	    startActivity(mainIntent);
-        	    overridePendingTransition(0, 0);
-        	}
-        }
+			recreate();
+		}
 	};
 
 	/**
@@ -140,11 +131,11 @@ public class MainActivity extends AppCompatActivity implements
 	 * Register in onCreate() and unregister in onDestroy()!
 	 */
 	private final BroadcastReceiver receiverUpdateView = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+		@Override
+		public void onReceive(Context context, Intent intent) {
 			Log.v(LOG_TAG, "Received BroadcastReceiver " + Constants.RECEIVER_UPDATE_VIEW);
-            supportInvalidateOptionsMenu();
-        }
+			supportInvalidateOptionsMenu();
+		}
 	};
 
 
@@ -183,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements
 		//mTW.timeEnd(-1); // only for debugging, resetting End time
 
 		// Setup FloatingActionButton from android.support.design.widget.FloatingActionButton for API < 21.
-		mFab = (FloatingActionButton) findViewById(R.id.fab);
+		mFab = findViewById(R.id.fab);
 		// handle the FloatingActionButton click event
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,25 +195,24 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         // Setup the action bar from android.support.v7.app.ActionBar for API < 21.
-        Toolbar supportToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar supportToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(supportToolbar);
-		final ActionBar actionBar = getSupportActionBar();
 
 		// Specify that the Home/Up button should not be enabled, since there is no hierarchical parent.
-		actionBar.setHomeButtonEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
 
         // Setup the ViewPager.
-		mViewPager = (CustomViewPager) findViewById(R.id.pager);
+		mViewPager = findViewById(R.id.pager);
 		// Create the adapter that will return a fragment for each of the primary sections of the app.
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), context);
 		mViewPager.setAdapter(mAppSectionsPagerAdapter);
 
         // Setup the TabLayout and connect it to the ViewPager.
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        // setupWithViewPager() does not work very well, so we do all the things ourself (see below)
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        // setupWithViewPager() does not work very well, so we do all the things oneself (see below)
         //tabLayout.setupWithViewPager(mViewPager);
 		mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
         	@Override
         	public void onTabSelected(TabLayout.Tab tab) {
         		// When the given tab is selected, switch to the corresponding page in the ViewPager.
@@ -266,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements
 			Tab tab = tabLayout.newTab();
 			tab.setCustomView(R.layout.custom_tab_title);
 			View tab_view = tab.getCustomView();
-			TextView tab_title = (TextView) tab_view.findViewById(R.id.title);
-			ImageView img = (ImageView) tab_view.findViewById(R.id.icon);
+			TextView tab_title = tab_view.findViewById(R.id.title);
+			ImageView img = tab_view.findViewById(R.id.icon);
 			tab_title.setText(mAppSectionsPagerAdapter.getPageTitle(i));
 			int icon = mAppSectionsPagerAdapter.getPageIcon(i);
 			if (icon != 0)
@@ -277,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
 		// setup the navigation drawer view from android.support.v4.widget.DrawerLayout for API < 21.
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+		mDrawerLayout = findViewById(R.id.drawerlayout);
 		// Necessary for automatically animated navigation drawer upon open and close.
 		// The two strings are not displayed to the user.
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, 
@@ -290,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements
 		mDrawerLayout.addDrawerListener(toggle);
 		toggle.syncState();
 
-		NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
+		NavigationView navigationView = findViewById(R.id.navigation_drawer);
 		navigationView.setNavigationItemSelectedListener(this);
 	}
 
@@ -446,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
-	public boolean onNavigationItemSelected(MenuItem item) { 
+	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Close drawer on item click
         mDrawerLayout.closeDrawers();
         
@@ -568,7 +558,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
     	boolean result = false;
-    	boolean retVal= false;
 
     	// detect pinching
 		int pointerCount = event.getPointerCount();
@@ -598,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements
     	if (!result) {
     		result = super.dispatchTouchEvent(event);
     	}
-		return retVal || result;
+		return result;
 	}
 
 	// EditTimes Listener
@@ -775,8 +764,9 @@ public class MainActivity extends AppCompatActivity implements
 	}
 	
 	@Override
-	public void onRequestPermissionsResult(int requestCode, 
-			String[] permissions, int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode,
+										   @NonNull String[] permissions,
+										   @NonNull int[] grantResults) {
 		// Handle the permissions request response.
 		switch (requestCode) {
 		case Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE:

@@ -1,5 +1,5 @@
-/**
- * $Id: CustomViewPager.java 86 2015-02-06 19:48:13Z hmueller $
+/*
+ * @file CustomViewPager.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0

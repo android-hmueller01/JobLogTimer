@@ -1,5 +1,5 @@
-/**
- * $Id: ViewSectionFragment.java 196 2017-01-16 16:58:20Z hmueller $
+/*
+ * @file ViewSectionFragment.java
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
@@ -45,7 +46,7 @@ import de.euhm.jlt.utils.Constants;
 import de.euhm.jlt.utils.TimeUtil;
 
 /**
- * Fragement for viewing the times database
+ * Fragment for viewing the times database
  * @author hmueller
  */
 public class ViewSectionFragment extends ListFragment {
@@ -119,12 +120,12 @@ public class ViewSectionFragment extends ListFragment {
 	}
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
     	super.onViewCreated(view, savedInstanceState);
     	updateInfoLine();
 
 	    // get the viewpager of the tabLayout toolbar
-		mViewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+		mViewPager = getActivity().findViewById(R.id.pager);
 
         // dynamically hide and show ActionBar
     	mListView = getListView();
@@ -207,7 +208,7 @@ public class ViewSectionFragment extends ListFragment {
      * @return list of times
      */
 	private List<Times> getListTimes() {
-		List<Times> listTimes = null;
+		List<Times> listTimes;
 		// check if database is open, might be called after onPause() by BroadcastReceiver ...
 		boolean closeDatabase = false;
 		if (!mDatasource.isOpen()) {
@@ -244,9 +245,9 @@ public class ViewSectionFragment extends ListFragment {
      */
     private void updateInfoLine() {
     	// get views of times info line
-    	TextView viewInfoLineLeft = (TextView) getView().findViewById(R.id.view_times_info_line_left);
-    	TextView viewInfoLineMiddle = (TextView) getView().findViewById(R.id.view_times_info_line_middle);
-    	TextView viewInfoLineRight = (TextView) getView().findViewById(R.id.view_times_info_line_right);
+    	TextView viewInfoLineLeft = getView().findViewById(R.id.view_times_info_line_left);
+    	TextView viewInfoLineMiddle = getView().findViewById(R.id.view_times_info_line_middle);
+    	TextView viewInfoLineRight = getView().findViewById(R.id.view_times_info_line_right);
 
     	// set default values (if we have leave before setting at the end)
     	String strLeft = String.format(Locale.getDefault(),
@@ -285,7 +286,7 @@ public class ViewSectionFragment extends ListFragment {
 	    		ti_next = (Times) la.getItem(i + 1);
 	    	} else {
 	    		// no, set day to next day (which is != current day) to finish calculating this day (see if below)
-	    		ti_next = new Times(0, ti.getTimeStart() + 1 * 24 * 60 * 60 * 1000, 0);
+	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0);
 	    	}
 	    	// do we have more values with same day? 
 	    	if (ti.getCalStart().get(Calendar.DAY_OF_MONTH) != ti_next.getCalStart().get(Calendar.DAY_OF_MONTH)) {
@@ -374,7 +375,7 @@ public class ViewSectionFragment extends ListFragment {
 	/**
 	 * Backup internal database to local storage.<br />
 	 * Previous backup will be overwritten without warning!
-	 * @param dbPath
+	 * @param dbPath Path to export to.
 	 */
 	public void exportDatabase(String dbPath) {
 		try {
@@ -395,7 +396,7 @@ public class ViewSectionFragment extends ListFragment {
 	 * <i><b>WARNING:</b> This will delete the current database and replace it
 	 * with the backup!</i>
 	 * 
-	 * @param dbPath
+	 * @param dbPath Path to import from
 	 */
 	public void importDatabase(String dbPath) {
 		try {
@@ -446,31 +447,5 @@ public class ViewSectionFragment extends ListFragment {
 		mViewPager = null;
 		mContext = null;
 	}
-
-/*
-  // Will be called via the onClick attribute of the buttons
-  public void onClick(View view) {
-    @SuppressWarnings("unchecked")
-    ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
-    Comment comment = null;
-    switch (view.getId()) {
-    case R.id.add:
-      String[] comments = new String[] { "Cool", "Very nice", "Hate it" };
-      int nextInt = new Random().nextInt(3);
-      // save the new comment to the database
-      comment = datasource.createComment(comments[nextInt]);
-      adapter.add(comment);
-      break;
-    case R.id.delete:
-      if (getListAdapter().getCount() > 0) {
-        comment = (Comment) getListAdapter().getItem(0);
-        datasource.deleteComment(comment);
-        adapter.remove(comment);
-      }
-      break;
-    }
-    adapter.notifyDataSetChanged();
-  }
-*/
 
 } 

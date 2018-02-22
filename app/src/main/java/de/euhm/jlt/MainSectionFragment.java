@@ -1,5 +1,5 @@
-/**
- * $Id: MainSectionFragment.java 184 2016-12-21 21:32:19Z hmueller $
+/*
+ * @file MainSectionFragment.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -84,8 +85,8 @@ public class MainSectionFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_section_main, container, false);
 
 		// setup the left/right main statistics swipe gesture
@@ -162,21 +163,21 @@ public class MainSectionFragment extends Fragment {
 		float percentProgressBar = (float) (curTimeMillis - mTW.getTimeStart()) / 
 				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart());
 		
-		TextView tvDate = (TextView) view.findViewById(R.id.date_val);
-		TextView tvTime = (TextView) view.findViewById(R.id.start_val);
-		ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+		TextView tvDate = view.findViewById(R.id.date_val);
+		TextView tvTime = view.findViewById(R.id.start_val);
+		ProgressBar progressBar = view.findViewById(R.id.progress_bar);
 		if (mTW.getTimeStart() == -1) {
 			tvDate.setText(" --.--.---- ");
 			tvTime.setText(" --:-- ");
 			progressBar.setSecondaryProgress(0);
 			progressBar.setProgress(0);
-			tv = (TextView) view.findViewById(R.id.progress_bar_percent_val);
+			tv = view.findViewById(R.id.progress_bar_percent_val);
 			tv.setText("-");
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_1);
+			tv = view.findViewById(R.id.progress_bar_time_1);
 			tv.setText("-");
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_2);
+			tv = view.findViewById(R.id.progress_bar_time_2);
 			tv.setText("-");
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_3);
+			tv = view.findViewById(R.id.progress_bar_time_3);
 			tv.setText("-");
 		} else {
 			// view start date and time
@@ -185,9 +186,9 @@ public class MainSectionFragment extends Fragment {
 
 			// set the progress bar values
 			String workedTimeString = TimeUtil.formatTimeString(TimeUtil.getWorkedTime(mContext, mTW.getTimeStart(), curTimeMillis));
-			String addProgressBarInfo = "";
-			int progress = 0;
-			int secondaryProgress = 0;
+			String addProgressBarInfo;
+			int progress;
+			int secondaryProgress;
 			if (curTimeMillis > mTW.getNormalWorkEndTime()) {
 				// we are in over time ...
 				progress = (int) Math.floor(percentNormal * 100);
@@ -197,6 +198,7 @@ public class MainSectionFragment extends Fragment {
 			} else {
 				// we are in normal work time, no secondaryProgress needed
 				progress = (int) Math.floor(percentProgressBar * 100);
+				secondaryProgress = 0;
 				if (prefs.getViewPercentEnabled()) {
 					addProgressBarInfo = "(" + (int) Math.floor(percentCurrent * 100) + "%)";
 				} else {
@@ -208,11 +210,11 @@ public class MainSectionFragment extends Fragment {
 			progressBar.setProgress(progress);
 			
 			// set the progress bar text
-			tv = (TextView) view.findViewById(R.id.progress_bar_percent_val);
+			tv = view.findViewById(R.id.progress_bar_percent_val);
 			tv.setText(workedTimeString + " " + addProgressBarInfo);
 			
 			// set tick 1 values
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_1);
+			tv = view.findViewById(R.id.progress_bar_time_1);
 			tv.setText(String.format(Locale.getDefault(), "%tR", mTW.getCalStart()));
 			
 			// set tick 2 values
@@ -222,19 +224,19 @@ public class MainSectionFragment extends Fragment {
 			params = (RelativeLayout.LayoutParams) v.getLayoutParams();
 			params.leftMargin = pos - v.getWidth() / 2;
 			v.setLayoutParams(params);
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_2);
+			tv = view.findViewById(R.id.progress_bar_time_2);
 			tv.setText(String.format(Locale.getDefault(), "%tR", mTW.getCalNormalWorkEndTime()));
 			params = (RelativeLayout.LayoutParams) tv.getLayoutParams();
 			params.leftMargin = pos - tv.getWidth() / 2;
 			tv.setLayoutParams(params);
 			
 			// set tick 3 values
-			tv = (TextView) view.findViewById(R.id.progress_bar_time_3);
+			tv = view.findViewById(R.id.progress_bar_time_3);
 			tv.setText(String.format(Locale.getDefault(), "%tR", mTW.getCalMaxWorkEndTime()));
 		}
 
 
-		tv = (TextView) view.findViewById(R.id.end_val);
+		tv = view.findViewById(R.id.end_val);
 		if (mTW.getTimeEnd() == -1) {
 			tv.setText(" --:-- ");
 		} else {
@@ -265,7 +267,7 @@ public class MainSectionFragment extends Fragment {
 	    		ti_next = values.get(i + 1);
 	    	} else {
 	    		// no, set day to next day (which is != current day) to finish calculating this day (see if below)
-	    		ti_next = new Times(0, ti.getTimeStart() + 1 * 24 * 60 * 60 * 1000, 0);
+	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0);
 	    	}
 	    	// do we have more values with same day? 
 	    	if (ti.getCalStart().get(Calendar.DAY_OF_MONTH) != ti_next.getCalStart().get(Calendar.DAY_OF_MONTH)) {
@@ -330,18 +332,18 @@ public class MainSectionFragment extends Fragment {
         Log.d(LOG_TAG, String.format(Locale.getDefault(), "weekly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
 
 		calStart.add(Calendar.DAY_OF_MONTH, 1); // add one day, to get CW from Monday instead of Sunday
-		tv = (TextView) view.findViewById(R.id.stats_weekly_text);
+		tv = view.findViewById(R.id.stats_weekly_text);
         tv.setText(String.format(Locale.getDefault(), getResources().getString(R.string.stats_weekly_text),
         		calStart.get(Calendar.WEEK_OF_YEAR)));
-		tv = (TextView) view.findViewById(R.id.stats_weekly_worked_val);
+		tv = view.findViewById(R.id.stats_weekly_worked_val);
         tv.setText(TimeUtil.formatTimeString(workedTime.value));
-		tv = (TextView) view.findViewById(R.id.stats_weekly_overtime_val);
+		tv = view.findViewById(R.id.stats_weekly_overtime_val);
         tv.setText("(" + TimeUtil.formatTimeString(overTime.value) + ")");
 
         // fill week table
 	    for (int i = 1; i < 6; i++) {
 			if (weekTableIds[i] != 0) {
-				tv = (TextView) view.findViewById(weekTableIds[i]);
+				tv = view.findViewById(weekTableIds[i]);
 				tv.setText(TimeUtil.formatTimeString(overTimes[i]));
 				if (overTimes[i] < 0) {
 					tv.setTextColor(ContextCompat.getColor(mContext, R.color.sysRed));
@@ -357,12 +359,12 @@ public class MainSectionFragment extends Fragment {
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime);
 		Log.d(LOG_TAG, String.format(Locale.getDefault(), "monthly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
 
-		tv = (TextView) view.findViewById(R.id.stats_monthly_text);
+		tv = view.findViewById(R.id.stats_monthly_text);
         tv.setText(String.format(Locale.getDefault(), getResources().getString(R.string.stats_monthly_text),
         		android.text.format.DateFormat.format("MMM", calStart.getTimeInMillis())));
-		tv = (TextView) view.findViewById(R.id.stats_monthly_worked_val);
+		tv = view.findViewById(R.id.stats_monthly_worked_val);
         tv.setText(TimeUtil.formatTimeString(workedTime.value));
-		tv = (TextView) view.findViewById(R.id.stats_monthly_overtime_val);
+		tv = view.findViewById(R.id.stats_monthly_overtime_val);
         tv.setText("(" + TimeUtil.formatTimeString(overTime.value) + ")");
 	}
 	
