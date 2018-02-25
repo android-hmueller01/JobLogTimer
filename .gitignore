@@ -12,6 +12,7 @@
 bin/
 gen/
 out/
+app/release
 import-summary.txt
 
 # Gradle files
@@ -42,3 +43,4 @@ captures/
 
 # Keystore files
 *.jks
+*.keystore
