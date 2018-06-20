@@ -13,6 +13,7 @@ package de.euhm.jlt.utils;
 public final class Constants {
 	// Notification IDs
 	public static final int NOTIFICATION_END_WORK = 1;
+	public static final String NOTIFICATION_CHANNEL = "WORK DONE";
 	
 	// Action Codes
 	public static final String ACTION_UPDATE_WIDGET = "de.euhm.jlt.ACTION_UPDATE_WIDGET";

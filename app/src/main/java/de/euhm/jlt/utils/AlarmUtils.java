@@ -11,17 +11,23 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
+
 import de.euhm.jlt.dao.TimesWork;
 import de.euhm.jlt.preferences.Prefs;
 import de.euhm.jlt.services.AlarmWorkMaxService;
 import de.euhm.jlt.services.AlarmWorkNormalService;
+import de.euhm.jlt.services.StartWorkService;
 
 /**
  * Helper class to set JobLogTimer alarms
  * @author hmueller
  */
 public class AlarmUtils {
+	private final static String LOG_TAG = AlarmUtils.class.getSimpleName();
+
 	/**
 	 * Set JobLogTimer alarms for normal and maximal work time, set update widget alarm.
 	 * @param context Context of application environment.
@@ -42,7 +48,13 @@ public class AlarmUtils {
 				// set an alarm to normal work hour
 				alarmIntent = new Intent(context, AlarmWorkNormalService.class);
 				pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
-				alarmMgr.set(AlarmManager.RTC_WAKEUP, timesWork.getNormalWorkEndTime(), pendingIntent);
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkNormalService)");
+					alarmMgr.set(AlarmManager.RTC_WAKEUP, timesWork.getNormalWorkEndTime(), pendingIntent);
+				} else {
+					Log.d(LOG_TAG, "alarmMgr.setExactAndAllowWhileIdle(AlarmWorkNormalService)");
+					alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timesWork.getNormalWorkEndTime(), pendingIntent);
+				}
 			}
 
 			if (prefs.getMaxHoursWarnEnabled()) {
@@ -50,7 +62,13 @@ public class AlarmUtils {
 				alarmIntent = new Intent(context, AlarmWorkMaxService.class);
 				pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
 				long alarmTime = timesWork.getMaxWorkEndTime() - prefs.getMaxHoursWarnBeforeInMillis();
-				alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkMaxService)");
+					alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+				} else {
+					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkMaxService)");
+					alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+				}
 			}
 			
 			// TODO: set repeating alarm only of we are not in power save mode

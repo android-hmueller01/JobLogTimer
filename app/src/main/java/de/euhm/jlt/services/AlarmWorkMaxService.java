@@ -8,12 +8,14 @@ package de.euhm.jlt.services;
 
 import java.io.File;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -50,7 +52,7 @@ public class AlarmWorkMaxService extends Service {
             PendingIntent.getService(this, 0, endWorkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder =
-        	    new NotificationCompat.Builder(this)
+        	    new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL)
         	    .setSmallIcon(R.drawable.ic_launcher_bw)
         	    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_color))
         	    .setContentTitle(getResources().getText(R.string.app_name))
@@ -63,8 +65,15 @@ public class AlarmWorkMaxService extends Service {
         	    .setContentIntent(resultPendingIntent);
         // Gets an instance of the NotificationManager service
         NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // Builds the notification and issues it.
-        notifyMgr.notify(Constants.NOTIFICATION_END_WORK, builder.build());
+		if (notifyMgr != null) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				NotificationChannel channel = new NotificationChannel(Constants.NOTIFICATION_CHANNEL,
+						getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
+				notifyMgr.createNotificationChannel(channel);
+			}
+			// Builds the notification and issues it.
+			notifyMgr.notify(Constants.NOTIFICATION_END_WORK, builder.build());
+		}
 
         // do not restart if service is killed
 		return START_NOT_STICKY;
