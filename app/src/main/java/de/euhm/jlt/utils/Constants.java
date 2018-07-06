@@ -16,8 +16,9 @@ public final class Constants {
 	public static final String NOTIFICATION_CHANNEL = "WORK DONE";
 	
 	// Action Codes
-	public static final String ACTION_UPDATE_WIDGET = "de.euhm.jlt.ACTION_UPDATE_WIDGET";
-	
+	//public static final String ACTION_UPDATE_WIDGET = "de.euhm.jlt.ACTION_UPDATE_WIDGET";
+	// use AppWidgetManager.ACTION_APPWIDGET_UPDATE instead
+
 	// Receiver Codes
 	public static final String RECEIVER_RECREATE = "de.euhm.jlt.RECREATE";
 	public static final String RECEIVER_UPDATE_VIEW = "de.euhm.jlt.UPDATE_VIEW";

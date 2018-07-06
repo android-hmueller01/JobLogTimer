@@ -42,12 +42,11 @@
 		<service android:name="de.euhm.jlt.services.EndWorkService" />
 
 		<receiver
-		    android:name="de.euhm.jlt.MainWidgetProvider"
+		    android:name=".MainWidgetProvider"
             android:label="@string/app_name" >
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="de.euhm.jlt.ACTION_UPDATE_WIDGET" />
-			</intent-filter>
+            </intent-filter>
 			<meta-data
 			    android:name="android.appwidget.provider"
 				android:resource="@xml/widget_info" />

@@ -9,6 +9,7 @@ package de.euhm.jlt.utils;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -66,8 +67,8 @@ public class AlarmUtils {
 					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkMaxService)");
 					alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
 				} else {
-					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkMaxService)");
-					alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+					Log.d(LOG_TAG, "alarmMgr.setExactAndAllowWhileIdle(AlarmWorkMaxService)");
+					alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
 				}
 			}
 			
@@ -78,7 +79,7 @@ public class AlarmUtils {
 			if (!pm.isPowerSaveMode() || prefs.getWidgetUpdateOnLowBattery()) {}
 			*/
 			// update the widget with an alarm, but do not wake up device ...
-			alarmIntent = new Intent(Constants.ACTION_UPDATE_WIDGET);
+			alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
 			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
 					SystemClock.elapsedRealtime(),
@@ -94,7 +95,7 @@ public class AlarmUtils {
 			pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
 	        alarmMgr.cancel(pendingIntent);
 
-			alarmIntent = new Intent(Constants.ACTION_UPDATE_WIDGET);
+			alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
 	        alarmMgr.cancel(pendingIntent);
 

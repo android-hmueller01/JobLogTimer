@@ -7,6 +7,7 @@
 package de.euhm.jlt.services;
 
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -65,7 +66,7 @@ public class EndWorkService extends Service {
         	sendBroadcast(new Intent(Constants.RECEIVER_UPDATE_VIEW));
         	
         	// update AppWidgetProvider
-        	sendBroadcast(new Intent(Constants.ACTION_UPDATE_WIDGET));
+        	sendBroadcast(new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE));
 
     		Toast.makeText(this, R.string.work_ended, Toast.LENGTH_SHORT).show();
 	    }

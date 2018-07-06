@@ -15,12 +15,12 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import de.euhm.jlt.dao.TimesWork;
 import de.euhm.jlt.services.EndWorkService;
 import de.euhm.jlt.services.StartWorkService;
-import de.euhm.jlt.utils.Constants;
 import de.euhm.jlt.utils.TimeUtil;
 
 /**
@@ -28,13 +28,15 @@ import de.euhm.jlt.utils.TimeUtil;
  * @author hmueller
  */
 public class MainWidgetProvider extends AppWidgetProvider {
+	private static final String LOG_TAG = MainWidgetProvider.class.getSimpleName();
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		Intent intent;
 		PendingIntent pendingIntent;
-		
+
+		Log.v(LOG_TAG, "onUpdate");
 		TimesWork timesWork = new TimesWork(context);
 		for (int currentWidgetId : appWidgetIds) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
@@ -94,7 +96,7 @@ public class MainWidgetProvider extends AppWidgetProvider {
 				appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);
 				// always cancel periodic widget update feature (only active while working)
 				AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-				intent = new Intent(Constants.ACTION_UPDATE_WIDGET);
+				intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 				pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 		        if (alarmMgr != null) alarmMgr.cancel(pendingIntent);
 			}
@@ -115,16 +117,14 @@ public class MainWidgetProvider extends AppWidgetProvider {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-	    String action = intent.getAction();
-	    if (action != null &&
-				(action.equals(Constants.ACTION_UPDATE_WIDGET) ||
-						action.equals(Intent.ACTION_DATE_CHANGED))) {
-	        AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-	        int[] appWidgetIds = appWM.getAppWidgetIds(new ComponentName(context, MainWidgetProvider.class));
-	        this.onUpdate(context, appWM, appWidgetIds);            
-	    } else {
-	    	super.onReceive(context, intent);
-	    }
+		String action = intent.getAction();
+		Log.v(LOG_TAG, "Received MainWidgetProvider intent '" + action + "'");
+		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
+			AppWidgetManager appWM = AppWidgetManager.getInstance(context);
+			int[] appWidgetIds = appWM.getAppWidgetIds(new ComponentName(context, MainWidgetProvider.class));
+			this.onUpdate(context, appWM, appWidgetIds);
+		} else {
+			super.onReceive(context, intent);
+		}
 	}
-
 }
