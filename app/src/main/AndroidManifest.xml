@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.euhm.jlt"
     android:versionCode="12"
-    android:versionName="0.14a" >
+    android:versionName="0.14b" >
 
     <!-- needed to re-register the alarms after reboot -->   
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

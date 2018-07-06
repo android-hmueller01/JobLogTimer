@@ -1,5 +1,5 @@
-/**
- * $Id: StartWorkService.java 90 2015-02-11 19:38:55Z hmueller $
+/*
+ * @file StartWorkService.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0

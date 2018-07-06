@@ -63,7 +63,8 @@ public class AlarmWorkNormalService extends Service {
         	    .setTicker(getResources().getText(R.string.work_time_end_ticker))
         	    .setLights(ContextCompat.getColor(this, R.color.alarm_normal_work_time_led), 500, 1000)
         	    .setSound(Uri.parse("android.resource://" + getPackageName() + File.separator + R.raw.beeps))
-        	    .addAction(R.drawable.ic_action_stop, getResources().getText(R.string.button_end), 
+				// icon is not shown since Nougat https://stackoverflow.com/questions/41503972/icon-is-not-getting-displayed-in-notification-in-android-nougat
+        	    .addAction(R.drawable.ic_action_stop, getResources().getText(R.string.button_end),
         	    		endWorkPendingIntent)
         	    .setContentIntent(resultPendingIntent);
         // Gets an instance of the NotificationManager service

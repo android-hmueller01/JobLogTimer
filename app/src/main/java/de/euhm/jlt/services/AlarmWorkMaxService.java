@@ -1,5 +1,5 @@
-/**
- * $Id: AlarmWorkMaxService.java 184 2016-12-21 21:32:19Z hmueller $
+/*
+ * @file AlarmWorkMaxService.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -60,7 +60,8 @@ public class AlarmWorkMaxService extends Service {
         	    .setTicker(getResources().getText(R.string.work_time_max_ticker))
         	    .setLights(ContextCompat.getColor(this, R.color.alarm_max_work_time_led), 200, 200)
         	    .setSound(Uri.parse("android.resource://" + getPackageName() + File.separator + R.raw.beeps))
-        	    .addAction(R.drawable.ic_action_stop, getResources().getText(R.string.button_end), 
+				// icon is not shown since Nougat https://stackoverflow.com/questions/41503972/icon-is-not-getting-displayed-in-notification-in-android-nougat
+        	    .addAction(R.drawable.ic_action_stop, getResources().getText(R.string.button_end),
         	    		endWorkPendingIntent)
         	    .setContentIntent(resultPendingIntent);
         // Gets an instance of the NotificationManager service

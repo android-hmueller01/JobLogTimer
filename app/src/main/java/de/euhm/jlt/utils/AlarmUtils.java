@@ -1,5 +1,5 @@
-/**
- * $Id: $
+/*
+ * @file AlarmUtils.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -20,7 +20,6 @@ import de.euhm.jlt.dao.TimesWork;
 import de.euhm.jlt.preferences.Prefs;
 import de.euhm.jlt.services.AlarmWorkMaxService;
 import de.euhm.jlt.services.AlarmWorkNormalService;
-import de.euhm.jlt.services.StartWorkService;
 
 /**
  * Helper class to set JobLogTimer alarms
