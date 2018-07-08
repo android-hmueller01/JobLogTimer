@@ -126,18 +126,24 @@ public class TimeUtil {
 	 * @return Normal work end time in milliseconds.
 	 */
 	public static long getNormalWorkEndTime(Context context, long time) {
+		long endTime = time;
 		Prefs prefs = new Prefs(context);
 		if (prefs.getBreakIndividualEnabled()) {
-			time = time + prefs.getHoursInMillis() + prefs.getBreakTimeInMillis();
+			endTime = time + prefs.getHoursInMillis();
+			if ((prefs.getBreakAfterHoursEnabled() &&
+					prefs.getHoursInMillis() > prefs.getBreakAfterHoursInMillis()) ||
+					(time < prefs.getBreakAtFixTime() && endTime > prefs.getBreakAtFixTime())) {
+				endTime += prefs.getBreakTimeInMillis();
+			}
 		} else {
 			// if break is set to German law
 			if (prefs.getHoursInMillis() < Constants.GL_WORK_TIME2) {
-				time = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME1;
+				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME1;
 			} else {
-				time = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME2;				
+				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME2;
 			}
 		}
-		return time;
+		return endTime;
 	}
 
 	/**
