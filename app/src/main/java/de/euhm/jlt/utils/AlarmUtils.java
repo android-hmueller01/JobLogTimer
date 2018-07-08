@@ -48,6 +48,7 @@ public class AlarmUtils {
 				// set an alarm to normal work hour
 				alarmIntent = new Intent(context, AlarmWorkNormalService.class);
 				pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkNormalService)");
 					alarmMgr.set(AlarmManager.RTC_WAKEUP, timesWork.getNormalWorkEndTime(), pendingIntent);
@@ -87,7 +88,7 @@ public class AlarmUtils {
 		} else {
 			// cancel alarm
 			alarmIntent = new Intent(context, AlarmWorkNormalService.class);
-			pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+			pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);//PendingIntent.FLAG_UPDATE_CURRENT
 	        alarmMgr.cancel(pendingIntent);
 
 			alarmIntent = new Intent(context, AlarmWorkMaxService.class);
