@@ -60,6 +60,7 @@ import de.euhm.jlt.dialogs.DatePickerFragment;
 import de.euhm.jlt.dialogs.EditTimesFragment;
 import de.euhm.jlt.dialogs.FilterFragment;
 import de.euhm.jlt.dialogs.TimePickerFragment;
+import de.euhm.jlt.receivers.AlarmReceiver;
 import de.euhm.jlt.services.EndWorkService;
 import de.euhm.jlt.services.StartWorkService;
 import de.euhm.jlt.utils.AlarmUtils;
@@ -138,6 +139,12 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	};
 
+	/**
+	 * A {@link BroadcastReceiver} to alarm the user.<br>
+	 * Register in onCreate() and unregister in onDestroy()!
+	 */
+	private final BroadcastReceiver alarmReceiver = new AlarmReceiver();
+
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -149,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements
 	    registerReceiver(receiverRecreate, new IntentFilter(Constants.RECEIVER_RECREATE));
 		// register the update view receiver to update view from service
 	    registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		// register the alarm receiver
+		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_NORMAL_WORK_ALARM));
+		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM));
 
 	    // set path and name of backup database used by db export and import
 	    mBackupDbPath = 
@@ -821,6 +831,7 @@ public class MainActivity extends AppCompatActivity implements
 		// Unregister receiver, because after that activity is killed!
 	    unregisterReceiver(receiverRecreate);
 		unregisterReceiver(receiverUpdateView);
+		unregisterReceiver(alarmReceiver);
 		//  clean up stored references to avoid leaking
 		mAppSectionsPagerAdapter = null;
 		mViewPager = null;

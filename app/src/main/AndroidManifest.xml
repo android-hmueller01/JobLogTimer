@@ -22,7 +22,7 @@
             <!--
             android:launchMode="singleTop"
             ActionBar 'up' button destroys parent activity, 'back' does not
-			use: android:launchMode="singleTop"
+    		use: android:launchMode="singleTop"
 			Reference : http://developer.android.com/guide/topics/manifest/activity-element.html
             -->
             <intent-filter>
@@ -40,6 +40,13 @@
 		<service android:name="de.euhm.jlt.services.AlarmWorkMaxService" />
 		<service android:name="de.euhm.jlt.services.StartWorkService" />
 		<service android:name="de.euhm.jlt.services.EndWorkService" />
+
+		<receiver android:name=".receivers.AlarmReceiver" >
+			<intent-filter>
+				<action android:name="${packageName}.NORMAL_WORK_ALARM" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
 
 		<receiver
 		    android:name=".MainWidgetProvider"

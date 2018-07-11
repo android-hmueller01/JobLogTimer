@@ -18,6 +18,7 @@ import android.util.Log;
 
 import de.euhm.jlt.dao.TimesWork;
 import de.euhm.jlt.preferences.Prefs;
+import de.euhm.jlt.receivers.AlarmReceiver;
 import de.euhm.jlt.services.AlarmWorkMaxService;
 import de.euhm.jlt.services.AlarmWorkNormalService;
 
@@ -46,8 +47,14 @@ public class AlarmUtils {
 			// set alarm
 			if (prefs.getEndHoursWarnEnabled()) {
 				// set an alarm to normal work hour
-				alarmIntent = new Intent(context, AlarmWorkNormalService.class);
-				pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+				// TODO
+				//alarmIntent = new Intent(context, AlarmWorkNormalService.class);
+				//pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+				alarmIntent = new Intent(Constants.RECEIVER_NORMAL_WORK_ALARM);
+				alarmIntent.setClass(context, AlarmReceiver.class);
+				pendingIntent = PendingIntent.getBroadcast(
+						context, 0, alarmIntent,
+						PendingIntent.FLAG_CANCEL_CURRENT);
 
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkNormalService)");
@@ -60,8 +67,13 @@ public class AlarmUtils {
 
 			if (prefs.getMaxHoursWarnEnabled()) {
 				// set a second alarm to max work hour
-				alarmIntent = new Intent(context, AlarmWorkMaxService.class);
-				pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+				//alarmIntent = new Intent(context, AlarmWorkMaxService.class);
+				//pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);
+				alarmIntent = new Intent(Constants.RECEIVER_MAX_WORK_ALARM);
+				alarmIntent.setClass(context, AlarmReceiver.class);
+				pendingIntent = PendingIntent.getBroadcast(
+						context, 0, alarmIntent,
+						PendingIntent.FLAG_CANCEL_CURRENT);
 				long alarmTime = timesWork.getMaxWorkEndTime() - prefs.getMaxHoursWarnBeforeInMillis();
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 					Log.d(LOG_TAG, "alarmMgr.set(AlarmWorkMaxService)");
@@ -86,6 +98,7 @@ public class AlarmUtils {
 					Constants.WIDGET_UPDATE_INTERVAL,
 					pendingIntent);
 		} else {
+			// TODO kill Broadcast, not Service ...
 			// cancel alarm
 			alarmIntent = new Intent(context, AlarmWorkNormalService.class);
 			pendingIntent = PendingIntent.getService(context, 0, alarmIntent, 0);//PendingIntent.FLAG_UPDATE_CURRENT
