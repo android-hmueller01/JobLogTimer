@@ -24,6 +24,7 @@ public final class Constants {
 	public static final String RECEIVER_UPDATE_VIEW = "de.euhm.jlt.UPDATE_VIEW";
 	public static final String RECEIVER_NORMAL_WORK_ALARM = "de.euhm.jlt.NORMAL_WORK_ALARM";
 	public static final String RECEIVER_MAX_WORK_ALARM = "de.euhm.jlt.MAX_WORK_ALARM";
+	public static final String RECEIVER_START_STOP = "de.euhm.jlt.START_STOP";
 
 	// Permission Codes
 	public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;

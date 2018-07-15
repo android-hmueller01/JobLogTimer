@@ -26,7 +26,6 @@ import java.io.File;
 
 import de.euhm.jlt.MainActivity;
 import de.euhm.jlt.R;
-import de.euhm.jlt.services.EndWorkService;
 import de.euhm.jlt.utils.Constants;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -35,11 +34,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		String action = intent.getAction();
-		Log.i(LOG_TAG, "onReceive() intent '" + action + "'");
+		Log.v(LOG_TAG, "onReceive() intent '" + action + "'");
 
 		// Gets an instance of the NotificationManager service
 		NotificationManager notifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (notifyMgr != null) {
+		if (notifyMgr == null) {
 			Log.e(LOG_TAG, "Error getting notification system service.");
 			return;
 		}
@@ -70,9 +69,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 		PendingIntent resultPendingIntent =
 				PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		Intent endWorkIntent = new Intent(context, EndWorkService.class);
+		Intent endWorkIntent = new Intent(Constants.RECEIVER_START_STOP, null, context, StartStopReceiver.class);
 		PendingIntent endWorkPendingIntent =
-				PendingIntent.getService(context, 0, endWorkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				PendingIntent.getBroadcast(context, 0, endWorkIntent, 0);
 
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL)
