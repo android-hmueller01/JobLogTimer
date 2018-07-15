@@ -402,9 +402,11 @@ public class MainActivity extends AppCompatActivity implements
 		// Handle presses on the action bar items
 		switch (id) {
 		case R.id.action_start:
+			// make the broadcast Intent explicit by specifying the receiver class
 			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
 			return true;
 		case R.id.action_end:
+			// make the broadcast Intent explicit by specifying the receiver class
 			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
 			return true;
 		case R.id.action_filter:

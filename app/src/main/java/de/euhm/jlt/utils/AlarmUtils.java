@@ -45,7 +45,7 @@ public class AlarmUtils {
 		if (timesWork.getWorkStarted()) {
 			// set alarm
 			if (prefs.getEndHoursWarnEnabled()) {
-				// set an alarm to normal work hour, use
+				// set an alarm to normal work hour, use explicit intent by specifying the receiver class
 				alarmIntent = new Intent(Constants.RECEIVER_NORMAL_WORK_ALARM);
 				alarmIntent.setClass(context, AlarmReceiver.class);
 				pendingIntent = PendingIntent.getBroadcast(
@@ -61,7 +61,7 @@ public class AlarmUtils {
 			}
 
 			if (prefs.getMaxHoursWarnEnabled()) {
-				// set a second alarm to max work hour
+				// set a second alarm to max work hour, use explicit intent by specifying the receiver class
 				alarmIntent = new Intent(Constants.RECEIVER_MAX_WORK_ALARM);
 				alarmIntent.setClass(context, AlarmReceiver.class);
 				pendingIntent = PendingIntent.getBroadcast(
