@@ -1,5 +1,5 @@
-/**
- * $Id: Prefs.java 90 2015-02-11 19:38:55Z hmueller $
+/*
+ * @file Prefs.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -147,7 +147,7 @@ public class Prefs {
 
 	/**
 	 * Get selected break at fix time.
-	 * @return Fix time in milliseconds at that a break must be done.
+	 * @return Fix time in hours at that a break must be done.
 	 */
 	public float getBreakAtFixTime() {
 		return getFloat("pref_break_atfixtime_key", 0f);

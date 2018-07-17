@@ -91,6 +91,15 @@ public class TimeUtil {
 	}
 
 	/**
+	 * Convert milliseconds time to time in milliseconds modulus days.
+	 * @param time Time in milliseconds.
+	 * @return time in milliseconds modulus 24h.
+	 */
+	public static long getTime24InMillis(long time) {
+		return ((long) getHours24(time) * 60 + getMinutes(time)) * 60 * 1000;
+	}
+
+	/**
 	 * Format time string from time in milliseconds modulus days.
 	 * @param time Time in milliseconds.
 	 * @return Time string formated like HH:mm.
@@ -126,18 +135,34 @@ public class TimeUtil {
 	 * @return Normal work end time in milliseconds.
 	 */
 	public static long getNormalWorkEndTime(Context context, long time) {
+		long endTime;
 		Prefs prefs = new Prefs(context);
 		if (prefs.getBreakIndividualEnabled()) {
-			time = time + prefs.getHoursInMillis() + prefs.getBreakTimeInMillis();
+			endTime = time + prefs.getHoursInMillis();
+			if (prefs.getBreakAfterHoursEnabled()) {
+				// break after fix hours
+				if (prefs.getHoursInMillis() > prefs.getBreakAfterHoursInMillis()) {
+					endTime += prefs.getBreakTimeInMillis();
+				}
+			} else {
+				// break at fix time
+				long timeOffset = getTimeOffsetInMillis();
+				long time24 = getTime24InMillis(time) + timeOffset;
+				long timeBreak24 = (long) prefs.getBreakAtFixTime() * 60*60*1000;
+				long endTime24 = getTime24InMillis(endTime) + timeOffset;
+				if (time24 < timeBreak24 && endTime24 > timeBreak24) {
+					endTime += prefs.getBreakTimeInMillis();
+				}
+			}
 		} else {
 			// if break is set to German law
 			if (prefs.getHoursInMillis() < Constants.GL_WORK_TIME2) {
-				time = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME1;
+				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME1;
 			} else {
-				time = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME2;				
+				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME2;
 			}
 		}
-		return time;
+		return endTime;
 	}
 
 	/**

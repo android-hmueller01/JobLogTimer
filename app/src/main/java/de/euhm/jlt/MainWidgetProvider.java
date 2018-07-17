@@ -15,11 +15,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import de.euhm.jlt.dao.TimesWork;
-import de.euhm.jlt.services.EndWorkService;
-import de.euhm.jlt.services.StartWorkService;
+import de.euhm.jlt.receivers.StartStopReceiver;
 import de.euhm.jlt.utils.Constants;
 import de.euhm.jlt.utils.TimeUtil;
 
@@ -28,13 +28,15 @@ import de.euhm.jlt.utils.TimeUtil;
  * @author hmueller
  */
 public class MainWidgetProvider extends AppWidgetProvider {
+	private static final String LOG_TAG = MainWidgetProvider.class.getSimpleName();
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		Intent intent;
 		PendingIntent pendingIntent;
-		
+
+		Log.v(LOG_TAG, "onUpdate()");
 		TimesWork timesWork = new TimesWork(context);
 		for (int currentWidgetId : appWidgetIds) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
@@ -68,12 +70,6 @@ public class MainWidgetProvider extends AppWidgetProvider {
 				}
 				// set new image for stop action
 				remoteViews.setImageViewResource(R.id.widget_button_start_stop, R.drawable.ic_action_stop);
-				// register the onClickListener (EndWorkService)
-				intent = new Intent(context, EndWorkService.class);
-				pendingIntent = PendingIntent.getService(context,
-						0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-				remoteViews.setOnClickPendingIntent(R.id.widget_button_start_stop, pendingIntent);
-				appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);
 			} else {
 				// update widget info line
 				remoteViews.setTextViewText(R.id.widget_info_line1, 
@@ -86,18 +82,18 @@ public class MainWidgetProvider extends AppWidgetProvider {
 				remoteViews.setViewVisibility(R.id.widget_progress_bar_red, View.INVISIBLE);
 				// set new image for start action
 				remoteViews.setImageViewResource(R.id.widget_button_start_stop, R.drawable.ic_action_start);
-				// register the onClickListener (StartWorkService)
-				intent = new Intent(context, StartWorkService.class);
-				pendingIntent = PendingIntent.getService(context,
-						0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-				remoteViews.setOnClickPendingIntent(R.id.widget_button_start_stop, pendingIntent);
-				appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);
-				// always cancel periodic widget update feature (only active while working)
+
 				AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-				intent = new Intent(Constants.ACTION_UPDATE_WIDGET);
+				intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 				pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 		        if (alarmMgr != null) alarmMgr.cancel(pendingIntent);
 			}
+			// add onClickListener for Start/Stop
+			intent = new Intent(Constants.RECEIVER_START_STOP);
+			// make the broadcast Intent explicit by specifying the receiver class
+			intent.setClass(context, StartStopReceiver.class);
+			pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+			remoteViews.setOnClickPendingIntent(R.id.widget_button_start_stop, pendingIntent);
 			// add onClickListener for Main App
 			intent = new Intent(context, MainActivity.class);
 			intent.setAction(Intent.ACTION_MAIN);
@@ -106,6 +102,7 @@ public class MainWidgetProvider extends AppWidgetProvider {
 			pendingIntent = PendingIntent.getActivity(context,
 					0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			remoteViews.setOnClickPendingIntent(R.id.widget_button_StartApp, pendingIntent);
+			// finally update the widget
 			appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);
 
 			// BEWARE: Toast keeps device awake, as it counts as action and this is called cyclic!!!
@@ -115,16 +112,28 @@ public class MainWidgetProvider extends AppWidgetProvider {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-	    String action = intent.getAction();
-	    if (action != null &&
-				(action.equals(Constants.ACTION_UPDATE_WIDGET) ||
-						action.equals(Intent.ACTION_DATE_CHANGED))) {
-	        AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-	        int[] appWidgetIds = appWM.getAppWidgetIds(new ComponentName(context, MainWidgetProvider.class));
-	        this.onUpdate(context, appWM, appWidgetIds);            
-	    } else {
-	    	super.onReceive(context, intent);
-	    }
+		String action = intent.getAction();
+		Log.v(LOG_TAG, "onReceive() intent '" + action + "'");
+		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
+			AppWidgetManager appWM = AppWidgetManager.getInstance(context);
+			int[] appWidgetIds = appWM.getAppWidgetIds(new ComponentName(context, MainWidgetProvider.class));
+			this.onUpdate(context, appWM, appWidgetIds);
+		} else {
+			super.onReceive(context, intent);
+		}
 	}
 
+	@Override
+	public void onDisabled(Context context) {
+		Log.v(LOG_TAG, "onDisabled()");
+
+		super.onDisabled(context);
+	}
+
+	@Override
+	public void onEnabled(Context context) {
+		Log.v(LOG_TAG, "onEnabled()");
+
+		super.onEnabled(context);
+	}
 }

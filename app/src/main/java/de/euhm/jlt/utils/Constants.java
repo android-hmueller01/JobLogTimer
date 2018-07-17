@@ -1,5 +1,5 @@
-/**
- * $Id: Constants.java 187 2016-12-22 18:10:54Z hmueller $
+/*
+ * @file Constants.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -13,13 +13,18 @@ package de.euhm.jlt.utils;
 public final class Constants {
 	// Notification IDs
 	public static final int NOTIFICATION_END_WORK = 1;
+	public static final String NOTIFICATION_CHANNEL = "WORK DONE";
 	
 	// Action Codes
-	public static final String ACTION_UPDATE_WIDGET = "de.euhm.jlt.ACTION_UPDATE_WIDGET";
-	
+	//public static final String ACTION_UPDATE_WIDGET = "de.euhm.jlt.ACTION_UPDATE_WIDGET";
+	// use AppWidgetManager.ACTION_APPWIDGET_UPDATE instead
+
 	// Receiver Codes
 	public static final String RECEIVER_RECREATE = "de.euhm.jlt.RECREATE";
 	public static final String RECEIVER_UPDATE_VIEW = "de.euhm.jlt.UPDATE_VIEW";
+	public static final String RECEIVER_NORMAL_WORK_ALARM = "de.euhm.jlt.NORMAL_WORK_ALARM";
+	public static final String RECEIVER_MAX_WORK_ALARM = "de.euhm.jlt.MAX_WORK_ALARM";
+	public static final String RECEIVER_START_STOP = "de.euhm.jlt.START_STOP";
 
 	// Permission Codes
 	public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;

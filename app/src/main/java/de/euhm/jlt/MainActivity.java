@@ -60,8 +60,8 @@ import de.euhm.jlt.dialogs.DatePickerFragment;
 import de.euhm.jlt.dialogs.EditTimesFragment;
 import de.euhm.jlt.dialogs.FilterFragment;
 import de.euhm.jlt.dialogs.TimePickerFragment;
-import de.euhm.jlt.services.EndWorkService;
-import de.euhm.jlt.services.StartWorkService;
+import de.euhm.jlt.receivers.AlarmReceiver;
+import de.euhm.jlt.receivers.StartStopReceiver;
 import de.euhm.jlt.utils.AlarmUtils;
 import de.euhm.jlt.utils.Constants;
 import de.euhm.jlt.utils.TimeUtil;
@@ -138,8 +138,14 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	};
 
+	/**
+	 * A {@link BroadcastReceiver} to alarm the user.<br>
+	 * Register in onCreate() and unregister in onDestroy()!
+	 */
+	private final BroadcastReceiver alarmReceiver = new AlarmReceiver();
 
-    @Override
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Context context = getApplicationContext();
@@ -149,8 +155,11 @@ public class MainActivity extends AppCompatActivity implements
 	    registerReceiver(receiverRecreate, new IntentFilter(Constants.RECEIVER_RECREATE));
 		// register the update view receiver to update view from service
 	    registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		// register the alarm receiver
+		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_NORMAL_WORK_ALARM));
+		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM));
 
-	    // set path and name of backup database used by db export and import
+		// set path and name of backup database used by db export and import
 	    mBackupDbPath = 
 	    		Environment.getExternalStorageDirectory().getAbsolutePath() +
 				File.separatorChar + getResources().getString(R.string.app_name) +
@@ -393,10 +402,12 @@ public class MainActivity extends AppCompatActivity implements
 		// Handle presses on the action bar items
 		switch (id) {
 		case R.id.action_start:
-			startService(new Intent(this, StartWorkService.class));
+			// make the broadcast Intent explicit by specifying the receiver class
+			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
 			return true;
 		case R.id.action_end:
-			startService(new Intent(this, EndWorkService.class));
+			// make the broadcast Intent explicit by specifying the receiver class
+			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
 			return true;
 		case R.id.action_filter:
 			// prepare to edit filter
@@ -818,9 +829,11 @@ public class MainActivity extends AppCompatActivity implements
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Log.v(LOG_TAG, "onDestroy()");
 		// Unregister receiver, because after that activity is killed!
 	    unregisterReceiver(receiverRecreate);
 		unregisterReceiver(receiverUpdateView);
+		unregisterReceiver(alarmReceiver);
 		//  clean up stored references to avoid leaking
 		mAppSectionsPagerAdapter = null;
 		mViewPager = null;

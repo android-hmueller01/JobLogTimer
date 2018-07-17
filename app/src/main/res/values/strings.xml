@@ -4,7 +4,10 @@
     <string name="app_name">JobLogTimer</string>
     <string name="title_activity_main">@string/app_name</string>
     <string name="hello_world">Hello world!</string>
-    
+
+    <!-- notification -->
+    <string name="notification_channel">Channel work done</string>
+
     <!-- drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

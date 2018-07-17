@@ -1,5 +1,5 @@
-/**
- * $Id: PowerStateChangedReceiver.java 122 2015-03-06 19:00:22Z hmueller $
+/*
+ * @file PowerStateChangedReceiver.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -8,6 +8,7 @@ package de.euhm.jlt.receivers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,14 +39,14 @@ public class PowerStateChangedReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		boolean batteryLow = intent.getAction().equals(Intent.ACTION_BATTERY_LOW);
+		boolean batteryLow = Intent.ACTION_BATTERY_LOW.equals(intent.getAction());
 		Prefs prefs = new Prefs(context);
 
 		if (!prefs.getWidgetUpdateOnLowBattery()) {
 			TimesWork timesWork = new TimesWork(context);
 			AlarmManager alarmMgr = (AlarmManager) context
 					.getSystemService(Context.ALARM_SERVICE);
-			Intent alarmIntent = new Intent(Constants.ACTION_UPDATE_WIDGET);
+			Intent alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
 					0, alarmIntent, 0);
 
