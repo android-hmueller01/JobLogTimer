@@ -4,7 +4,12 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
-V0.14d: versionCode 12, 15.07.2018 Mr (<b>beta testing</b>)
+V0.15: versionCode 13, 04.01.2019 Mr
+- Added current time display (including seconds)
+- Added release signing config
+- Updated targetSdkVersion to 28 (Android 9 / PIE)
+
+V0.14: versionCode 12, 17.07.2018 Mr
 - Fixed issues with Android 8.0 / Oreo (Widget, Notifications, Alarms, Services).<br />
   It felt like nothing works any more ... :-(
 - Fixed bug of normal work time calculation, if break time is not within work time.

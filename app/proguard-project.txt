@@ -19,12 +19,6 @@
 #   public *;
 #}
 
-# Ensures that Otto annotations aren't removed by ProGuard.
--keepclassmembers class ** {
-    @com.squareup.otto.Subscribe public *;
-    @com.squareup.otto.Produce public *;
-}
-
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
 
@@ -33,3 +27,5 @@
 
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
+
+-keep,includedescriptorclasses class android.arch.lifecycle.** { *; }

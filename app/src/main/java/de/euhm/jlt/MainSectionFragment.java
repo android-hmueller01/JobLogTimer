@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -43,7 +44,7 @@ public class MainSectionFragment extends Fragment {
 	private Context mContext; // gets initialized in onAttach()
 	private TimesWork mTW; // gets initialized in onCreate()
 	private Handler mHandlerUpdateTimes = new Handler();
-	private final long HANDLER_UPDATE_TIMES_DELAY = 10 * 1000;
+	private final long HANDLER_UPDATE_TIMES_DELAY = 1 * 1000;
 	private OnSwipeTouchListener mOnSwipeTouchListener;
 	
 	/**
@@ -136,6 +137,7 @@ public class MainSectionFragment extends Fragment {
 		return mOnSwipeTouchListener;
 	}
 
+	@SuppressLint("SetTextI18n")
 	public void updateTimesView() {
 		View view = getView();
 		// only update the view if all global variables are valid ...
@@ -154,6 +156,11 @@ public class MainSectionFragment extends Fragment {
 			// work is done and times are set
 			curTimeMillis = mTW.getTimeEnd();
 		}
+
+		// update current time in seconds
+		tv = view.findViewById(R.id.current_time);
+		tv.setText(String.format(Locale.getDefault(),
+				getResources().getString(R.string.current_time_text), Calendar.getInstance()));
 
 		// calculate the percentage worked
 		float percentCurrent = (float) (curTimeMillis - mTW.getTimeStart()) / 
@@ -235,7 +242,6 @@ public class MainSectionFragment extends Fragment {
 			tv.setText(String.format(Locale.getDefault(), "%tR", mTW.getCalMaxWorkEndTime()));
 		}
 
-
 		tv = view.findViewById(R.id.end_val);
 		if (mTW.getTimeEnd() == -1) {
 			tv.setText(" --:-- ");
@@ -309,6 +315,7 @@ public class MainSectionFragment extends Fragment {
         calEnd.set(Calendar.DAY_OF_MONTH, maxDayOfMonth);
   	}
 
+	@SuppressLint("SetTextI18n")
 	public void updateStatisticsView() {
 		View view = getView();
 		// only update the view if all global variables are valid ...
@@ -329,7 +336,8 @@ public class MainSectionFragment extends Fragment {
 		calStart = (Calendar) mTW.getStatisticsDate().clone();
 		calcCalendarWeekRange(calStart, calEnd);
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime);
-        Log.d(LOG_TAG, String.format(Locale.getDefault(), "weekly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
+        Log.d(LOG_TAG, String.format(Locale.getDefault(),
+				"weekly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
 
 		calStart.add(Calendar.DAY_OF_MONTH, 1); // add one day, to get CW from Monday instead of Sunday
 		tv = view.findViewById(R.id.stats_weekly_text);
@@ -357,7 +365,8 @@ public class MainSectionFragment extends Fragment {
 		calStart = (Calendar) mTW.getStatisticsDate().clone();
 		calcCalendarMonthRange(calStart, calEnd);
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime);
-		Log.d(LOG_TAG, String.format(Locale.getDefault(), "monthly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
+		Log.d(LOG_TAG, String.format(Locale.getDefault(),
+				"monthly statistics: %1$td.%1$tm.%1$tY %1$tR - %2$td.%2$tm.%2$tY %2$tR", calStart, calEnd));
 
 		tv = view.findViewById(R.id.stats_monthly_text);
         tv.setText(String.format(Locale.getDefault(), getResources().getString(R.string.stats_monthly_text),
@@ -374,8 +383,8 @@ public class MainSectionFragment extends Fragment {
     	updateTimesView();
     	updateStatisticsView();
 	    mHandlerUpdateTimes.removeCallbacks(mUpdateTimesTask);
-		// do another update in 10 millis, because at first call all pos. and widths are 0 ...
-	    mHandlerUpdateTimes.postDelayed(mUpdateTimesTask, 10);
+		// do another update in 100 millis, because at first call all pos. and widths are 0 ...
+	    mHandlerUpdateTimes.postDelayed(mUpdateTimesTask, 100);
 	}
 
 	@Override

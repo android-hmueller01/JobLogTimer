@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+
     /*
     V7: Android 2.1.x	ECLAIR_MR1
     V8: Android 2.2.x	FROYO
@@ -18,23 +18,82 @@ android {
     V25: Android 7.1.1	NOUGAT
     V26: Android 8.0    OREO
     V27: Android 8.1    OREO
+    V28: Android 9      PIE
     */
     defaultConfig {
         applicationId "de.euhm.jlt"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
+        versionCode 13
+        versionName "0.15"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'alias'
+            keyPassword ''
+            storeFile file('JobLogTimer.keystore')
+            storePassword ''
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            debuggable true
         }
     }
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+}
+
+System.setProperty('java.awt.headless', 'false')
+import groovy.swing.SwingBuilder
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(':app:packageRelease')) {
+        def password = ""
+
+        if (System.console() == null) {
+            new SwingBuilder().edt {
+                dialog(modal: true,
+                        title: "Enter password",
+                        alwaysOnTop: true,
+                        resizable: false,
+                        locationRelativeTo: null,
+                        pack: true,
+                        show: true
+                ) {
+                    vbox {
+                        label(text: "Please enter store/key password: ")
+                        input = passwordField()
+                        button(defaultButton: true,
+                                text: 'OK',
+                                actionPerformed: {
+                                    password = input.password;
+                                    dispose();
+                                })
+                    }
+                }
+            }
+        } else {
+            password = System.console().readPassword("\nEnter password: ")
+        }
+
+        if (password.size() <= 0) {
+            throw new InvalidUserDataException("Empty password")
+        }
+
+        // set signing config key passwords
+        android.signingConfigs.release.storePassword = new String(password)
+        android.signingConfigs.release.keyPassword = new String(password)
+    }
 }
