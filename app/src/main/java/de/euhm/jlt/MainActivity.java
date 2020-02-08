@@ -21,23 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.TabLayout.Tab;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +30,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayout.Tab;
 
 import java.io.File;
 import java.util.Calendar;
@@ -88,10 +92,10 @@ public class MainActivity extends AppCompatActivity implements
     private String mBackupDbPath;
 
 	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-	 * primary sections of the app. We use a {@link android.support.v4.app.FragmentPagerAdapter}
+	 * The {@link PagerAdapter} that will provide fragments for each of the
+	 * primary sections of the app. We use a {@link FragmentPagerAdapter}
 	 * derivative, which will keep every loaded fragment in memory. If this becomes too memory
-	 * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
+	 * intensive, it may be best to switch to a {@link FragmentStatePagerAdapter}.
 	 */
 	AppSectionsPagerAdapter mAppSectionsPagerAdapter;
 
@@ -102,14 +106,14 @@ public class MainActivity extends AppCompatActivity implements
 	CustomViewPager mViewPager;
 
 	/**
-	 * The {@link android.support.v4.widget.DrawerLayout} that will provide full 
+	 * The {@link DrawerLayout} that will provide full
 	 * material design drawer navigation back to Android v4.
 	 */
 	DrawerLayout mDrawerLayout;
 	int mDrawerState; // state of drawer (s. e.g. DrawerLayout.STATE_SETTLING)
 
 	/**
-	 * The {@link android.support.design.widget.FloatingActionButton} that will
+	 * The {@link FloatingActionButton} that will
 	 * provide full material design Floating Action Button back to Android v7.
 	 */
 	FloatingActionButton mFab;

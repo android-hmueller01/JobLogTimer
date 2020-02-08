@@ -19,7 +19,7 @@
   more info see
   http://stackoverflow.com/documentation/android/124/material-design-for-all-android-versions/
  -->
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,7 +28,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-<android.support.v4.widget.DrawerLayout
+<androidx.drawerlayout.widget.DrawerLayout
     android:id="@+id/drawerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -43,20 +43,20 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical" >
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbarlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay" >
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/AppTheme.AppBar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 app:tabIndicatorColor="@color/toolbar"
                 app:tabIndicatorHeight="4dp"
                 app:tabMode="fixed" />
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <!-- <android.support.v4.view.ViewPager -->
         <de.euhm.jlt.CustomViewPager
@@ -76,7 +76,7 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-	<android.support.design.widget.NavigationView
+	<com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
@@ -85,9 +85,9 @@
         app:menu="@menu/navigation_drawer" />
 		<!-- to open drawer below toolbar set android:layout_marginTop="?attr/actionBarSize" -->
 
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
 
-	<android.support.design.widget.FloatingActionButton
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
 	    android:id="@+id/fab"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -97,5 +97,5 @@
      	app:backgroundTint="@color/toolbar" />
 	    <!-- android:src="@android:drawable/btn_plus"  -->
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 	

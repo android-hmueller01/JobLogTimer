@@ -4,6 +4,10 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
+V0.16: versionCode 14, 08.02.2020 Mr
+- Migrated from AppCompat to AndroidX
+- Updated targetSdkVersion to 29 (Android 10)
+
 V0.15: versionCode 13, 04.01.2019 Mr
 - Added current time display (including seconds)
 - Added release signing config

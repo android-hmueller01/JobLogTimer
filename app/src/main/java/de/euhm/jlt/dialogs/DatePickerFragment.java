@@ -6,14 +6,15 @@
  */
 package de.euhm.jlt.dialogs;
 
-import java.util.Calendar;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
+
+import androidx.fragment.app.DialogFragment;
+
+import java.util.Calendar;
 
 /**
  * Implements a DialogFragment for picking the date
