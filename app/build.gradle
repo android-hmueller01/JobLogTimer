@@ -78,8 +78,8 @@ gradle.taskGraph.whenReady { taskGraph ->
                         button(defaultButton: true,
                                 text: 'OK',
                                 actionPerformed: {
-                                    password = input.password;
-                                    dispose();
+                                    password = input.password
+                                    dispose()
                                 })
                     }
                 }
