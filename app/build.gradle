@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     /*
     V7: Android 2.1.x	ECLAIR_MR1
@@ -19,13 +19,15 @@ android {
     V26: Android 8.0    OREO
     V27: Android 8.1    OREO
     V28: Android 9      PIE
+    V29: Android 10     Q
+    V30: Android 11     R
     */
     defaultConfig {
         applicationId "de.euhm.jlt"
         minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 14
-        versionName "0.16"
+        targetSdkVersion 30
+        versionCode 15
+        versionName "0.17"
     }
 
     signingConfigs {
@@ -50,9 +52,9 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.2.1'
 }
 
 System.setProperty('java.awt.headless', 'false')

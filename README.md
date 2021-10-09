@@ -4,6 +4,9 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
+V0.17: versionCode 15, 08.10.2020 Mr
+- Updated targetSdkVersion to 30 (Android 11)
+
 V0.16: versionCode 14, 08.02.2020 Mr
 - Migrated from AppCompat to AndroidX
 - Updated targetSdkVersion to 29 (Android 10)
@@ -123,3 +126,5 @@ Icon generator: http://romannurik.github.io/AndroidAssetStudio
 Support library: https://android-developers.googleblog.com/2015/05/android-design-support-library.html
 
 AppCompat: https://android-developers.googleblog.com/2014/10/appcompat-v21-material-design-for-pre.html
+
+AndoidX: https://developer.android.com/jetpack/androidx
