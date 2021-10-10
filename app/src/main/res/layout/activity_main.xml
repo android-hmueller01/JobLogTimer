@@ -56,16 +56,16 @@
                 android:theme="@style/AppTheme.AppBar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:background="@color/tabLayout"
-                app:tabBackground="@color/tabLayout"
-                app:tabIndicatorColor="@color/toolbar"
-                app:tabIndicatorHeight="4dp"
-                app:tabMode="fixed" />
+			<com.google.android.material.tabs.TabLayout
+				android:id="@+id/tabLayout"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:layout_gravity="top"
+				android:background="@color/tabLayout"
+				app:tabBackground="@color/tabLayout"
+				app:tabIndicatorColor="@color/toolbar"
+				app:tabIndicatorHeight="4dp"
+				app:tabMode="fixed" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- <android.support.v4.view.ViewPager -->
