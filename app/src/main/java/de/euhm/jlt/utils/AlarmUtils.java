@@ -41,6 +41,11 @@ public class AlarmUtils {
 		//Context context = getApplicationContext();
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Prefs prefs = new Prefs(context);
+		int flag = 0;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			// needed starting Android 12 (S = 31)
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 
 		if (timesWork.getWorkStarted()) {
 			// set alarm
@@ -49,7 +54,7 @@ public class AlarmUtils {
 				alarmIntent = new Intent(Constants.RECEIVER_NORMAL_WORK_ALARM);
 				alarmIntent.setClass(context, AlarmReceiver.class);
 				pendingIntent = PendingIntent.getBroadcast(
-						context, 0, alarmIntent, 0);
+						context, 0, alarmIntent, flag);
 
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 					Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_NORMAL_WORK_ALARM)");
@@ -65,7 +70,7 @@ public class AlarmUtils {
 				alarmIntent = new Intent(Constants.RECEIVER_MAX_WORK_ALARM);
 				alarmIntent.setClass(context, AlarmReceiver.class);
 				pendingIntent = PendingIntent.getBroadcast(
-						context, 0, alarmIntent, 0);
+						context, 0, alarmIntent, flag);
 				long alarmTime = timesWork.getMaxWorkEndTime() - prefs.getMaxHoursWarnBeforeInMillis();
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 					Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_MAX_WORK_ALARM)");
@@ -78,7 +83,7 @@ public class AlarmUtils {
 
 			// update the widget with an alarm, but do not wake up device ...
 			alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, flag);
 			// set repeating alarm only of we are not in power save mode
 			// unfortunately isPowerSaveMode() works only with API >= 21
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -101,17 +106,17 @@ public class AlarmUtils {
 			alarmIntent = new Intent(Constants.RECEIVER_NORMAL_WORK_ALARM);
 			alarmIntent.setClass(context, AlarmReceiver.class);
 			pendingIntent = PendingIntent.getBroadcast(
-					context, 0, alarmIntent, 0);
+					context, 0, alarmIntent, flag);
 	        alarmMgr.cancel(pendingIntent);
 
 			alarmIntent = new Intent(Constants.RECEIVER_MAX_WORK_ALARM);
 			alarmIntent.setClass(context, AlarmReceiver.class);
 			pendingIntent = PendingIntent.getBroadcast(
-					context, 0, alarmIntent, 0);
+					context, 0, alarmIntent, flag);
 	        alarmMgr.cancel(pendingIntent);
 
 			alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+			pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, flag);
 	        alarmMgr.cancel(pendingIntent);
 
 			// cancel/remove notification

@@ -35,6 +35,11 @@ public class MainWidgetProvider extends AppWidgetProvider {
 			int[] appWidgetIds) {
 		Intent intent;
 		PendingIntent pendingIntent;
+		int flag = 0;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			// needed starting Android 12 (S = 31)
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 
 		Log.v(LOG_TAG, "onUpdate()");
 		TimesWork timesWork = new TimesWork(context);
@@ -85,14 +90,14 @@ public class MainWidgetProvider extends AppWidgetProvider {
 
 				AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 				intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-				pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+				pendingIntent = PendingIntent.getBroadcast(context, 0, intent, flag);
 		        if (alarmMgr != null) alarmMgr.cancel(pendingIntent);
 			}
 			// add onClickListener for Start/Stop
 			intent = new Intent(Constants.RECEIVER_START_STOP);
 			// make the broadcast Intent explicit by specifying the receiver class
 			intent.setClass(context, StartStopReceiver.class);
-			pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+			pendingIntent = PendingIntent.getBroadcast(context, 0, intent, flag);
 			remoteViews.setOnClickPendingIntent(R.id.widget_button_start_stop, pendingIntent);
 			// add onClickListener for Main App
 			intent = new Intent(context, MainActivity.class);
@@ -100,7 +105,7 @@ public class MainWidgetProvider extends AppWidgetProvider {
 			intent.addCategory(Intent.CATEGORY_LAUNCHER);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			pendingIntent = PendingIntent.getActivity(context,
-					0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+					0, intent, flag | PendingIntent.FLAG_UPDATE_CURRENT);
 			remoteViews.setOnClickPendingIntent(R.id.widget_button_StartApp, pendingIntent);
 			// finally update the widget
 			appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);

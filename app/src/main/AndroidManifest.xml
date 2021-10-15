@@ -7,6 +7,8 @@
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<!-- needed to write database backup files -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<!-- needed to set exact alarms -->
+	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
 	<application
 		android:allowBackup="true"

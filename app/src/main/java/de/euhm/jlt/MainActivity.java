@@ -9,6 +9,7 @@
 package de.euhm.jlt;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -316,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements
 		}
 
 		@Override
+		@NonNull
 		public Fragment getItem(int position) {
 			switch (position) {
 			case 0: // Main tab
@@ -389,14 +391,11 @@ public class MainActivity extends AppCompatActivity implements
 			menu.findItem(R.id.action_end).setVisible(false);
 		}
 		// show special menu entries only on view tab
-		if (mViewPager.getCurrentItem() == 1) {
-			menu.findItem(R.id.action_filter).setVisible(true);
-		} else {
-			menu.findItem(R.id.action_filter).setVisible(false);
-		}
+		menu.findItem(R.id.action_filter).setVisible(mViewPager.getCurrentItem() == 1);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -406,9 +405,6 @@ public class MainActivity extends AppCompatActivity implements
 		// Handle presses on the action bar items
 		switch (id) {
 		case R.id.action_start:
-			// make the broadcast Intent explicit by specifying the receiver class
-			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
-			return true;
 		case R.id.action_end:
 			// make the broadcast Intent explicit by specifying the receiver class
 			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
@@ -449,6 +445,7 @@ public class MainActivity extends AppCompatActivity implements
 	 * Navigation drawer menu stuff (onNavigationItemSelected)
 	 * ****************************************************************** */
 
+	@SuppressLint("NonConstantResourceId")
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -511,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements
 							} else {
 								// check if we have permission to read from external storage
 								if (ContextCompat.checkSelfPermission(MainActivity.this,
-										Manifest.permission.READ_EXTERNAL_STORAGE)	!= 
+										Manifest.permission.READ_EXTERNAL_STORAGE)	!=
 										PackageManager.PERMISSION_GRANTED) {
 									// permission is not granted, ask for permission and wait for
 									// callback method onRequestPermissionsResult gets the result of the request.
@@ -732,6 +729,7 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	}
 
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public void onFinishTimePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
@@ -756,6 +754,7 @@ public class MainActivity extends AppCompatActivity implements
 		AlarmUtils.setAlarms(this, mTW);
 	}
 	
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public void onFinishDatePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
@@ -782,6 +781,7 @@ public class MainActivity extends AppCompatActivity implements
 	public void onRequestPermissionsResult(int requestCode,
 										   @NonNull String[] permissions,
 										   @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		// Handle the permissions request response.
 		switch (requestCode) {
 		case Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE:
@@ -800,12 +800,12 @@ public class MainActivity extends AppCompatActivity implements
         		mViewSectionFragment.importDatabase(mBackupDbPath);
             }
             break;
-        }
+		}
     }
 
 
 	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
+	public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);
 		if (mTimes != null) {
