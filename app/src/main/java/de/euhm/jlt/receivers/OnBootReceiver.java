@@ -32,6 +32,7 @@ public class OnBootReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		// test if the received intent is really a BOOT_COMPLETED
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			TimesWork timesWork = new TimesWork(context);
 			if (timesWork.getWorkStarted()) {
