@@ -72,8 +72,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 		resultIntent.setAction(Intent.ACTION_MAIN);
 		resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 		resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		PendingIntent resultPendingIntent =
-				PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0,
+				resultIntent, flag | PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// make the broadcast Intent explicit by specifying the receiver class
 		Intent endWorkIntent = new Intent(Constants.RECEIVER_START_STOP, null, context, StartStopReceiver.class);
