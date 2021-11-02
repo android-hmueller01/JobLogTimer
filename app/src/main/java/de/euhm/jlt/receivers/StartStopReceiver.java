@@ -1,5 +1,6 @@
 /*
  * @file StartStopReceiver.java
+ * @author Holger Mueller
  *
  * Global receiver to start/stop working (replaces old services, with did not work with Oreo in all cases)
  *
@@ -16,9 +17,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import de.euhm.jlt.R;
-import de.euhm.jlt.dao.Times;
 import de.euhm.jlt.dao.TimesDataSource;
 import de.euhm.jlt.dao.TimesWork;
+import de.euhm.jlt.preferences.Prefs;
 import de.euhm.jlt.utils.AlarmUtils;
 import de.euhm.jlt.utils.Constants;
 import de.euhm.jlt.utils.TimeUtil;
@@ -30,6 +31,7 @@ public class StartStopReceiver extends BroadcastReceiver {
 	public void onReceive(final Context context, final Intent intent) {
 		String action = intent.getAction();
 		Log.v(LOG_TAG, "onReceive() intent '" + action + "'");
+		Prefs prefs = new Prefs(context);
 
 		// Construct/load TimesWork DAO from persistent data
 		TimesWork timesWork = new TimesWork(context);
@@ -42,10 +44,9 @@ public class StartStopReceiver extends BroadcastReceiver {
 			timesWork.setWorkStarted(false);
 
 			// write data to database
-			Times times = new Times(0, timesWork.getTimeStart(), timesWork.getTimeEnd());
 			TimesDataSource mDataSource = new TimesDataSource(context);
 			mDataSource.open();
-			mDataSource.createTimes(times.getTimeStart(), times.getTimeEnd());
+			mDataSource.createTimes(timesWork);
 			mDataSource.close();
 
 			// Store TimesWork DAO to persistent data
@@ -63,9 +64,15 @@ public class StartStopReceiver extends BroadcastReceiver {
 			Toast.makeText(context, R.string.work_ended, Toast.LENGTH_SHORT).show();
 		} else {
 			// Start work ...
+			timesWork.setWorkStarted(true);
 			timesWork.setTimeStart(TimeUtil.getCurrentTimeInMillis());
 			timesWork.setTimeEnd(-1);
-			timesWork.setWorkStarted(true);
+			if (prefs.getHomeOfficeUseDefault()) {
+				// use default home office setting from prefs
+				timesWork.setHomeOffice(prefs.getHomeOfficeDefaultSetting());
+			} // otherwise do not change old timesWork home office value
+			long workedTimeDay = TimeUtil.getFinishedDayWorkTime(context, TimeUtil.getCurrentTime());
+			timesWork.setTimeWorked(workedTimeDay);
 
 			// Store TimesWork DAO to persistent data
 			timesWork.saveTimesWork();

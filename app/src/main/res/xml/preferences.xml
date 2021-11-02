@@ -13,13 +13,13 @@
 -->
 
     <PreferenceCategory android:title="@string/pref_times_title" >
-        <EditTextPreference
-			android:key="pref_hours_key"
-			android:title="@string/pref_hours_title"
-			android:summary="@string/pref_hours_summary"
+		<EditTextPreference
 			android:defaultValue="8"
-			android:numeric="decimal"
-			android:maxLength="5" />
+			android:inputType="numberDecimal"
+			android:key="pref_hours_key"
+			android:maxLength="5"
+			android:summary="@string/pref_hours_summary"
+			android:title="@string/pref_hours_title" />
 		<EditTextPreference
 			android:key="pref_max_hours_key"
 			android:title="@string/pref_max_hours_title"
@@ -65,6 +65,20 @@
 			android:defaultValue="12"
 			android:numeric="decimal"
 			android:maxLength="5" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_homeoffice_title" >
+		<CheckBoxPreference
+			android:key="pref_homeoffice_use_default_key"
+			android:title="@string/pref_homeoffice_use_last_title"
+			android:summary="@string/pref_homeoffice_use_last_summary"
+			android:defaultValue="false" />
+		<CheckBoxPreference
+			android:key="pref_homeoffice_default_setting_key"
+			android:title="@string/pref_homeoffice_default_setting_title"
+			android:summary="@string/pref_homeoffice_default_setting_summary"
+			android:dependency="pref_homeoffice_use_default_key"
+			android:defaultValue="false" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/pref_warnings_title" >

@@ -16,7 +16,7 @@ import android.preference.PreferenceManager;
  */
 @SuppressWarnings("unused")
 public class Prefs {
-	private SharedPreferences mSharedPreferencesSettings;
+	private final SharedPreferences mSharedPreferencesSettings;
 
 	/**
 	 * Class constructor to get a reference to the SharedPreferences.
@@ -151,6 +151,24 @@ public class Prefs {
 	 */
 	public float getBreakAtFixTime() {
 		return getFloat("pref_break_atfixtime_key", 0f);
+	}
+
+	/**
+	 * Get the selection of home office use default setting.
+	 * @return <b>True</b> use default setting.<br>
+	 * 		   <b>False</b> use last setting.
+	 */
+	public boolean getHomeOfficeUseDefault() {
+		return getBoolean("pref_homeoffice_use_default_key", false);
+	}
+
+	/**
+	 * Get the selection of home office default setting.
+	 * @return <b>True</b> use home office work.<br>
+	 * 		   <b>False</b> use bureau work.
+	 */
+	public boolean getHomeOfficeDefaultSetting() {
+		return getBoolean("pref_homeoffice_default_setting_key", false);
 	}
 
 	/**

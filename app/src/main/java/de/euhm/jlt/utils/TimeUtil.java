@@ -1,6 +1,6 @@
 /*
- * @name TimeUtil.java
- * @author hmueller
+ * @file TimeUtil.java
+ * @author Holger Mueller
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -10,8 +10,11 @@ package de.euhm.jlt.utils;
 import android.content.Context;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
+import de.euhm.jlt.dao.Times;
+import de.euhm.jlt.dao.TimesDataSource;
 import de.euhm.jlt.preferences.Prefs;
 
 /**
@@ -91,18 +94,18 @@ public class TimeUtil {
 	}
 
 	/**
-	 * Convert milliseconds time to time in milliseconds modulus days.
+	 * Convert milliseconds time to time in minutes modulus days.
 	 * @param time Time in milliseconds.
-	 * @return time in milliseconds modulus 24h.
+	 * @return time in minutes modulus 24h.
 	 */
-	public static long getTime24InMillis(long time) {
-		return ((long) getHours24(time) * 60 + getMinutes(time)) * 60 * 1000;
+	public static long getTime24InMinutes(long time) {
+		return ((long) getHours24(time) * 60 + getMinutes(time));
 	}
 
 	/**
 	 * Format time string from time in milliseconds modulus days.
 	 * @param time Time in milliseconds.
-	 * @return Time string formated like HH:mm.
+	 * @return Time string formatted like HH:mm.
 	 */
 	public static String formatTimeString24(long time) {
 		return String.format(Locale.getDefault(), (time < 0 ? "-" : "") + "%02d:%02d",
@@ -112,7 +115,7 @@ public class TimeUtil {
 	/**
 	 * Format time string from time in milliseconds.
 	 * @param time Time in milliseconds.
-	 * @return Time string formated like HHHHH:mm.
+	 * @return Time string formatted like HHHHH:mm.
 	 */
 	public static String formatTimeString(long time) {
 		return String.format(Locale.getDefault(), (time < 0 ? "-" : "") + "%d:%02d",
@@ -122,7 +125,7 @@ public class TimeUtil {
 	/**
 	 * Format date string from time in milliseconds.
 	 * @param time Time in milliseconds.
-	 * @return Date string formated like dd.mm.YYYY.
+	 * @return Date string formatted like dd.mm.YYYY.
 	 */
 	public static String formatDateString(long time) {
 		return String.format(Locale.getDefault(), "%1$td.%1$tm.%1$tY", time);
@@ -131,55 +134,91 @@ public class TimeUtil {
 	/**
 	 * Calculate normal work time.
 	 * @param context The context used for the preferences values.
-	 * @param time Start time in milliseconds.
+	 * @param timeStart Start time in milliseconds.
+	 * @param timeWorked Time already worked that day in milliseconds.
+	 * @param homeOffice true if work is in home office
 	 * @return Normal work end time in milliseconds.
 	 */
-	public static long getNormalWorkEndTime(Context context, long time) {
-		long endTime;
+	public static long getNormalWorkEndTime(Context context, long timeStart, long timeWorked, boolean homeOffice) {
 		Prefs prefs = new Prefs(context);
-		if (prefs.getBreakIndividualEnabled()) {
-			endTime = time + prefs.getHoursInMillis();
+		long timeEnd = timeStart + prefs.getHoursInMillis() - timeWorked;
+		if (homeOffice) {
+			// no breaks needed in home office
+		} else if (prefs.getBreakIndividualEnabled()) {
 			if (prefs.getBreakAfterHoursEnabled()) {
 				// break after fix hours
 				if (prefs.getHoursInMillis() > prefs.getBreakAfterHoursInMillis()) {
-					endTime += prefs.getBreakTimeInMillis();
+					timeEnd += prefs.getBreakTimeInMillis();
 				}
 			} else {
 				// break at fix time
-				long timeOffset = getTimeOffsetInMillis();
-				long time24 = getTime24InMillis(time) + timeOffset;
-				long timeBreak24 = (long) prefs.getBreakAtFixTime() * 60*60*1000;
-				long endTime24 = getTime24InMillis(endTime) + timeOffset;
-				if (time24 < timeBreak24 && endTime24 > timeBreak24) {
-					endTime += prefs.getBreakTimeInMillis();
+				long breakTime = prefs.getBreakTimeInMillis() / (60*1000);
+				long breakStartTimeInMinutes = (long)(prefs.getBreakAtFixTime() * 60);
+				long breakEndTimeInMinutes = breakStartTimeInMinutes + breakTime;
+				long timeOffset = getTimeOffsetInMillis() / (60*1000);
+				long timeStartInMinutes = getTime24InMinutes(timeStart) + timeOffset;
+				// check if start time is during break time
+				if (timeStartInMinutes > breakStartTimeInMinutes &&
+						timeStartInMinutes < breakEndTimeInMinutes) {
+					// timeStart is during break time
+					timeEnd += (breakEndTimeInMinutes - timeStartInMinutes) * 60*1000;
+				} else if (timeStartInMinutes <= breakStartTimeInMinutes) {
+					// timeStart is before break time
+					timeEnd += prefs.getBreakTimeInMillis();
 				}
 			}
 		} else {
 			// if break is set to German law
 			if (prefs.getHoursInMillis() < Constants.GL_WORK_TIME2) {
-				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME1;
+				timeEnd += Constants.GL_BREAK_TIME1;
 			} else {
-				endTime = time + prefs.getHoursInMillis() + Constants.GL_BREAK_TIME2;
+				timeEnd += Constants.GL_BREAK_TIME2;
 			}
 		}
-		return endTime;
+		return timeEnd;
 	}
 
 	/**
 	 * Calculate maximal work time.
 	 * @param context The context used for the preferences values.
-	 * @param time Start time in milliseconds.
+	 * @param timeStart Start time in milliseconds.
+	 * @param timeWorked Time already worked that day in milliseconds.
+	 * @param homeOffice true if work is in home office (no breaks)
 	 * @return Maximal work end time in milliseconds.
 	 */
-	public static long getMaxWorkEndTime(Context context, long time) {
+	public static long getMaxWorkEndTime(Context context, long timeStart, long timeWorked, boolean homeOffice) {
 		Prefs prefs = new Prefs(context);
-		if (prefs.getBreakIndividualEnabled()) {
-			time = time + prefs.getMaxHoursInMillis() + prefs.getBreakTimeInMillis();
+		long timeEnd = timeStart + prefs.getMaxHoursInMillis() - timeWorked;
+		if (homeOffice) {
+			// no breaks needed in home office
+		} else if (prefs.getBreakIndividualEnabled()) {
+			if (prefs.getBreakAfterHoursEnabled()) {
+				// break after fix hours
+				if (prefs.getMaxHoursInMillis() > prefs.getBreakAfterHoursInMillis()) {
+					timeEnd += prefs.getBreakTimeInMillis();
+				}
+			} else {
+				// break at fix time
+				long breakTime = prefs.getBreakTimeInMillis() / (60*1000);
+				long breakStartTimeInMinutes = (long)(prefs.getBreakAtFixTime() * 60);
+				long breakEndTimeInMinutes = breakStartTimeInMinutes + breakTime;
+				long timeOffset = getTimeOffsetInMillis() / (60*1000);
+				long timeStartInMinutes = getTime24InMinutes(timeStart) + timeOffset;
+				// check if start time is during break time
+				if (timeStartInMinutes > breakStartTimeInMinutes &&
+						timeStartInMinutes < breakEndTimeInMinutes) {
+					// timeStart is during break time
+					timeEnd += (breakEndTimeInMinutes - timeStartInMinutes) * 60*1000;
+				} else if (timeStartInMinutes <= breakStartTimeInMinutes) {
+					// timeStart is before break time
+					timeEnd += prefs.getBreakTimeInMillis();
+				}
+			}
 		} else {
 			// if break is set to German law
-			time = time + prefs.getMaxHoursInMillis() + Constants.GL_BREAK_TIME2;
+			timeEnd += Constants.GL_BREAK_TIME2;
 		}
-		return time;
+		return timeEnd;
 	}
 
 	/**
@@ -187,12 +226,21 @@ public class TimeUtil {
 	 * @param context The context used for the preferences values.
 	 * @param timeStart Start time in milliseconds.
 	 * @param timeEnd End time in milliseconds.
+	 * @param homeOffice true if work is in home office (no breaks)
 	 * @return Worked time in milliseconds.
 	 */
-	public static long getWorkedTime(Context context, long timeStart, long timeEnd) {
+	public static long getWorkedTime(Context context, long timeStart, long timeEnd, boolean homeOffice) {
 		Prefs prefs = new Prefs(context);
 		// calc work time based on start time, end time and break time
 		long workedTime = timeEnd - timeStart;
+		if (workedTime < 0) {
+			// correct work time if timeEnd might be before timeStart
+			workedTime = 0;
+		}
+		if (homeOffice) {
+			// no brake calculation if work is in home office
+			return workedTime;
+		}
 		long breakTime = prefs.getBreakTimeInMillis();
 		if (!prefs.getBreakIndividualEnabled()) {
 			// break by German law (30 min. after 6 h, 45 min. after 9 h)
@@ -259,10 +307,11 @@ public class TimeUtil {
 	 * @param context The context used for the preferences values.
 	 * @param timeStart (Calendar class) Start time.
 	 * @param timeEnd (Calendar class) End time.
+	 * @param homeOffice true if work is in home office (no breaks)
 	 * @return Worked time in Milliseconds.
 	 */
-	public static long getWorkedTime(Context context, Calendar timeStart, Calendar timeEnd) {
-		return getWorkedTime(context, timeStart.getTimeInMillis(), timeEnd.getTimeInMillis());
+	public static long getWorkedTime(Context context, Calendar timeStart, Calendar timeEnd, boolean homeOffice) {
+		return getWorkedTime(context, timeStart.getTimeInMillis(), timeEnd.getTimeInMillis(), homeOffice);
 	}
 
 	/**
@@ -270,11 +319,12 @@ public class TimeUtil {
 	 * @param context The context used for the preferences values.
 	 * @param timeStart Start time in milliseconds.
 	 * @param timeEnd End time  in milliseconds.
+	 * @param homeOffice true if work is in home office (no breaks)
 	 * @return Overtime in Milliseconds.
 	 */
-	public static long getOverTime(Context context, long timeStart, long timeEnd) {
+	public static long getOverTime(Context context, long timeStart, long timeEnd, boolean homeOffice) {
 		Prefs prefs = new Prefs(context);
-		return getWorkedTime(context, timeStart, timeEnd) - prefs.getHoursInMillis();
+		return getWorkedTime(context, timeStart, timeEnd, homeOffice) - prefs.getHoursInMillis();
 	}
 	
 	/**
@@ -282,10 +332,45 @@ public class TimeUtil {
 	 * @param context The context used for the preferences values.
 	 * @param timeStart (Calendar class) Start time.
 	 * @param timeEnd (Calendar class) End time.
+	 * @param homeOffice true if work is in home office (no breaks)
 	 * @return Overtime in Milliseconds.
 	 */
-	public static long getOverTime(Context context, Calendar timeStart, Calendar timeEnd) {
-		return getOverTime(context, timeStart.getTimeInMillis(), timeEnd.getTimeInMillis());
+	public static long getOverTime(Context context, Calendar timeStart, Calendar timeEnd, boolean homeOffice) {
+		return getOverTime(context, timeStart.getTimeInMillis(), timeEnd.getTimeInMillis(), homeOffice);
+	}
+
+	/**
+	 * Get finished work time (from database) for a selected day.
+	 * @param context The context used for the preferences values.
+	 * @param calDay (Calendar class) Day to look for.
+	 * @return Worked time in Milliseconds.
+	 */
+	public static long getFinishedDayWorkTime(Context context, Calendar calDay) {
+		Calendar calStart = (Calendar) calDay.clone();
+		Calendar calEnd = Calendar.getInstance();
+
+		// set start of day
+		calStart.set(Calendar.HOUR_OF_DAY, 0);
+		calStart.set(Calendar.MINUTE, 0);
+
+		// set end day of day
+		calEnd.setTimeInMillis(calStart.getTimeInMillis());
+		calEnd.add(Calendar.DAY_OF_MONTH, 1);
+
+		// load data form database
+		TimesDataSource db = new TimesDataSource(context);
+		db.open();
+		List<Times> values = db.getTimeRangeTimes(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), "ASC");
+		db.close();
+
+		int cnt = values.size();
+		long workedTimeDay = 0;
+		for (int i = 0; i < cnt; i++) {
+			Times ti = values.get(i);
+			workedTimeDay += TimeUtil.getWorkedTime(context, ti.getTimeStart(), ti.getTimeEnd(), ti.getHomeOffice());
+		}
+
+		return workedTimeDay;
 	}
 
 	/**

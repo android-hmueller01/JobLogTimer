@@ -28,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements
 		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM));
 
 		// set path and name of backup database used by db export and import
+		// TODO: try to set Android/data/de.euhm.jlt
 	    mBackupDbPath = 
 	    		Environment.getExternalStorageDirectory().getAbsolutePath() +
 				File.separatorChar + getResources().getString(R.string.app_name) +
@@ -175,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements
 			// initialize preferences with default settings
 			PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		} else {
-			if (mTimes == null) mTimes = new Times(0, 0, 0);
+			if (mTimes == null) mTimes = new Times(0, 0, 0, false);
 			mTimes.loadInstanceState(savedInstanceState);
 			if (mTimes.getId() == 0 && mTimes.getTimeStart() == 0 && mTimes.getTimeEnd() == 0) {
 				// no data loaded, remove mTimes
@@ -195,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
     			// prepare to add a new SQL row
     			long currentTime = TimeUtil.getCurrentTimeInMillis();
-    			Times times = new Times(-1, currentTime, currentTime);
+    			Times times = new Times(-1, currentTime, currentTime, false);
     			
     			// prepare to edit entry
     	        EditTimesFragment frag = new EditTimesFragment();
@@ -299,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements
 	}
 
 
-    /* ******************************************************************
+	/* ******************************************************************
 	 * FragmentPagerAdapter to handle tabs
 	 * ****************************************************************** */
 
@@ -458,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements
 		case R.id.nav_item_add_times:
 			// prepare to add a new SQL row
 			long currentTime = TimeUtil.getCurrentTimeInMillis();
-			Times times = new Times(-1, currentTime, currentTime);
+			Times times = new Times(-1, currentTime, currentTime, false);
 			
 			// prepare to edit entry
 	        EditTimesFragment frag = new EditTimesFragment();
@@ -473,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements
 			// backup internal database to external file
 			// check if we have permission to write external storage
 			if (ContextCompat.checkSelfPermission(this,
-					Manifest.permission.WRITE_EXTERNAL_STORAGE)	!= 
+					Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
 					PackageManager.PERMISSION_GRANTED) {
 				// permission is not granted, ask for permission and wait for
 				// callback method onRequestPermissionsResult gets the result of the request.
@@ -687,6 +689,21 @@ public class MainActivity extends AppCompatActivity implements
 		case Constants.BUTTON_CANCEL:
 			// user canceled action (currently not used / called)
 			break;
+		}
+	}
+
+	public void onCheckboxClicked(View view) {
+		// Check which checkbox was clicked
+		switch(view.getId()) {
+			case R.id.homeoffice_cb:
+				// save the Home Office check box into mTW dataset
+				if (mTW.getWorkStarted()) {
+					mTW.setHomeOffice(((CheckBox) view).isChecked());
+					mMainSectionFragment.updateTimesView();
+				} else {
+					((CheckBox) view).toggle();
+					Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
+				}
 		}
 	}
 
