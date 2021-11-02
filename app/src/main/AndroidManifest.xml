@@ -5,8 +5,10 @@
 
 	<!-- needed to re-register the alarms after reboot -->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<!-- needed to write database backup files -->
+	<!-- needed to write database backup files,
+	     since Android 11 (API 30) MANAGE_EXTERNAL_STORAGE is needed -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 	<!-- needed to set exact alarms -->
 	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
