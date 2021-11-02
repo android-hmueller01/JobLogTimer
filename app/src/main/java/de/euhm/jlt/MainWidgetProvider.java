@@ -1,5 +1,6 @@
 /*
  * @file MainWidgetProvider.java
+ * @author Holger Mueller
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -51,8 +52,8 @@ public class MainWidgetProvider extends AppWidgetProvider {
 			if (timesWork.getWorkStarted()) {
 				// update widget info line
 				long curTimeMillis = TimeUtil.getCurrentTimeInMillis();
-				long workTime = TimeUtil.getWorkedTime(context, timesWork.getTimeStart(), curTimeMillis);
-				long overTime = TimeUtil.getOverTime(context, timesWork.getTimeStart(), curTimeMillis);
+				long workTime = TimeUtil.getWorkedTime(context, timesWork.getTimeStart(), curTimeMillis, timesWork.getHomeOffice());
+				long overTime = TimeUtil.getOverTime(context, timesWork.getTimeStart(), curTimeMillis, timesWork.getHomeOffice());
 				remoteViews.setTextViewText(R.id.widget_info_line1,
 						TimeUtil.formatTimeString24(workTime));
 				remoteViews.setTextViewText(R.id.widget_info_line2, "(" +
@@ -104,8 +105,8 @@ public class MainWidgetProvider extends AppWidgetProvider {
 			intent.setAction(Intent.ACTION_MAIN);
 			intent.addCategory(Intent.CATEGORY_LAUNCHER);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			pendingIntent = PendingIntent.getActivity(context,
-					0, intent, flag | PendingIntent.FLAG_UPDATE_CURRENT);
+			pendingIntent = PendingIntent.getActivity(context, 0,
+					intent, flag | PendingIntent.FLAG_UPDATE_CURRENT);
 			remoteViews.setOnClickPendingIntent(R.id.widget_button_StartApp, pendingIntent);
 			// finally update the widget
 			appWidgetManager.updateAppWidget(currentWidgetId, remoteViews);
