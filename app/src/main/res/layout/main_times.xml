@@ -72,4 +72,19 @@
         		android:textSize="@dimen/times_text_size"
                 android:text="02:00" />
         </TableRow>
-    </TableLayout>
+		<TableRow
+			android:layout_margin="@dimen/times_table_row_margin" >
+			<TextView
+				android:layout_marginLeft="@dimen/times_table_margin_left"
+				android:layout_marginRight="@dimen/times_table_column_margin"
+				android:gravity="right"
+				android:textSize="@dimen/times_text_size"
+				android:text="@string/homeoffice_text" />
+			<CheckBox
+				android:id="@+id/homeoffice_cb"
+				android:layout_width="20dp"
+				android:layout_height="20dp"
+				android:onClick="onCheckboxClicked"
+				android:text="@null" />
+		</TableRow>
+</TableLayout>
