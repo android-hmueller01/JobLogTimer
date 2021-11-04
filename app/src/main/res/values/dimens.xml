@@ -17,7 +17,7 @@
 
     <dimen name="times_table_row_margin">9dp</dimen>
     <dimen name="times_table_column_margin">20dp</dimen>
-    <dimen name="times_table_margin_left">0dp</dimen>
+    <dimen name="times_table_margin_left">10dp</dimen>
     <dimen name="times_text_size">20sp</dimen>
 	
     <dimen name="marginTop_progress_bar_scale">10dp</dimen>

@@ -41,7 +41,7 @@
     <string name="start_time_set">Set start time</string>
     <string name="end_text">End</string>
     <string name="end_time_set">Set end time</string>
-    <string name="homeoffice_text">Home</string>
+    <string name="homeoffice_text">Home office</string>
     <string name="work_started">Work started.</string>
     <string name="work_ended">Work ended.</string>
     <string name="work_not_started">Work not started.</string>
