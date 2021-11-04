@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -216,7 +217,10 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(supportToolbar);
 
 		// Specify that the Home/Up button should not be enabled, since there is no hierarchical parent.
-		getSupportActionBar().setHomeButtonEnabled(false);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(false);
+		}
 
         // Setup the ViewPager.
 		mViewPager = findViewById(R.id.pager);
@@ -273,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements
 			Tab tab = tabLayout.newTab();
 			tab.setCustomView(R.layout.custom_tab_title);
 			View tab_view = tab.getCustomView();
+			assert tab_view != null;
 			TextView tab_title = tab_view.findViewById(R.id.title);
 			ImageView img = tab_view.findViewById(R.id.icon);
 			tab_title.setText(mAppSectionsPagerAdapter.getPageTitle(i));
@@ -312,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements
 	 */
 	public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 		
-		private Context mContext;
+		private final Context mContext;
 
 		public AppSectionsPagerAdapter(FragmentManager fm, Context context) {
 			super(fm);
@@ -511,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements
 							} else {
 								// check if we have permission to read from external storage
 								if (ContextCompat.checkSelfPermission(MainActivity.this,
-										Manifest.permission.READ_EXTERNAL_STORAGE)	!=
+										Manifest.permission.READ_EXTERNAL_STORAGE) !=
 										PackageManager.PERMISSION_GRANTED) {
 									// permission is not granted, ask for permission and wait for
 									// callback method onRequestPermissionsResult gets the result of the request.
@@ -696,15 +701,18 @@ public class MainActivity extends AppCompatActivity implements
 	public void onCheckboxClicked(View view) {
 		// Check which checkbox was clicked
 		switch(view.getId()) {
-			case R.id.homeoffice_cb:
-				// save the Home Office check box into mTW dataset
-				if (mTW.getWorkStarted()) {
-					mTW.setHomeOffice(((CheckBox) view).isChecked());
-					mMainSectionFragment.updateTimesView();
-				} else {
-					((CheckBox) view).toggle();
-					Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
-				}
+		case R.id.homeoffice_cb:
+			// save the Home Office check box into mTW dataset
+			if (mTW.getWorkStarted()) {
+				mTW.setHomeOffice(((CheckBox) view).isChecked());
+				mMainSectionFragment.updateTimesView();
+			} else {
+				((CheckBox) view).toggle();
+				Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			throw new IllegalStateException("Unexpected value: " + view.getId());
 		}
 	}
 
@@ -788,6 +796,8 @@ public class MainActivity extends AppCompatActivity implements
 				mTW.setCalEnd(calTimeEnd);
 			}
 			break;
+		default:
+			throw new IllegalStateException("Unexpected value: " + titleId);
 		}
 		// update view and alarms ...
 		mMainSectionFragment.updateTimesView();
