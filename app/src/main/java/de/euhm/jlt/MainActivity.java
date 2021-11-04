@@ -166,8 +166,9 @@ public class MainActivity extends AppCompatActivity implements
 		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM));
 
 		// set path and name of backup database used by db export and import
-		// TODO: try to set Android/data/de.euhm.jlt
-	    mBackupDbPath = 
+		// TODO: set to Android/data/de.euhm.jlt/files to avoid permission requests
+		//mBackupDbPath = getExternalFilesDir(null).toString() + File.separatorChar + JobLogContract.DATABASE_NAME;
+	    mBackupDbPath =
 	    		Environment.getExternalStorageDirectory().getAbsolutePath() +
 				File.separatorChar + getResources().getString(R.string.app_name) +
 				File.separatorChar + JobLogContract.DATABASE_NAME;
