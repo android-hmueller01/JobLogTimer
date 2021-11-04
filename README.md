@@ -4,6 +4,10 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
+V0.19: versionCode 17, 04.11.2021 Mr
+- Added home office function (no forced breaks)
+- Optimized work per day calculation, if there is more than one work time per day
+
 V0.18: versionCode 16, 09.10.2021 Mr
 - Updated targetSdkVersion to 31 (Android 12)
 
