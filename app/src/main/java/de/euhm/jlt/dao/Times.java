@@ -151,6 +151,7 @@ public class Times {
 	 * @param time Time in milliseconds
 	 * @return Time string
 	 */
+	@SuppressWarnings("unused")
 	public String getTimeString(long time) {
 		return String.format(Locale.getDefault(),"%tR", time);
 	}

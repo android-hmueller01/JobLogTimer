@@ -166,6 +166,7 @@ public class TimesWork extends TimeUtil {
 	 * Get a date string from start time.
 	 * @return Date string of mTimeStart.
 	 */
+	@SuppressWarnings("unused")
 	public String getDateString() {
 		return formatDateString(mTimeStart);
 	}

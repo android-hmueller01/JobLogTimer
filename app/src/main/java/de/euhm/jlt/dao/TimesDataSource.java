@@ -31,9 +31,9 @@ public class TimesDataSource {
 	private final String LOG_TAG = TimesDataSource.class.getSimpleName();
 	// Database fields
 	private SQLiteDatabase database;
-	private JobLogDbHelper dbHelper;
+	private final JobLogDbHelper dbHelper;
 	// projection to all columns from the database
-	private String[] allColumns = { JobLogTimes._ID,
+	private final String[] allColumns = { JobLogTimes._ID,
 			JobLogTimes.COLUMN_NAME_TIME_START,
 			JobLogTimes.COLUMN_NAME_TIME_END,
 			JobLogTimes.COLUMN_NAME_HOME_OFFICE };
@@ -105,6 +105,7 @@ public class TimesDataSource {
 		values.put(JobLogTimes.COLUMN_NAME_TIME_END, timeEnd);
 		values.put(JobLogTimes.COLUMN_NAME_HOME_OFFICE, homeOffice);
 		// Update the row(s), returning the number of rows affected
+		@SuppressWarnings("unused")
 		int rows = database.update(JobLogTimes.TABLE_NAME, values, selection,
 				null);
 		return rows;
@@ -175,6 +176,7 @@ public class TimesDataSource {
 	public int deleteTimes(long id) {
 		Log.d(LOG_TAG, "Times deleted with id=" + id);
 		String selection = JobLogTimes._ID + "=" + id;
+		@SuppressWarnings("unused")
 		int rows = database.delete(JobLogTimes.TABLE_NAME, selection, null);
 		return rows;
 	}
@@ -185,6 +187,7 @@ public class TimesDataSource {
 	}
 
 	private Times cursorToTimes(Cursor cursor) {
+		@SuppressWarnings("unused")
 		Times times = new Times(cursor.getLong(0), cursor.getLong(1),
 				cursor.getLong(2), cursor.getShort(3) != 0);
 		/* obsolete since new Times constructor
