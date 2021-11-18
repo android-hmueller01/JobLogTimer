@@ -1,5 +1,6 @@
 /*
  * @file MainActivity.java
+ * @author Holger Mueller
  * 
  * Main activity of JobLogTimer
  * 
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements
 
 		// set path and name of backup database used by db export and import
 		// TODO: set to Android/data/de.euhm.jlt/files to avoid permission requests
-		//mBackupDbPath = getExternalFilesDir(null).toString() + File.separatorChar + JobLogContract.DATABASE_NAME;
+		//mBackupDbPath = getExternalFilesDir(null).getAbsolutePath() + File.separatorChar + JobLogContract.DATABASE_NAME;
 	    mBackupDbPath =
 	    		Environment.getExternalStorageDirectory().getAbsolutePath() +
 				File.separatorChar + getResources().getString(R.string.app_name) +
