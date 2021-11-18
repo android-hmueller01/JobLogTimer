@@ -18,8 +18,7 @@
     <TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/times_table_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-		android:layout_marginTop="0dp" >
+        android:layout_height="wrap_content" >
 
         <TableRow
             android:layout_margin="@dimen/times_table_row_margin" >
@@ -72,4 +71,20 @@
         		android:textSize="@dimen/times_text_size"
                 android:text="02:00" />
         </TableRow>
-    </TableLayout>
+		<TableRow
+			android:layout_margin="@dimen/times_table_row_margin" >
+			<TextView
+				android:layout_marginLeft="@dimen/times_table_margin_left"
+				android:layout_marginRight="@dimen/times_table_column_margin"
+				android:gravity="right"
+				android:textSize="@dimen/times_text_size"
+				android:text="@null" />
+
+			<CheckBox
+				android:id="@+id/homeoffice_cb"
+				android:background="@color/sysLtGray"
+				android:onClick="onCheckboxClicked"
+				android:paddingRight="@dimen/times_table_margin_left"
+				android:text="@string/homeoffice_text" />
+		</TableRow>
+</TableLayout>

@@ -1,5 +1,6 @@
 /*
  * @file TimesDataSource.java
+ * @author Holger Mueller
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -29,12 +30,13 @@ import de.euhm.jlt.database.JobLogDbHelper;
 public class TimesDataSource {
 	private final String LOG_TAG = TimesDataSource.class.getSimpleName();
 	// Database fields
-	private SQLiteDatabase database = null;
-	private JobLogDbHelper dbHelper;
+	private SQLiteDatabase database;
+	private final JobLogDbHelper dbHelper;
 	// projection to all columns from the database
-	private String[] allColumns = { JobLogTimes._ID,
+	private final String[] allColumns = { JobLogTimes._ID,
 			JobLogTimes.COLUMN_NAME_TIME_START,
-			JobLogTimes.COLUMN_NAME_TIME_END };
+			JobLogTimes.COLUMN_NAME_TIME_END,
+			JobLogTimes.COLUMN_NAME_HOME_OFFICE };
 
 	public TimesDataSource(Context context) {
 		dbHelper = new JobLogDbHelper(context);
@@ -75,31 +77,42 @@ public class TimesDataSource {
 		return (database != null);
 	}
 
-	public Times createTimes(long timeStart, long timeEnd) {
+	private Times createTimes(long timeStart, long timeEnd, boolean homeOffice) {
 		// Create a new map of values, where column names are the keys
 		ContentValues values = new ContentValues();
 		values.put(JobLogTimes.COLUMN_NAME_TIME_START, timeStart);
 		values.put(JobLogTimes.COLUMN_NAME_TIME_END, timeEnd);
+		values.put(JobLogTimes.COLUMN_NAME_HOME_OFFICE, homeOffice);
 		// Insert the new row, returning the primary key value of the new row
 		long id = database.insert(JobLogTimes.TABLE_NAME, null, values);
 		// read the data back
 		return getTimes(id);
 	}
 
-	public int updateTimes(long id, long timeStart, long timeEnd) {
+	public Times createTimes(Times times) {
+		return createTimes(times.getTimeStart(), times.getTimeEnd(), times.getHomeOffice());
+	}
+
+	public Times createTimes(TimesWork tw) {
+		return createTimes(tw.getTimeStart(), tw.getTimeEnd(), tw.getHomeOffice());
+	}
+
+	private int updateTimes(long id, long timeStart, long timeEnd, boolean homeOffice) {
 		String selection = JobLogTimes._ID + "=" + id;
 		// Create a new map of values, where column names are the keys
 		ContentValues values = new ContentValues();
 		values.put(JobLogTimes.COLUMN_NAME_TIME_START, timeStart);
 		values.put(JobLogTimes.COLUMN_NAME_TIME_END, timeEnd);
+		values.put(JobLogTimes.COLUMN_NAME_HOME_OFFICE, homeOffice);
 		// Update the row(s), returning the number of rows affected
+		@SuppressWarnings("unused")
 		int rows = database.update(JobLogTimes.TABLE_NAME, values, selection,
 				null);
 		return rows;
 	}
 
 	public int updateTimes(Times times) {
-		return updateTimes(times.getId(), times.getTimeStart(), times.getTimeEnd());
+		return updateTimes(times.getId(), times.getTimeStart(), times.getTimeEnd(), times.getHomeOffice());
 	}
 
 	public Times getTimes(long id) {
@@ -163,6 +176,7 @@ public class TimesDataSource {
 	public int deleteTimes(long id) {
 		Log.d(LOG_TAG, "Times deleted with id=" + id);
 		String selection = JobLogTimes._ID + "=" + id;
+		@SuppressWarnings("unused")
 		int rows = database.delete(JobLogTimes.TABLE_NAME, selection, null);
 		return rows;
 	}
@@ -173,7 +187,9 @@ public class TimesDataSource {
 	}
 
 	private Times cursorToTimes(Cursor cursor) {
-		Times times = new Times(cursor.getLong(0), cursor.getLong(1), cursor.getLong(2));
+		@SuppressWarnings("unused")
+		Times times = new Times(cursor.getLong(0), cursor.getLong(1),
+				cursor.getLong(2), cursor.getShort(3) != 0);
 		/* obsolete since new Times constructor
 		times.setId(cursor.getLong(0));
 		times.setTimeStart(cursor.getLong(1));

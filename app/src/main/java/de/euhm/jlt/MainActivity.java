@@ -1,5 +1,6 @@
 /*
  * @file MainActivity.java
+ * @author Holger Mueller
  * 
  * Main activity of JobLogTimer
  * 
@@ -9,6 +10,7 @@
 package de.euhm.jlt;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -27,11 +29,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -164,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements
 		registerReceiver(alarmReceiver, new IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM));
 
 		// set path and name of backup database used by db export and import
-	    mBackupDbPath = 
+		// TODO: set to Android/data/de.euhm.jlt/files to avoid permission requests
+		//mBackupDbPath = getExternalFilesDir(null).getAbsolutePath() + File.separatorChar + JobLogContract.DATABASE_NAME;
+	    mBackupDbPath =
 	    		Environment.getExternalStorageDirectory().getAbsolutePath() +
 				File.separatorChar + getResources().getString(R.string.app_name) +
 				File.separatorChar + JobLogContract.DATABASE_NAME;
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements
 			// initialize preferences with default settings
 			PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		} else {
-			if (mTimes == null) mTimes = new Times(0, 0, 0);
+			if (mTimes == null) mTimes = new Times(0, 0, 0, false);
 			mTimes.loadInstanceState(savedInstanceState);
 			if (mTimes.getId() == 0 && mTimes.getTimeStart() == 0 && mTimes.getTimeEnd() == 0) {
 				// no data loaded, remove mTimes
@@ -194,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
     			// prepare to add a new SQL row
     			long currentTime = TimeUtil.getCurrentTimeInMillis();
-    			Times times = new Times(-1, currentTime, currentTime);
+    			Times times = new Times(-1, currentTime, currentTime, false);
     			
     			// prepare to edit entry
     	        EditTimesFragment frag = new EditTimesFragment();
@@ -212,7 +218,10 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(supportToolbar);
 
 		// Specify that the Home/Up button should not be enabled, since there is no hierarchical parent.
-		getSupportActionBar().setHomeButtonEnabled(false);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(false);
+		}
 
         // Setup the ViewPager.
 		mViewPager = findViewById(R.id.pager);
@@ -269,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements
 			Tab tab = tabLayout.newTab();
 			tab.setCustomView(R.layout.custom_tab_title);
 			View tab_view = tab.getCustomView();
+			assert tab_view != null;
 			TextView tab_title = tab_view.findViewById(R.id.title);
 			ImageView img = tab_view.findViewById(R.id.icon);
 			tab_title.setText(mAppSectionsPagerAdapter.getPageTitle(i));
@@ -298,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements
 	}
 
 
-    /* ******************************************************************
+	/* ******************************************************************
 	 * FragmentPagerAdapter to handle tabs
 	 * ****************************************************************** */
 
@@ -308,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
 	 */
 	public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 		
-		private Context mContext;
+		private final Context mContext;
 
 		public AppSectionsPagerAdapter(FragmentManager fm, Context context) {
 			super(fm);
@@ -316,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements
 		}
 
 		@Override
+		@NonNull
 		public Fragment getItem(int position) {
 			switch (position) {
 			case 0: // Main tab
@@ -389,14 +400,11 @@ public class MainActivity extends AppCompatActivity implements
 			menu.findItem(R.id.action_end).setVisible(false);
 		}
 		// show special menu entries only on view tab
-		if (mViewPager.getCurrentItem() == 1) {
-			menu.findItem(R.id.action_filter).setVisible(true);
-		} else {
-			menu.findItem(R.id.action_filter).setVisible(false);
-		}
+		menu.findItem(R.id.action_filter).setVisible(mViewPager.getCurrentItem() == 1);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -406,9 +414,6 @@ public class MainActivity extends AppCompatActivity implements
 		// Handle presses on the action bar items
 		switch (id) {
 		case R.id.action_start:
-			// make the broadcast Intent explicit by specifying the receiver class
-			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
-			return true;
 		case R.id.action_end:
 			// make the broadcast Intent explicit by specifying the receiver class
 			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
@@ -449,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements
 	 * Navigation drawer menu stuff (onNavigationItemSelected)
 	 * ****************************************************************** */
 
+	@SuppressLint("NonConstantResourceId")
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -461,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements
 		case R.id.nav_item_add_times:
 			// prepare to add a new SQL row
 			long currentTime = TimeUtil.getCurrentTimeInMillis();
-			Times times = new Times(-1, currentTime, currentTime);
+			Times times = new Times(-1, currentTime, currentTime, false);
 			
 			// prepare to edit entry
 	        EditTimesFragment frag = new EditTimesFragment();
@@ -476,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements
 			// backup internal database to external file
 			// check if we have permission to write external storage
 			if (ContextCompat.checkSelfPermission(this,
-					Manifest.permission.WRITE_EXTERNAL_STORAGE)	!= 
+					Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
 					PackageManager.PERMISSION_GRANTED) {
 				// permission is not granted, ask for permission and wait for
 				// callback method onRequestPermissionsResult gets the result of the request.
@@ -511,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements
 							} else {
 								// check if we have permission to read from external storage
 								if (ContextCompat.checkSelfPermission(MainActivity.this,
-										Manifest.permission.READ_EXTERNAL_STORAGE)	!= 
+										Manifest.permission.READ_EXTERNAL_STORAGE) !=
 										PackageManager.PERMISSION_GRANTED) {
 									// permission is not granted, ask for permission and wait for
 									// callback method onRequestPermissionsResult gets the result of the request.
@@ -693,6 +699,24 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	}
 
+	public void onCheckboxClicked(View view) {
+		// Check which checkbox was clicked
+		switch(view.getId()) {
+		case R.id.homeoffice_cb:
+			// save the Home Office check box into mTW dataset
+			if (mTW.getWorkStarted()) {
+				mTW.setHomeOffice(((CheckBox) view).isChecked());
+				mMainSectionFragment.updateTimesView();
+			} else {
+				((CheckBox) view).toggle();
+				Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			throw new IllegalStateException("Unexpected value: " + view.getId());
+		}
+	}
+
 	public void showDatePickerDialog(View v) {
 		if (mTW.getWorkStarted()) {
 			// do not set mTW.timeStart to current time, otherwise we can not cancel ...
@@ -732,6 +756,7 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	}
 
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public void onFinishTimePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
@@ -756,6 +781,7 @@ public class MainActivity extends AppCompatActivity implements
 		AlarmUtils.setAlarms(this, mTW);
 	}
 	
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public void onFinishDatePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
@@ -771,6 +797,8 @@ public class MainActivity extends AppCompatActivity implements
 				mTW.setCalEnd(calTimeEnd);
 			}
 			break;
+		default:
+			throw new IllegalStateException("Unexpected value: " + titleId);
 		}
 		// update view and alarms ...
 		mMainSectionFragment.updateTimesView();
@@ -782,6 +810,7 @@ public class MainActivity extends AppCompatActivity implements
 	public void onRequestPermissionsResult(int requestCode,
 										   @NonNull String[] permissions,
 										   @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		// Handle the permissions request response.
 		switch (requestCode) {
 		case Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE:
@@ -800,12 +829,12 @@ public class MainActivity extends AppCompatActivity implements
         		mViewSectionFragment.importDatabase(mBackupDbPath);
             }
             break;
-        }
+		}
     }
 
 
 	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
+	public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);
 		if (mTimes != null) {

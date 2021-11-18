@@ -1,39 +1,44 @@
-/**
- * $Id: JobLogDbHelper.java 178 2016-12-09 10:41:22Z hmueller $
- * 
+/*
+ * @name JobLogDbHelper.java
+ * @author hmueller
+ *
  * based on http://developer.android.com/training/basics/data-storage/databases.html
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 package de.euhm.jlt.database;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import de.euhm.jlt.database.JobLogContract.JobLogTimes;
 import de.euhm.jlt.utils.FileUtils;
 
 /**
  * Defines the schema of the database
  * @author hmueller
- * @version $Rev: 178 $
  */
 public class JobLogDbHelper extends SQLiteOpenHelper {
     private final String LOG_TAG = JobLogDbHelper.class.getSimpleName();
 	private static final String SQL_TABLE_CREATE = "CREATE TABLE "
-			+ JobLogTimes.TABLE_NAME + " (" 
-			+ JobLogTimes._ID + " INTEGER PRIMARY KEY," 
-			+ JobLogTimes.COLUMN_NAME_TIME_START + " INTEGER, " 
-			+ JobLogTimes.COLUMN_NAME_TIME_END + " INTEGER);";
+			+ JobLogTimes.TABLE_NAME + " (`"
+			+ JobLogTimes._ID + "` INTEGER PRIMARY KEY, `"
+			+ JobLogTimes.COLUMN_NAME_TIME_START + "` INTEGER, `"
+			+ JobLogTimes.COLUMN_NAME_TIME_END + "` INTEGER, `"
+			+ JobLogTimes.COLUMN_NAME_HOME_OFFICE + "` BOOLEAN)";
 	private static final String SQL_TABLE_DELETE = "DROP TABLE IF EXISTS "
 			+ JobLogTimes.TABLE_NAME;
+	private static final String SQL_TABLE_UPGRADE_1 = "ALTER TABLE "
+			+ JobLogTimes.TABLE_NAME
+			+ " ADD `" + JobLogTimes.COLUMN_NAME_HOME_OFFICE + "` BOOLEAN DEFAULT 0";
 	public final String DB_FILEPATH;// = "/data/data/{package_name}/databases/database.db";
 
 	public JobLogDbHelper(Context context) {
@@ -50,16 +55,17 @@ public class JobLogDbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// This database is only a cache for online data, so its upgrade policy
-		// is to simply to discard the data and start over
-		db.execSQL(SQL_TABLE_DELETE);
-		Log.d(LOG_TAG, "Database table " + JobLogTimes.TABLE_NAME + " dropped.");
-		onCreate(db);
-	}
-
-	@Override
-	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		onUpgrade(db, oldVersion, newVersion);
+		// Upgrade database from version to version
+		if ((oldVersion == 1) && (newVersion > oldVersion)) {
+			db.execSQL(SQL_TABLE_UPGRADE_1);
+			Log.d(LOG_TAG, "Database table " + JobLogTimes.TABLE_NAME + " upgraded from v1 to v2.");
+			oldVersion++;
+		}
+		if ((oldVersion == 2) && (newVersion > oldVersion)) {
+			//db.execSQL(SQL_TABLE_UPGRADE_2);
+			Log.d(LOG_TAG, "Database table " + JobLogTimes.TABLE_NAME + " upgraded from v2 to v3.");
+			oldVersion++;
+		}
 	}
 
 	/**
@@ -94,10 +100,12 @@ public class JobLogDbHelper extends SQLiteOpenHelper {
 			FileInputStream fromFile = new FileInputStream(oldDb);
 			// make dir hierarchy, otherwise FileOutputStream() will crash
 			File directory = newDb.getParentFile(); // get path without filename
-			directory.mkdirs();
+			if (directory != null && !directory.exists()) {
+				if (!directory.mkdirs())
+					return false;
+			}
 			FileOutputStream toFile = new FileOutputStream(newDb);
 			FileUtils.copyFile(fromFile, toFile);
-			//FileUtils.copyFile(new FileInputStream(oldDb), new FileOutputStream(newDb));
 			return true;
 		}
 		return false;

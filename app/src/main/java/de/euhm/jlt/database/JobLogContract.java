@@ -1,5 +1,6 @@
-/**
- * $Id: JobLogContract.java 40 2015-01-20 19:59:38Z hmueller $
+/*
+ * @name JobLogContract.java
+ * @author hmueller
  * 
  * based on http://developer.android.com/training/basics/data-storage/databases.html
  * 
@@ -21,7 +22,7 @@ public final class JobLogContract {
     public JobLogContract() {}
 
 	// If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "JobLogTimer.db";
 
     /* Inner class that defines the table contents */
@@ -29,6 +30,6 @@ public final class JobLogContract {
         public static final String TABLE_NAME = "times";
         public static final String COLUMN_NAME_TIME_START = "start";
         public static final String COLUMN_NAME_TIME_END = "end";
-        public static final String COLUMN_NAME_ = "subtitle";
+        public static final String COLUMN_NAME_HOME_OFFICE = "h_office";
     }
 }

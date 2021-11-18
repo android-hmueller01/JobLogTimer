@@ -1,5 +1,6 @@
 /*
  * @file MainSectionFragment.java
+ * @author Holger Mueller
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,8 +47,8 @@ public class MainSectionFragment extends Fragment {
 	private final String LOG_TAG = MainSectionFragment.class.getSimpleName();
 	private Context mContext; // gets initialized in onAttach()
 	private TimesWork mTW; // gets initialized in onCreate()
-	private Handler mHandlerUpdateTimes = new Handler();
-	private final long HANDLER_UPDATE_TIMES_DELAY = 1 * 1000;
+	private final Handler mHandlerUpdateTimes = new Handler();
+	private final long HANDLER_UPDATE_TIMES_DELAY = 1000;
 	private OnSwipeTouchListener mOnSwipeTouchListener;
 	
 	/**
@@ -70,7 +72,7 @@ public class MainSectionFragment extends Fragment {
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 	    super.onAttach(context);
 	    mContext = context;
 	}
@@ -165,12 +167,12 @@ public class MainSectionFragment extends Fragment {
 				getResources().getString(R.string.current_time_text), Calendar.getInstance()));
 
 		// calculate the percentage worked
-		float percentCurrent = (float) (curTimeMillis - mTW.getTimeStart()) / 
-				(float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart());
-		float percentNormal = (float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart()) / 
-				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart());
-		float percentProgressBar = (float) (curTimeMillis - mTW.getTimeStart()) / 
-				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart());
+		float percentCurrent = (float) (curTimeMillis - mTW.getTimeStart() + mTW.getTimeWorked()) /
+				(float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
+		float percentNormal = (float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked()) /
+				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
+		float percentProgressBar = (float) (curTimeMillis - mTW.getTimeStart() + mTW.getTimeWorked()) /
+				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
 		
 		TextView tvDate = view.findViewById(R.id.date_val);
 		TextView tvTime = view.findViewById(R.id.start_val);
@@ -193,8 +195,13 @@ public class MainSectionFragment extends Fragment {
 			tvDate.setText(String.format(Locale.getDefault(), " %1$td.%1$tm.%1$tY ", mTW.getCalStart()));
 			tvTime.setText(String.format(Locale.getDefault(), " %tR ", mTW.getCalStart()));
 
+			// set home office check box
+			CheckBox homeOfficeCb = view.findViewById(R.id.homeoffice_cb);
+			homeOfficeCb.setChecked(mTW.getHomeOffice());
+
 			// set the progress bar values
-			String workedTimeString = TimeUtil.formatTimeString(TimeUtil.getWorkedTime(mContext, mTW.getTimeStart(), curTimeMillis));
+			String workedTimeString = TimeUtil.formatTimeString(mTW.getTimeWorked() +
+					TimeUtil.getWorkedTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice()));
 			String addProgressBarInfo;
 			int progress;
 			int secondaryProgress;
@@ -202,8 +209,8 @@ public class MainSectionFragment extends Fragment {
 				// we are in over time ...
 				progress = (int) Math.floor(percentNormal * 100);
 				secondaryProgress = (int) Math.floor(percentProgressBar * 100);
-				addProgressBarInfo = "(" + TimeUtil.formatTimeString(
-						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis)) + ")";
+				addProgressBarInfo = "(" + TimeUtil.formatTimeString(mTW.getTimeWorked() +
+						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice())) + ")";
 			} else {
 				// we are in normal work time, no secondaryProgress needed
 				progress = (int) Math.floor(percentProgressBar * 100);
@@ -211,8 +218,8 @@ public class MainSectionFragment extends Fragment {
 				if (prefs.getViewPercentEnabled()) {
 					addProgressBarInfo = "(" + (int) Math.floor(percentCurrent * 100) + "%)";
 				} else {
-					addProgressBarInfo = "(" + TimeUtil.formatTimeString(
-						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis)) + ")";
+					addProgressBarInfo = "(" + TimeUtil.formatTimeString(mTW.getTimeWorked() +
+						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice())) + ")";
 				}
 			}
 			progressBar.setSecondaryProgress(secondaryProgress);
@@ -252,8 +259,7 @@ public class MainSectionFragment extends Fragment {
 		}
 	}
 
-	public void calcTimesInRange(long overTimes[], Calendar calStart, Calendar calEnd, 
-			LongRef workedTime, LongRef overTime) {
+	public void calcTimesInRange(long[] overTimes, Calendar calStart, Calendar calEnd, LongRef workedTime, LongRef overTime) {
 		Prefs prefs = new Prefs(mContext);
         TimesDataSource db = new TimesDataSource(mContext);
 	    db.open();
@@ -267,7 +273,7 @@ public class MainSectionFragment extends Fragment {
 	    for (int i = 0; i < cnt; i++) {
 	    	Times ti = values.get(i);
 	    	// do only calc worked time and not overtime, as we do not know jet, if we have more entries on the same day
-    		workedPerDay += TimeUtil.getWorkedTime(mContext, ti.getTimeStart(), ti.getTimeEnd());
+    		workedPerDay += TimeUtil.getWorkedTime(mContext, ti.getTimeStart(), ti.getTimeEnd(), ti.getHomeOffice());
     		Times ti_next;
     		// do we have a next value?
 	    	if (i + 1 < cnt) {
@@ -275,7 +281,7 @@ public class MainSectionFragment extends Fragment {
 	    		ti_next = values.get(i + 1);
 	    	} else {
 	    		// no, set day to next day (which is != current day) to finish calculating this day (see if below)
-	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0);
+	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0, ti.getHomeOffice());
 	    	}
 	    	// do we have more values with same day? 
 	    	if (ti.getCalStart().get(Calendar.DAY_OF_MONTH) != ti_next.getCalStart().get(Calendar.DAY_OF_MONTH)) {
@@ -329,8 +335,8 @@ public class MainSectionFragment extends Fragment {
 		Calendar calEnd = Calendar.getInstance();
 	    LongRef workedTime = new LongRef(0);
 	    LongRef overTime = new LongRef(0);
-		long overTimes[] = new long[7];
-		int weekTableIds[] = {0, R.id.week_table_mo_val, R.id.week_table_tu_val,
+		long[] overTimes = new long[7];
+		int[] weekTableIds = {0, R.id.week_table_mo_val, R.id.week_table_tu_val,
 				R.id.week_table_we_val, R.id.week_table_th_val, R.id.week_table_fr_val, 0};
 		TextView tv;
 		
@@ -396,7 +402,7 @@ public class MainSectionFragment extends Fragment {
 		mHandlerUpdateTimes.removeCallbacks(mUpdateTimesTask);
 	}
 
-	private Runnable mUpdateTimesTask = new Runnable() {
+	private final Runnable mUpdateTimesTask = new Runnable() {
 	    public void run() {
 	    	updateTimesView();
 	    	// set next update post delayed

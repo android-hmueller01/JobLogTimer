@@ -1,5 +1,6 @@
 /*
  * @file ViewSectionFragment.java
+ * @author Holger Mueller
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * 
@@ -71,7 +72,8 @@ public class ViewSectionFragment extends ListFragment {
 			Log.v(LOG_TAG, "Received BroadcastReceiver " + Constants.RECEIVER_UPDATE_VIEW);
         	// update ListAdapter and info line at top
     		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
-    		adapter.refill(getListTimes());
+			assert adapter != null;
+			adapter.refill(getListTimes());
     		updateInfoLine();
         }
 	};
@@ -83,7 +85,7 @@ public class ViewSectionFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 	    super.onAttach(context);
 	    mContext = context;
 	}
@@ -127,7 +129,7 @@ public class ViewSectionFragment extends ListFragment {
     	updateInfoLine();
 
 	    // get the viewpager of the tabLayout toolbar
-		mViewPager = getActivity().findViewById(R.id.pager);
+		mViewPager = requireActivity().findViewById(R.id.pager);
 
         // dynamically hide and show ActionBar
     	mListView = getListView();
@@ -140,7 +142,8 @@ public class ViewSectionFragment extends ListFragment {
 
             @Override
    	        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            	ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            	ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+				assert actionBar != null;
     	        if (mViewPager != null &&
     	        		view.getId() == mListView.getId() && 
     	        		mViewPager.getCurrentItem() == 1 &&
@@ -189,7 +192,7 @@ public class ViewSectionFragment extends ListFragment {
 		        Log.d(LOG_TAG, "onItemLongClick, pos=" + pos);
 
 				Times times = (Times) mListView.getItemAtPosition(pos);
-				((OnEditTimesFragmentListener) getActivity()).
+				((OnEditTimesFragmentListener) requireActivity()).
 					onFinishEditTimesFragment(Constants.BUTTON_DELETE, times);
 				return true; // handle as long click, otherwise this will be handled as normal click
 			}
@@ -247,9 +250,9 @@ public class ViewSectionFragment extends ListFragment {
      */
     private void updateInfoLine() {
     	// get views of times info line
-    	TextView viewInfoLineLeft = getView().findViewById(R.id.view_times_info_line_left);
-    	TextView viewInfoLineMiddle = getView().findViewById(R.id.view_times_info_line_middle);
-    	TextView viewInfoLineRight = getView().findViewById(R.id.view_times_info_line_right);
+    	TextView viewInfoLineLeft = requireView().findViewById(R.id.view_times_info_line_left);
+    	TextView viewInfoLineMiddle = requireView().findViewById(R.id.view_times_info_line_middle);
+    	TextView viewInfoLineRight = requireView().findViewById(R.id.view_times_info_line_right);
 
     	// set default values (if we have leave before setting at the end)
     	String strLeft = String.format(Locale.getDefault(),
@@ -280,7 +283,7 @@ public class ViewSectionFragment extends ListFragment {
 	    for (int i = 0; i < cnt; i++) {
 	    	Times ti = (Times) la.getItem(i);
 	    	// do only calc worked time and not overtime, as we do not know jet, if we have more entries on the same day
-    		workedPerDay += TimeUtil.getWorkedTime(mContext, ti.getTimeStart(), ti.getTimeEnd());
+    		workedPerDay += TimeUtil.getWorkedTime(mContext, ti.getTimeStart(), ti.getTimeEnd(), ti.getHomeOffice());
     		Times ti_next;
     		// do we have a next value?
 	    	if (i + 1 < cnt) {
@@ -288,7 +291,7 @@ public class ViewSectionFragment extends ListFragment {
 	    		ti_next = (Times) la.getItem(i + 1);
 	    	} else {
 	    		// no, set day to next day (which is != current day) to finish calculating this day (see if below)
-	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0);
+	    		ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0, ti.getHomeOffice());
 	    	}
 	    	// do we have more values with same day? 
 	    	if (ti.getCalStart().get(Calendar.DAY_OF_MONTH) != ti_next.getCalStart().get(Calendar.DAY_OF_MONTH)) {
@@ -319,8 +322,9 @@ public class ViewSectionFragment extends ListFragment {
 			return;
 		}
 
-		times = mDatasource.createTimes(times.getTimeStart(), times.getTimeEnd());
+		times = mDatasource.createTimes(times);
 		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
+		assert adapter != null;
 		adapter.setNotifyOnChange(false); // do not notify changes yet
 		adapter.add(times);
 		adapter.sort();
@@ -340,6 +344,7 @@ public class ViewSectionFragment extends ListFragment {
 		}
 		// only needed,  if list was recreated in the meantime (e.g. by rotating the device)
 		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
+		assert adapter != null;
 		adapter.setNotifyOnChange(false); // do not notify changes yet
 		adapter.update(times);
 		adapter.sort();
@@ -359,6 +364,7 @@ public class ViewSectionFragment extends ListFragment {
 		}
 		
 		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
+		assert adapter != null;
 		adapter.remove(times); // remove item from adapter list
 		adapter.notifyDataSetChanged(); // now update the changed data
 		updateInfoLine();
@@ -370,6 +376,7 @@ public class ViewSectionFragment extends ListFragment {
 
 		// update ListAdapter
 		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
+		assert adapter != null;
 		adapter.refill(getListTimes());
 		updateInfoLine();
 	}
@@ -384,7 +391,7 @@ public class ViewSectionFragment extends ListFragment {
 			boolean result;
 			result = mDatasource.getDbHelper().exportDatabase(dbPath);
 			if (result) {
-				Toast.makeText(mContext, "Backuped database to " + dbPath, Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext, "Backed up database to " + dbPath, Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(mContext, "Failed to backup database.", Toast.LENGTH_LONG).show();
 			}

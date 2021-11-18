@@ -1,5 +1,6 @@
 /*
  * @file TimesWork.java
+ * @author Holger Mueller
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -23,6 +24,8 @@ public class TimesWork extends TimeUtil {
 	private static boolean mWorkStarted = false; // true, if work is started
 	private static long mTimeStart = 0; // current start time in milliseconds
 	private static long mTimeEnd = 0; // current end time in milliseconds
+	private static long mTimeWorked = 0; // time already worked that day in milliseconds
+	private static boolean mHomeOffice = false; // true, if work is in home office
 	private static Calendar mStatisticsDate = Calendar.getInstance(); // Calendar of current statistics view
 	private static int mFilterMonth = 0; // view filter month (Jan. = 1), set to 0 to disable
 	private static int mFilterYear = 0; // view filter year, set to 0 to disable
@@ -31,7 +34,7 @@ public class TimesWork extends TimeUtil {
 	 * Internal data
 	 */
 	private static final String PREFS_NAME = "JobLogData";
-	private Context mContext;
+	private final Context mContext;
 	
 	public TimesWork(Context context) {
 		mContext = context;
@@ -60,6 +63,39 @@ public class TimesWork extends TimeUtil {
 	 */
 	public void setWorkStarted(boolean workStarted) {
 		mWorkStarted = workStarted;
+	}
+
+
+	/**
+	 * Get the time already worked that day in milliseconds.
+	 * @return The mTimeWorked value.
+	 */
+	public long getTimeWorked() {
+		return mTimeWorked;
+	}
+
+	/**
+	 * Set the time already worked that day in milliseconds.
+	 * @param timeWorked The mTimeWorked value to set.
+	 */
+	public void setTimeWorked(long timeWorked) {
+		mTimeWorked = timeWorked;
+	}
+
+	/**
+	 * Return <b>true</b> if work in home office, otherwise <b>false</b>.
+	 * @return The mHomeOffice.
+	 */
+	public boolean getHomeOffice() {
+		return mHomeOffice;
+	}
+
+	/**
+	 * Set <b>true</b> if work is in home office, otherwise <b>false</b>.
+	 * @param homeOffice The mHomeOffice value to set.
+	 */
+	public void setHomeOffice(boolean homeOffice) {
+		mHomeOffice = homeOffice;
 	}
 
 	/**
@@ -130,6 +166,7 @@ public class TimesWork extends TimeUtil {
 	 * Get a date string from start time.
 	 * @return Date string of mTimeStart.
 	 */
+	@SuppressWarnings("unused")
 	public String getDateString() {
 		return formatDateString(mTimeStart);
 	}
@@ -197,7 +234,9 @@ public class TimesWork extends TimeUtil {
 		SharedPreferences prefData = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		mTimeStart = prefData.getLong("timeStart", -1);
 		mTimeEnd = prefData.getLong("timeEnd", -1);
+		mTimeWorked = prefData.getLong("timeWorked", 0);
 		mWorkStarted = prefData.getBoolean("workStarted", false);
+		mHomeOffice = prefData.getBoolean("homeOffice", false);
 		long statistics = prefData.getLong("statistics", -1);
 		if (statistics == -1) {
 			mStatisticsDate = getCurrentTime();
@@ -218,11 +257,13 @@ public class TimesWork extends TimeUtil {
 		SharedPreferences.Editor editor = prefData.edit();
 		editor.putLong("timeStart", mTimeStart);
 		editor.putLong("timeEnd", mTimeEnd);
+		editor.putLong("timeWorked", mTimeWorked);
+		editor.putBoolean("homeOffice", mHomeOffice);
 		editor.putBoolean("workStarted", mWorkStarted);
 		editor.putLong("statistics", mStatisticsDate.getTimeInMillis());
 		editor.putInt("filterMonth", mFilterMonth);
 		editor.putInt("filterYear", mFilterYear);
-		editor.commit(); // Commit the edits
+		editor.apply(); // Commit the edits
 	}
 
 
@@ -232,7 +273,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Normal work end time
 	 */
 	public long getNormalWorkEndTime() {
-		return getNormalWorkEndTime(mContext, mTimeStart);
+		return getNormalWorkEndTime(mContext, mTimeStart, mTimeWorked, mHomeOffice);
 	}
 	
 	/**
@@ -241,7 +282,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Normal work end time (Calendar class)
 	 */
 	public Calendar getCalNormalWorkEndTime() {
-		return millisToCalendar(getNormalWorkEndTime(mContext, mTimeStart));
+		return millisToCalendar(getNormalWorkEndTime());
 	}
 	
 	/**
@@ -250,7 +291,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Max. work end time
 	 */
 	public long getMaxWorkEndTime() {
-		return getMaxWorkEndTime(mContext, mTimeStart);
+		return getMaxWorkEndTime(mContext, mTimeStart, mTimeWorked, mHomeOffice);
 	}
 
 	/**
@@ -259,7 +300,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Max. work end time (Calendar class)
 	 */
 	public Calendar getCalMaxWorkEndTime() {
-		return millisToCalendar(getMaxWorkEndTime(mContext, mTimeStart));
+		return millisToCalendar(getMaxWorkEndTime());
 	}
 
 	/**
@@ -268,7 +309,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Worked time in Milliseconds
 	 */
 	public long getWorkedTime() {
-		return getWorkedTime(mContext, mTimeStart, mTimeEnd);
+		return getWorkedTime(mContext, mTimeStart, mTimeEnd, mHomeOffice);
 	}
 
 	/**
@@ -277,7 +318,7 @@ public class TimesWork extends TimeUtil {
 	 * @return Overtime in Milliseconds
 	 */
 	public long getOverTime() {
-		return getOverTime(mContext, mTimeStart, mTimeEnd);
+		return getOverTime(mContext, mTimeStart, mTimeEnd, mHomeOffice);
 	}
 	
 }

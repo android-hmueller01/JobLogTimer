@@ -13,6 +13,8 @@ import java.util.Locale;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 /**
  * This class is the model and contains the data we will save in the database and show in the user interface.
  * 
@@ -22,21 +24,25 @@ public class Times {
 	private long id;
 	private long timeStart;
 	private long timeEnd;
+	private boolean homeOffice;
 
 	private static final String TIMES_ID = "Times_id";
 	private static final String TIMES_TIME_START = "Times_timesStart";
 	private static final String TIMES_TIME_END = "Times_timeEnd";
+	private static final String TIMES_HOME_OFFICE = "Times_homeOffice";
 
 	/**
 	 * Instantiate new Times class with values.
 	 * @param id Unique ID within database
 	 * @param timeStart Start work time in milliseconds
 	 * @param timeEnd End work time in milliseconds
+	 * @param homeOffice True if work is in home office
 	 */
-	public Times(long id, long timeStart, long timeEnd) {
+	public Times(long id, long timeStart, long timeEnd, boolean homeOffice) {
 		this.id = id;
 		this.timeStart = timeStart;
 		this.timeEnd = timeEnd;
+		this.homeOffice = homeOffice;
 	}
 	
 	/**
@@ -108,6 +114,22 @@ public class Times {
 	}
 
 	/**
+	 * Get home office work.
+	 * @return True if work is in home office
+	 */
+	public boolean getHomeOffice() {
+		return homeOffice;
+	}
+
+	/**
+	 * Set home office work.
+	 * @param homeOffice True if work is in home office
+	 */
+	public void setHomeOffice(boolean homeOffice) {
+		this.homeOffice = homeOffice;
+	}
+
+	/**
 	 * Format a given time to a date string like "DD.MM.YYYY".
 	 * @param time Time in milliseconds
 	 * @return Date string
@@ -129,6 +151,7 @@ public class Times {
 	 * @param time Time in milliseconds
 	 * @return Time string
 	 */
+	@SuppressWarnings("unused")
 	public String getTimeString(long time) {
 		return String.format(Locale.getDefault(),"%tR", time);
 	}
@@ -141,6 +164,7 @@ public class Times {
 		savedInstanceState.putLong(TIMES_ID, id);
 		savedInstanceState.putLong(TIMES_TIME_START, timeStart);
 		savedInstanceState.putLong(TIMES_TIME_END, timeEnd);
+		savedInstanceState.putBoolean(TIMES_HOME_OFFICE, homeOffice);
 	}
 
 	/**
@@ -153,10 +177,12 @@ public class Times {
 			id = savedInstanceState.getLong(TIMES_ID);
 			timeStart = savedInstanceState.getLong(TIMES_TIME_START);
 			timeEnd = savedInstanceState.getLong(TIMES_TIME_END);
+			homeOffice = savedInstanceState.getBoolean(TIMES_HOME_OFFICE);
 		}
 	}
 
 	// Will be used by the ArrayAdapter in the ListView
+	@NonNull
 	@Override
 	public String toString() {
 		// Good conversion?

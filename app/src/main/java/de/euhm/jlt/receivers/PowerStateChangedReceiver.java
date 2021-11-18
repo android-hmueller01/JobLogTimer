@@ -39,6 +39,11 @@ public class PowerStateChangedReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		int flag = 0;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			// needed starting Android 12 (S = 31)
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		boolean batteryLow = Intent.ACTION_BATTERY_LOW.equals(intent.getAction());
 		Prefs prefs = new Prefs(context);
 
@@ -48,7 +53,7 @@ public class PowerStateChangedReceiver extends BroadcastReceiver {
 					.getSystemService(Context.ALARM_SERVICE);
 			Intent alarmIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-					0, alarmIntent, 0);
+					0, alarmIntent, flag);
 
 			if (batteryLow) {
 				// cancel alarm under low battery conditions

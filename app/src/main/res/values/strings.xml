@@ -19,8 +19,8 @@
 
     <!-- main actionbar tabs -->
     <string name="tab_main">START</string>
-    <string name="tab_view"></string> <!-- using icon only -->
-    <string name="tab_settings"></string> <!-- using icon only -->
+    <string name="tab_view" /> <!-- using icon only -->
+    <string name="tab_settings" /> <!-- using icon only -->
     
     <!-- actionbar buttons -->
     <string name="button_start">Start work</string>
@@ -41,6 +41,7 @@
     <string name="start_time_set">Set start time</string>
     <string name="end_text">End</string>
     <string name="end_time_set">Set end time</string>
+    <string name="homeoffice_text">Home office</string>
     <string name="work_started">Work started.</string>
     <string name="work_ended">Work ended.</string>
     <string name="work_not_started">Work not started.</string>
@@ -96,12 +97,18 @@
 	<string name="pref_break_after_hours_summary">Fix hours after that break starts</string>
 	<string name="pref_break_atfixtime_title">Start time of break</string>
 	<string name="pref_break_atfixtime_summary">Fix time when break starts</string>
-	
+
+    <string name="pref_homeoffice_title">Home Office</string>
+    <string name="pref_homeoffice_use_last_title">Use default setting</string>
+    <string name="pref_homeoffice_use_last_summary">or remember last</string>
+    <string name="pref_homeoffice_default_setting_title">Default setting</string>
+    <string name="pref_homeoffice_default_setting_summary">Set for home office, unset for bureau</string>
+
     <string name="pref_warnings_title">Notifications</string>
 	<string name="pref_end_hours_warn_title">Warn normal work time end</string>
-    <string name="pref_end_hours_warn_summary"></string>
+    <string name="pref_end_hours_warn_summary" />
 	<string name="pref_max_hours_warn_title">Warn maximum work time</string>
-    <string name="pref_max_hours_warn_summary"></string>
+    <string name="pref_max_hours_warn_summary" />
     <string name="pref_max_hours_warn_before_title">Minutes before max. time</string>
     <string name="pref_max_hours_warn_before_summary">Warn selected minutes before maximum work time is over</string>
 

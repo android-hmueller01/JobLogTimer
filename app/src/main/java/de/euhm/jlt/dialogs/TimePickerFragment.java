@@ -1,26 +1,27 @@
-/**
- * $Id: TimePickerFragment.java 184 2016-12-21 21:32:19Z hmueller $
+/*
+ * @file TimePickerFragment.java
+ * @author Holger Mueller
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 package de.euhm.jlt.dialogs;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
 /**
  * Implements a DialogFragment for picking the time
- * @author hmueller
- * @version $Rev: 184 $
+ * @author Holger Mueller
  */
 public class TimePickerFragment extends DialogFragment
 	implements TimePickerDialog.OnTimeSetListener {
@@ -38,15 +39,16 @@ public class TimePickerFragment extends DialogFragment
 	}
 
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnTimePickerFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnTimePickerFragmentListener");
-        }
-    }
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		try {
+			mListener = (OnTimePickerFragmentListener) context;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(context.toString() + " must implement OnTimePickerFragmentListener");
+		}
+	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		if (mCal == null) {
@@ -109,7 +111,7 @@ public class TimePickerFragment extends DialogFragment
 	}
 
 	// set internal title id
-	public void setTitel(int titleId) {
+	public void setTitle(int titleId) {
 		mTitleId = titleId;
 	}
 	

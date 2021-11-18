@@ -45,4 +45,10 @@
             android:timePickerMode="spinner" />
     </LinearLayout>
 
+	<CheckBox
+		android:id="@+id/homeoffice_cb"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/homeoffice_text" />
+
 </LinearLayout>

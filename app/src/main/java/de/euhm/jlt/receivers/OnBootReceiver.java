@@ -1,6 +1,6 @@
-/**
- * $Id: OnBootReceiver.java 122 2015-03-06 19:00:22Z hmueller $
- * 
+/*
+ * @file OnBootReceiver.java
+ *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -32,10 +32,15 @@ public class OnBootReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		TimesWork timesWork = new TimesWork(context);
-		if (timesWork.getWorkStarted()) {
-			Log.v(LOG_TAG, "Re-register JobLogTimer alarms.");
-			AlarmUtils.setAlarms(context, timesWork);
+		// test if the received intent is really a BOOT_COMPLETED
+		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+			TimesWork timesWork = new TimesWork(context);
+			if (timesWork.getWorkStarted()) {
+				Log.v(LOG_TAG, "Re-register JobLogTimer alarms.");
+				AlarmUtils.setAlarms(context, timesWork);
+			}
+		} else {
+			Log.e(LOG_TAG, "getAction() != ACTION_BOOT_COMPLETED. This should never happen!");
 		}
 	}
 }

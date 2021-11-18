@@ -1,6 +1,7 @@
-/**
- * $Id: ViewTimesListAdapter.java 46 2015-01-20 21:12:11Z hmueller $
- * 
+/*
+ * @file ViewTimesListAdapter.java
+ * @author Holger Mueller
+ *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -18,6 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
 import de.euhm.jlt.dao.Times;
 import de.euhm.jlt.utils.TimeUtil;
 import de.euhm.jlt.R;
@@ -44,8 +48,9 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
         mListTimes = listTimes;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+	@Override
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         //Log.d(LOG_TAG, "Start getView position " + position);
 
         if (convertView == null) {
@@ -67,13 +72,15 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
         TextView monthAndYear = (TextView) convertView.findViewById(R.id.view_times_month_and_year);
         TextView hours = (TextView) convertView.findViewById(R.id.view_times_hours);
         TextView duration = (TextView) convertView.findViewById(R.id.view_times_duration);
+		TextView homeOffice = (TextView) convertView.findViewById(R.id.view_times_homeoffice);
 
         dayOfMonth.setText(String.format(Locale.getDefault(), "%td", timeStart));
         dayOfWeek.setText(String.format(Locale.getDefault(), "%tA (%d)", timeStart, timeStart.get(Calendar.WEEK_OF_YEAR)));
         monthAndYear.setText(String.format(Locale.getDefault(), "%1$tB %1$tY", timeStart));
         hours.setText(String.format(Locale.getDefault(), "%tR - %tR", timeStart, timeEnd));
-        duration.setText(TimeUtil.formatTimeString24(TimeUtil.getWorkedTime(mContext, timeStart, timeEnd)) + " (" +
-        		TimeUtil.formatTimeString24(TimeUtil.getOverTime(mContext, timeStart, timeEnd)) + ")");
+        duration.setText(TimeUtil.formatTimeString24(TimeUtil.getWorkedTime(mContext, timeStart, timeEnd, times.getHomeOffice())) + " (" +
+        		TimeUtil.formatTimeString24(TimeUtil.getOverTime(mContext, timeStart, timeEnd, times.getHomeOffice())) + ")");
+		homeOffice.setVisibility(times.getHomeOffice() ? View.VISIBLE : View.INVISIBLE);
 
         return convertView;
     }

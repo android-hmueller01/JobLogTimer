@@ -44,7 +44,7 @@ public class FilterFragment extends DialogFragment {
 	}
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
             mListener = (OnFilterFragmentListener) context;
@@ -68,7 +68,7 @@ public class FilterFragment extends DialogFragment {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -146,6 +146,7 @@ public class FilterFragment extends DialogFragment {
 		monthPicker.setMinValue(1);
 		monthPicker.setMaxValue(12);
 		//monthPicker.setWrapSelectorWheel(false);
+		//monthPicker.setFormatter(value -> String.format(Locale.getDefault(), "%02d", value));
 		monthPicker.setFormatter(new NumberPicker.Formatter() {
 		    @Override
 		    public String format(int value) {

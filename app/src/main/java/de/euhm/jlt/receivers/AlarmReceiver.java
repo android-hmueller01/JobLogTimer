@@ -63,17 +63,22 @@ public class AlarmReceiver extends BroadcastReceiver {
 	 * Returns the {@link NotificationCompat} used as part of the foreground service.
 	 */
 	private Notification getNotification(Context context, boolean normalEnd) {
+		int flag = 0;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+			// needed starting Android 12 (S = 31)
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		Intent resultIntent = new Intent(context, MainActivity.class);
 		resultIntent.setAction(Intent.ACTION_MAIN);
 		resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 		resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		PendingIntent resultPendingIntent =
-				PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0,
+				resultIntent, flag | PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// make the broadcast Intent explicit by specifying the receiver class
 		Intent endWorkIntent = new Intent(Constants.RECEIVER_START_STOP, null, context, StartStopReceiver.class);
 		PendingIntent endWorkPendingIntent =
-				PendingIntent.getBroadcast(context, 0, endWorkIntent, 0);
+				PendingIntent.getBroadcast(context, 0, endWorkIntent, flag);
 
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL)
