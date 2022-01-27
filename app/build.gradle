@@ -27,8 +27,8 @@ android {
         applicationId "de.euhm.jlt"
         minSdkVersion 14
         targetSdkVersion 31
-        versionCode 16
-        versionName "0.19"
+        versionCode 18
+        versionName "0.20a"
     }
 
     signingConfigs {
@@ -53,9 +53,9 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
 }
 
 System.setProperty('java.awt.headless', 'false')

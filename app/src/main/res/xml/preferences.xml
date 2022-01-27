@@ -14,7 +14,7 @@
 
     <PreferenceCategory android:title="@string/pref_times_title" >
 		<EditTextPreference
-			android:defaultValue="8"
+			android:defaultValue="7"
 			android:inputType="numberDecimal"
 			android:key="pref_hours_key"
 			android:maxLength="5"
@@ -108,7 +108,7 @@
 			android:key="pref_view_percent_key"
 			android:title="@string/pref_view_percent_title"
 			android:summary="@string/pref_view_percent_summary"
-			android:defaultValue="true" />
+			android:defaultValue="false" />
 		<CheckBoxPreference
 			android:key="pref_widget_update_low_battery_key"
 			android:title="@string/pref_widget_update_low_battery_title"
