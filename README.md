@@ -4,8 +4,10 @@ The Android App JobLogTimer keeps track of the time you work and alarms your to 
 
 # ChangeLog
 
-V0.20a: versionCode 18, 18.11.2021 Mr
+V0.20b: versionCode 18, 30.06.2022 Mr
 - Changed some default values of the preferences
+- fixed bug that setting home office is not respected by alarm
+- Updated targetSdkVersion to 33 (Android 13)
 
 V0.19: versionCode 17, 05.11.2021 Mr
 - Added home office function (no forced breaks)
