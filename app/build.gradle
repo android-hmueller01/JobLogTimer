@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    namespace = "de.euhm.jlt"
+    compileSdk 33
 
     /*
     V7: Android 2.1.x	ECLAIR_MR1
@@ -25,8 +26,8 @@ android {
     */
     defaultConfig {
         applicationId "de.euhm.jlt"
-        minSdkVersion 14
-        targetSdkVersion 33
+        minSdk 21
+        targetSdk 33
         versionCode 18
         versionName "0.20b"
     }
@@ -53,9 +54,9 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
 }
 
 System.setProperty('java.awt.headless', 'false')

@@ -9,6 +9,8 @@
  */
 package de.euhm.jlt;
 
+import de.euhm.jlt.R;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -412,13 +414,11 @@ public class MainActivity extends AppCompatActivity implements
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		// Handle presses on the action bar items
-		switch (id) {
-		case R.id.action_start:
-		case R.id.action_end:
+		if (id == R.id.action_start || id == R.id.action_end) {
 			// make the broadcast Intent explicit by specifying the receiver class
 			sendBroadcast(new Intent(Constants.RECEIVER_START_STOP, null, this, StartStopReceiver.class));
 			return true;
-		case R.id.action_filter:
+		} else if (id == R.id.action_filter) {
 			// prepare to edit filter
 	        FilterFragment filterFrag = new FilterFragment();
 	        filterFrag.setPickerMonth(mTW.getFilterMonth());
@@ -463,22 +463,20 @@ public class MainActivity extends AppCompatActivity implements
         
         // Get item ID to determine what to do on user click
         int itemId = item.getItemId();
-        switch (itemId) {
-		case R.id.nav_item_add_times:
+        if (itemId == R.id.nav_item_add_times) {
 			// prepare to add a new SQL row
 			long currentTime = TimeUtil.getCurrentTimeInMillis();
 			Times times = new Times(-1, currentTime, currentTime, false);
-			
+
 			// prepare to edit entry
-	        EditTimesFragment frag = new EditTimesFragment();
-	        frag.setTimes(times);
-	        // Display the edit fragment as the main content.
-	        getSupportFragmentManager().beginTransaction()
-				.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-				.add(0, frag)
-				.commit();
-	        break;
-        case R.id.nav_item_backup:
+			EditTimesFragment frag = new EditTimesFragment();
+			frag.setTimes(times);
+			// Display the edit fragment as the main content.
+			getSupportFragmentManager().beginTransaction()
+					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+					.add(0, frag)
+					.commit();
+		} else if (itemId == R.id.nav_item_backup) {
 			// backup internal database to external file
 			// check if we have permission to write external storage
 			if (ContextCompat.checkSelfPermission(this,
@@ -494,63 +492,60 @@ public class MainActivity extends AppCompatActivity implements
 				// permission is ok, do the backup right now
 				mViewSectionFragment.exportDatabase(mBackupDbPath);
 			}
-	        break;
-        case R.id.nav_item_restore:
+		} else if (itemId == R.id.nav_item_restore) {
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 			String message = getResources().getText(R.string.confirm_restore).toString();
 			message = String.format(Locale.getDefault(), message, mBackupDbPath);
-			
+
 			// set dialog message
 			//.setTitle("Title")
 			alertDialogBuilder
-				.setMessage(message)
-				.setCancelable(true)
-				.setPositiveButton(android.R.string.yes,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// if "Yes" this button is clicked
-							// restore backup database to internal database
-							if (Build.VERSION.SDK_INT < 16) {
-								// in API < 16 we are always allowed to read from external storage
-								// do the restore right now
-								mViewSectionFragment.importDatabase(mBackupDbPath);
-							} else {
-								// check if we have permission to read from external storage
-								if (ContextCompat.checkSelfPermission(MainActivity.this,
-										Manifest.permission.READ_EXTERNAL_STORAGE) !=
-										PackageManager.PERMISSION_GRANTED) {
-									// permission is not granted, ask for permission and wait for
-									// callback method onRequestPermissionsResult gets the result of the request.
-									// PERMISSION_REQUEST_READ_EXTERNAL_STORAGE is an app-defined int constant.
-									ActivityCompat.requestPermissions(MainActivity.this,
-										new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-										Constants.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
-								} else {
-									// permission is ok, do the restore right now
-									mViewSectionFragment.importDatabase(mBackupDbPath);
+					.setMessage(message)
+					.setCancelable(true)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									// if "Yes" this button is clicked
+									// restore backup database to internal database
+									if (Build.VERSION.SDK_INT < 16) {
+										// in API < 16 we are always allowed to read from external storage
+										// do the restore right now
+										mViewSectionFragment.importDatabase(mBackupDbPath);
+									} else {
+										// check if we have permission to read from external storage
+										if (ContextCompat.checkSelfPermission(MainActivity.this,
+												Manifest.permission.READ_EXTERNAL_STORAGE) !=
+												PackageManager.PERMISSION_GRANTED) {
+											// permission is not granted, ask for permission and wait for
+											// callback method onRequestPermissionsResult gets the result of the request.
+											// PERMISSION_REQUEST_READ_EXTERNAL_STORAGE is an app-defined int constant.
+											ActivityCompat.requestPermissions(MainActivity.this,
+													new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+													Constants.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+										} else {
+											// permission is ok, do the restore right now
+											mViewSectionFragment.importDatabase(mBackupDbPath);
+										}
+									}
 								}
-							}
-						}
-					})
-				.setNegativeButton(android.R.string.no,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// just close the dialog box and do nothing
-							dialog.cancel();
-						}
-					});
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									// just close the dialog box and do nothing
+									dialog.cancel();
+								}
+							});
 
 			// create alert dialog and show it
 			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
-        	break;
-        case R.id.nav_item_about:
+		} else if (itemId == R.id.nav_item_about) {
         	// Display the about fragment as the main content.
         	getSupportFragmentManager().beginTransaction()
         		.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         		.add(0, new AboutFragment())
         		.commit();
-        	break;
         }
         return true;
 	}
@@ -668,6 +663,12 @@ public class MainActivity extends AppCompatActivity implements
 		mViewSectionFragment.deleteTimesItem(mTimes);
 		// update statistics, it might change ...
 		mMainSectionFragment.updateStatisticsView();
+		// if work was started it might change the day ...
+		if (mTW.getWorkStarted()) {
+			mMainSectionFragment.updateTimesView();
+			// reset alarms and notification
+			AlarmUtils.setAlarms(this, mTW);
+		}
 		Toast.makeText(this, R.string.database_delete_positive_result, Toast.LENGTH_SHORT).show();
 		
 		mTimes = null; // mark as handled
@@ -701,18 +702,19 @@ public class MainActivity extends AppCompatActivity implements
 
 	public void onCheckboxClicked(View view) {
 		// Check which checkbox was clicked
-		switch(view.getId()) {
-		case R.id.homeoffice_cb:
+		if (view.getId() == R.id.homeoffice_cb) {
 			// save the Home Office check box into mTW dataset
+			mTW.setHomeOffice(((CheckBox) view).isChecked());
 			if (mTW.getWorkStarted()) {
-				mTW.setHomeOffice(((CheckBox) view).isChecked());
 				mMainSectionFragment.updateTimesView();
-			} else {
-				((CheckBox) view).toggle();
-				Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
+				// reset alarms and notification
+				AlarmUtils.setAlarms(this, mTW);
 			}
-			break;
-		default:
+//			else { TODO: remove
+//				((CheckBox) view).toggle();
+//				Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show();
+//			}
+		} else {
 			throw new IllegalStateException("Unexpected value: " + view.getId());
 		}
 	}
@@ -760,21 +762,18 @@ public class MainActivity extends AppCompatActivity implements
 	@Override
 	public void onFinishTimePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
-		switch (titleId) {
-		case R.string.start_time_set:
+		if (titleId == R.string.start_time_set) {
 			Calendar calTimeStart = TimeUtil.getCurrentTime();
-			if (mTW.getTimeStart() != -1)  calTimeStart.setTimeInMillis(mTW.getTimeStart());
+			if (mTW.getTimeStart() != -1) calTimeStart.setTimeInMillis(mTW.getTimeStart());
 			calTimeStart.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
 			calTimeStart.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
 			mTW.setCalStart(calTimeStart);
-			break;
-		case R.string.end_time_set:
+		} else if (titleId == R.string.end_time_set) {
 			Calendar calTimeEnd = TimeUtil.getCurrentTime();
 			if (mTW.getTimeEnd() != -1)  calTimeEnd.setTimeInMillis(mTW.getTimeEnd());
 			calTimeEnd.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
 			calTimeEnd.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
 			mTW.setCalEnd(calTimeEnd);
-			break;
 		}
 		// update view and alarms ...
 		mMainSectionFragment.updateTimesView();
@@ -785,8 +784,7 @@ public class MainActivity extends AppCompatActivity implements
 	@Override
 	public void onFinishDatePickerFragment(Calendar cal, int titleId) {
 		// set time depending on titleId
-		switch (titleId) {
-		case R.string.date_text:
+		if (titleId == R.string.date_text) {
 			Calendar calTimeStart = TimeUtil.getCurrentTime();
 			if (mTW.getTimeStart() != -1)  calTimeStart.setTimeInMillis(mTW.getTimeStart());
 			calTimeStart.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
@@ -796,8 +794,7 @@ public class MainActivity extends AppCompatActivity implements
 				calTimeEnd.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 				mTW.setCalEnd(calTimeEnd);
 			}
-			break;
-		default:
+		} else {
 			throw new IllegalStateException("Unexpected value: " + titleId);
 		}
 		// update view and alarms ...
