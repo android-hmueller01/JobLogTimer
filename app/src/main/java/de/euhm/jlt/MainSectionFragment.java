@@ -262,7 +262,6 @@ public class MainSectionFragment extends Fragment {
 	public void calcTimesInRange(long[] overTimes, Calendar calStart, Calendar calEnd, LongRef workedTime, LongRef overTime) {
 		Prefs prefs = new Prefs(mContext);
         TimesDataSource db = new TimesDataSource(mContext);
-	    db.open();
         List<Times> values = db.getTimeRangeTimes(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), "ASC");
         db.close();
 	    int cnt = values.size();
