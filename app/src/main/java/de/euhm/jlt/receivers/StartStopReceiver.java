@@ -45,7 +45,6 @@ public class StartStopReceiver extends BroadcastReceiver {
 
 			// write data to database
 			TimesDataSource mDataSource = new TimesDataSource(context);
-			mDataSource.open();
 			mDataSource.createTimes(timesWork);
 			mDataSource.close();
 
