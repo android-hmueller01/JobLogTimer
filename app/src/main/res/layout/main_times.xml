@@ -50,7 +50,7 @@
         		android:gravity="center"
         		android:background="@color/sysLtGray"
         		android:clickable="true"
-        		android:onClick="showTimePickerDialog_StartTime"
+        		android:onClick="showTimePickerDialogStartTime"
         		android:textSize="@dimen/times_text_size"
                 android:text="01:00" />
         </TableRow>
@@ -67,7 +67,7 @@
         		android:gravity="center"
         		android:background="@color/sysLtGray"
         		android:clickable="true"
-        		android:onClick="showTimePickerDialog_EndTime"
+        		android:onClick="showTimePickerDialogEndTime"
         		android:textSize="@dimen/times_text_size"
                 android:text="02:00" />
         </TableRow>
