@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: activity_main.xml 190 2017-01-12 20:55:58Z hmueller $ -->
 <!--
   Copyright 2012 The Android Open Source Project
 
@@ -80,6 +79,7 @@
         android:id="@+id/navigation_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="46dp"
         android:layout_gravity="start"
         app:headerLayout="@layout/drawer_header"
         app:menu="@menu/navigation_drawer" />
@@ -92,10 +92,10 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="bottom|end"
-     	android:layout_margin="16dp"
-     	android:src="@drawable/ic_action_new"
-     	app:backgroundTint="@color/toolbar" />
-	    <!-- android:src="@android:drawable/btn_plus"  -->
+	    android:layout_margin="16dp"
+        android:contentDescription="@string/button_add_times"
+        android:src="@drawable/ic_action_new"
+        app:backgroundTint="@color/toolbar" />
+        <!-- android:src="@android:drawable/btn_plus"  -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-	
