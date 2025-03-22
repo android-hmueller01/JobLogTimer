@@ -307,15 +307,17 @@ public class TimesWork extends TimeUtil {
 	 * Get worked time of a day (corrected by the break times)
 	 * 
 	 * @return Worked time in Milliseconds
+	 * @noinspection unused
 	 */
 	public long getWorkedTime() {
 		return getWorkedTime(mContext, mTimeStart, mTimeEnd, mHomeOffice);
 	}
 
 	/**
-	 * Get overtime of a working day(corrected by the break times)
+	 * Get overtime of a working day (corrected by the break times)
 	 * 
 	 * @return Overtime in Milliseconds
+	 * @noinspection unused
 	 */
 	public long getOverTime() {
 		return getOverTime(mContext, mTimeStart, mTimeEnd, mHomeOffice);
