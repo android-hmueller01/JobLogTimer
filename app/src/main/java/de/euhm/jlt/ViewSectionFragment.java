@@ -278,7 +278,7 @@ public class ViewSectionFragment extends ListFragment {
 		for (int i = 0; i < cnt; i++) {
 			Times ti = (Times) la.getItem(i);
 			// do only calc worked time and not overtime, as we do not know jet, if we have more entries on the same day
-			workedPerDay += TimeUtil.getWorkedTime(mContext, ti.getTimeStart(), ti.getTimeEnd(), ti.getHomeOffice());
+			workedPerDay += TimeUtil.getWorkedTime(mContext, ti.timeStart, ti.timeEnd, ti.homeOffice);
 			Times ti_next;
 			// do we have a next value?
 			if (i + 1 < cnt) {
@@ -286,7 +286,7 @@ public class ViewSectionFragment extends ListFragment {
 				ti_next = (Times) la.getItem(i + 1);
 			} else {
 				// no, set day to next day (which is != current day) to finish calculating this day (see if below)
-				ti_next = new Times(0, ti.getTimeStart() + 24 * 60 * 60 * 1000, 0, ti.getHomeOffice());
+				ti_next = new Times(0, ti.timeStart + 24 * 60 * 60 * 1000, 0, ti.homeOffice);
 			}
 			// do we have more values with same day?
 			if (ti.getCalStart().get(Calendar.DAY_OF_MONTH) != ti_next.getCalStart().get(Calendar.DAY_OF_MONTH)) {
@@ -452,5 +452,4 @@ public class ViewSectionFragment extends ListFragment {
 		mViewPager = null;
 		mContext = null;
 	}
-
-} 
+}
