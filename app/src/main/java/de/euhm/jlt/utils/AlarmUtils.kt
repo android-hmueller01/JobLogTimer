@@ -1,5 +1,5 @@
 /*
- * @file AlarmUtils.java
+ * @file AlarmUtils.kt
  *
  * Converted from Java to Kotlin by Android Studio Meerkat | 2024.3.1 in March 2025
  *
