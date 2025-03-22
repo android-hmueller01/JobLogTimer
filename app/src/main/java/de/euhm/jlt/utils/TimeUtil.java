@@ -268,9 +268,9 @@ public class TimeUtil {
 			// break at fix time
 			long breakStartTimeInMinutes = (long)(prefs.getBreakAtFixTime() * 60);
 			long breakEndTimeInMinutes = breakStartTimeInMinutes + breakTime / (60*1000);
-			long timeStartInMinutes = getHours24(timeStart) * 60 + getMinutes(timeStart) + 
+			long timeStartInMinutes = getHours24(timeStart) * 60L + getMinutes(timeStart) +
 					getTimeOffsetInMillis() / (60*1000);
-			long timeEndInMinutes = getHours24(timeEnd) * 60 + getMinutes(timeEnd) + 
+			long timeEndInMinutes = getHours24(timeEnd) * 60L + getMinutes(timeEnd) +
 					getTimeOffsetInMillis() / (60*1000);
 			// 23.01.2015: new implementation, less complicated ...
 			// check if start or end time is during break time
@@ -359,7 +359,6 @@ public class TimeUtil {
 
 		// load data form database
 		TimesDataSource db = new TimesDataSource(context);
-		db.open();
 		List<Times> values = db.getTimeRangeTimes(calStart.getTimeInMillis(), calEnd.getTimeInMillis(), "ASC");
 		db.close();
 
@@ -367,7 +366,7 @@ public class TimeUtil {
 		long workedTimeDay = 0;
 		for (int i = 0; i < cnt; i++) {
 			Times ti = values.get(i);
-			workedTimeDay += TimeUtil.getWorkedTime(context, ti.getTimeStart(), ti.getTimeEnd(), ti.getHomeOffice());
+			workedTimeDay += TimeUtil.getWorkedTime(context, ti.timeStart, ti.timeEnd, ti.homeOffice);
 		}
 
 		return workedTimeDay;
