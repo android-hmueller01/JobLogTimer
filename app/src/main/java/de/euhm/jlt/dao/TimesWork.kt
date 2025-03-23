@@ -18,7 +18,7 @@ import java.util.Calendar
  *
  * @author hmueller
  */
-class TimesWork(private val mContext: Context) : TimeUtil() {
+class TimesWork(private val mContext: Context) {
     init {
         if (timeStart == 0L) {
             // Restore work data from persistent store,
@@ -33,7 +33,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
      * @return Normal work end time
      */
     val normalWorkEndTime: Long
-        get() = getNormalWorkEndTime(mContext, timeStart, timeWorked, homeOffice)
+        get() = TimeUtil.getNormalWorkEndTime(mContext, timeStart, timeWorked, homeOffice)
 
     /**
      * Calc normal work time based on start time
@@ -41,7 +41,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
      * @return Normal work end time (Calendar class)
      */
     val calNormalWorkEndTime: Calendar
-        get() = millisToCalendar(normalWorkEndTime)
+        get() = TimeUtil.millisToCalendar(normalWorkEndTime)
 
     /**
      * Calc max. work time based on start time
@@ -49,7 +49,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
      * @return Max. work end time
      */
     val maxWorkEndTime: Long
-        get() = getMaxWorkEndTime(mContext, timeStart, timeWorked, homeOffice)
+        get() = TimeUtil.getMaxWorkEndTime(mContext, timeStart, timeWorked, homeOffice)
 
     /**
      * Calc max. work time based on start time
@@ -57,7 +57,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
      * @return Max. work end time (Calendar class)
      */
     val calMaxWorkEndTime: Calendar
-        get() = millisToCalendar(maxWorkEndTime)
+        get() = TimeUtil.millisToCalendar(maxWorkEndTime)
 
     companion object {
         private const val PREFS_NAME = "JobLogData"
@@ -94,7 +94,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
          */
         @JvmStatic
         var calStart: Calendar
-            get() = millisToCalendar(timeStart)
+            get() = TimeUtil.millisToCalendar(timeStart)
             set(cal) {
                 timeStart = cal.timeInMillis
             }
@@ -105,7 +105,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
          */
         @JvmStatic
         var calEnd: Calendar
-            get() = millisToCalendar(timeEnd)
+            get() = TimeUtil.millisToCalendar(timeEnd)
             set(cal) {
                 timeEnd = cal.timeInMillis
             }
@@ -123,7 +123,7 @@ class TimesWork(private val mContext: Context) : TimeUtil() {
             homeOffice = prefData.getBoolean("homeOffice", false)
             val statistics = prefData.getLong("statistics", -1)
             if (statistics == -1L) {
-                statisticsDate = getCurrentTime()
+                statisticsDate = TimeUtil.getCurrentTime()
             } else {
                 statisticsDate.timeInMillis = statistics
             }
