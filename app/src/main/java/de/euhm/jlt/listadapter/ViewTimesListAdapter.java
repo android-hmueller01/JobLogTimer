@@ -63,9 +63,9 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
 		
         Times times = mListTimes.get(position);
 		Calendar timeStart = Calendar.getInstance();
-		timeStart.setTimeInMillis(times.getTimeStart());
+		timeStart.setTimeInMillis(times.timeStart);
 		Calendar timeEnd = Calendar.getInstance();
-		timeEnd.setTimeInMillis(times.getTimeEnd());
+		timeEnd.setTimeInMillis(times.timeEnd);
 		
         TextView dayOfMonth = (TextView) convertView.findViewById(R.id.view_times_day_of_month);
         TextView dayOfWeek = (TextView) convertView.findViewById(R.id.view_times_day_of_week);
@@ -78,9 +78,9 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
         dayOfWeek.setText(String.format(Locale.getDefault(), "%tA (%d)", timeStart, timeStart.get(Calendar.WEEK_OF_YEAR)));
         monthAndYear.setText(String.format(Locale.getDefault(), "%1$tB %1$tY", timeStart));
         hours.setText(String.format(Locale.getDefault(), "%tR - %tR", timeStart, timeEnd));
-        duration.setText(TimeUtil.formatTimeString24(TimeUtil.getWorkedTime(mContext, timeStart, timeEnd, times.getHomeOffice())) + " (" +
-        		TimeUtil.formatTimeString24(TimeUtil.getOverTime(mContext, timeStart, timeEnd, times.getHomeOffice())) + ")");
-		homeOffice.setVisibility(times.getHomeOffice() ? View.VISIBLE : View.INVISIBLE);
+        duration.setText(TimeUtil.formatTimeString24(TimeUtil.getWorkedTime(mContext, timeStart, timeEnd, times.homeOffice)) + " (" +
+        		TimeUtil.formatTimeString24(TimeUtil.getOverTime(mContext, timeStart, timeEnd, times.homeOffice)) + ")");
+		homeOffice.setVisibility(times.homeOffice ? View.VISIBLE : View.INVISIBLE);
 
         return convertView;
     }
@@ -101,7 +101,7 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
     		int s = mListTimes.size();
     		for (int i = 0; i < s; i++) {
     			Times o = mListTimes.get(i);
-    			if (o.getId() == object.getId()) {
+    			if (o.id == object.id) {
     				mListTimes.remove(i);
     				return;
     			}
@@ -120,7 +120,7 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
     		int s = mListTimes.size();
     		for (int i = 0; i < s; i++) {
     			Times o = mListTimes.get(i);
-    			if (o.getId() == object.getId()) {
+    			if (o.id == object.id) {
     				mListTimes.set(i, object);
     				return;
     			}
@@ -135,7 +135,7 @@ public class ViewTimesListAdapter extends ArrayAdapter<Times> {
 		sort(new Comparator<Times>() {
 			@Override
 			public int compare(Times a, Times b) {
-				return a.getTimeStart() > b.getTimeStart() ? -1 : a.getTimeStart() == b.getTimeStart() ? 0 : 1;
+				return a.timeStart > b.timeStart ? -1 : a.timeStart == b.timeStart ? 0 : 1;
 			}
 		});
 	}
