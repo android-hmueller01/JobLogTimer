@@ -27,7 +27,7 @@ import de.euhm.jlt.database.JobLogDbHelper
  *
  * @param context Context
  */
-class TimesDataSource(context: Context?) {
+class TimesDataSource(context: Context) {
     @Suppress("PrivatePropertyName")
     private val LOG_TAG: String = TimesDataSource::class.java.simpleName
 
