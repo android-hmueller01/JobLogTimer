@@ -45,7 +45,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentTransaction
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -141,28 +140,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private val alarmReceiver: BroadcastReceiver = AlarmReceiver()
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private fun myRegisterReceiver(receiver: BroadcastReceiver, filter: IntentFilter) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(receiver, filter)
+        }
+    }
 
-    //@RequiresApi(Build.VERSION_CODES.TIRAMISU)
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = applicationContext
         setContentView(R.layout.activity_main)
 
         // register the recreate receiver to restart activity from service
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(receiverRecreate, IntentFilter(Constants.RECEIVER_RECREATE))
-        //registerReceiver(receiverRecreate, IntentFilter(Constants.RECEIVER_RECREATE), RECEIVER_NOT_EXPORTED)
+        myRegisterReceiver(receiverRecreate, IntentFilter(Constants.RECEIVER_RECREATE))
         // register the update view receiver to update view from service
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(receiverUpdateView, IntentFilter(Constants.RECEIVER_UPDATE_VIEW))
-        //registerReceiver(receiverUpdateView, IntentFilter(Constants.RECEIVER_UPDATE_VIEW), RECEIVER_NOT_EXPORTED)
+        myRegisterReceiver(receiverUpdateView, IntentFilter(Constants.RECEIVER_UPDATE_VIEW))
         // register the alarm receiver
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_NORMAL_WORK_ALARM))
-        //registerReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_NORMAL_WORK_ALARM), RECEIVER_NOT_EXPORTED)
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM))
-        //registerReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM), RECEIVER_NOT_EXPORTED)
+        myRegisterReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_NORMAL_WORK_ALARM))
+        myRegisterReceiver(alarmReceiver, IntentFilter(Constants.RECEIVER_MAX_WORK_ALARM))
 
         // set path and name of backup database used by db export and import
         // set path to Android/data/de.euhm.jlt/files to avoid permission requests
