@@ -33,10 +33,9 @@ class OnBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // test if the received intent is really a BOOT_COMPLETED
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            val timesWork = TimesWork(context)
-            if (timesWork.workStarted) {
+            if (TimesWork.workStarted) {
                 Log.v(LOG_TAG, "Re-register JobLogTimer alarms.")
-                AlarmUtils.setAlarms(context, timesWork)
+                AlarmUtils.setAlarms(context)
             }
         } else {
             Log.e(LOG_TAG, "getAction() != ACTION_BOOT_COMPLETED. This should never happen!")
