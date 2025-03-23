@@ -30,7 +30,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -98,8 +97,7 @@ public class ViewSectionFragment extends ListFragment {
 		mDatasource.open();
 
 		// register the update view receiver to update view from service
-		LocalBroadcastManager.getInstance(mContext)
-				.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
 	}
 
 	@Override
