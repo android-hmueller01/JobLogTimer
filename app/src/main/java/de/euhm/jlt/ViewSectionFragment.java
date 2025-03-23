@@ -56,7 +56,6 @@ public class ViewSectionFragment extends ListFragment {
 	private final String LOG_TAG = ViewSectionFragment.class.getSimpleName();
 	private TimesDataSource mDatasource; // gets used outside the normal initialization
 	private Context mContext; // gets initialized in onAttach()
-	private TimesWork mTW; // gets initialized in onCreate()
 	private ListView mListView;
 	private boolean mViewCreated = false; // set to true after view is created
 	private CustomViewPager mViewPager;
@@ -93,9 +92,6 @@ public class ViewSectionFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-
-		// get current Work Times DAO
-		mTW = new TimesWork(mContext);
 
 		// get Times database
 		mDatasource = new TimesDataSource(mContext);
@@ -217,12 +213,12 @@ public class ViewSectionFragment extends ListFragment {
 		}
 
 		// build list
-		if (mTW.getFilterMonth() == 0 || mTW.getFilterYear() == 0) {
+		if (TimesWork.getFilterMonth() == 0 || TimesWork.getFilterYear() == 0) {
 			// get all data
 			listTimes = mDatasource.getAllTimes();
 		} else {
 			// get filtered range
-			Calendar cal = TimeUtil.getFilterCal(mTW.getFilterMonth(), mTW.getFilterYear());
+			Calendar cal = TimeUtil.getFilterCal(TimesWork.getFilterMonth(), TimesWork.getFilterYear());
 			long timeStart = cal.getTimeInMillis();
 			// get end of month
 			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -254,13 +250,13 @@ public class ViewSectionFragment extends ListFragment {
 				getResources().getString(R.string.view_times_info_line_left), 0);
 		String strMiddle = "";
 		String strFilterActive = "";
-		if (mTW.getFilterMonth() != 0 && mTW.getFilterYear() != 0) {
+		if (TimesWork.getFilterMonth() != 0 && TimesWork.getFilterYear() != 0) {
 			// filter is active, indicate that
 			strFilterActive = " " + getResources().getString(R.string.view_times_info_line_filter_active);
-			Calendar cal = TimeUtil.getFilterCal(mTW.getFilterMonth(), mTW.getFilterYear());
+			Calendar cal = TimeUtil.getFilterCal(TimesWork.getFilterMonth(), TimesWork.getFilterYear());
 			strMiddle = String.format(Locale.getDefault(), "%s %04d",
 					android.text.format.DateFormat.format("MMM", cal.getTimeInMillis()),
-					mTW.getFilterYear());
+					TimesWork.getFilterYear());
 		}
 		viewInfoLineLeft.setText(String.format("%s%s", strLeft, strFilterActive));
 		viewInfoLineMiddle.setText(strMiddle);
@@ -366,8 +362,8 @@ public class ViewSectionFragment extends ListFragment {
 	}
 
 	public void updateFilter(int month, int year) {
-		mTW.setFilterMonth(month);
-		mTW.setFilterYear(year);
+		TimesWork.setFilterMonth(month);
+		TimesWork.setFilterYear(year);
 
 		// update ListAdapter
 		ViewTimesListAdapter adapter = (ViewTimesListAdapter) getListAdapter();
@@ -446,7 +442,6 @@ public class ViewSectionFragment extends ListFragment {
 		super.onDestroy();
 		mContext.unregisterReceiver(receiverUpdateView);
 		//  clean up stored references to avoid leaking
-		mTW = null;
 		mListView = null;
 		mDatasource = null;
 		mViewPager = null;
