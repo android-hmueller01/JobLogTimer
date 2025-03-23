@@ -36,10 +36,9 @@ object AlarmUtils {
      * Set JobLogTimer alarms for normal and maximal work time, set update widget alarm.
      *
      * @param context   Context of application environment.
-     * @param timesWork Current work times data.
      */
     @JvmStatic
-    fun setAlarms(context: Context, timesWork: TimesWork) {
+    fun setAlarms(context: Context) {
         // see http://android-er.blogspot.de/2010/10/simple-example-of-alarm-service-using.html
         // or http://android-er.blogspot.de/2011/05/using-alarmmanager-to-start-scheduled.html
         var alarmIntent: Intent
@@ -47,6 +46,7 @@ object AlarmUtils {
         //Context context = getApplicationContext();
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val prefs = Prefs(context)
+        val timesWork = TimesWork(context)
         var flag = 0
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // needed starting Android 12 (S = 31)
@@ -66,7 +66,7 @@ object AlarmUtils {
             }
         }
 
-        if (timesWork.workStarted) {
+        if (TimesWork.workStarted) {
             // set alarm
             if (prefs.endHoursWarnEnabled) {
                 // set an alarm to normal work hour, use explicit intent by specifying the receiver class
