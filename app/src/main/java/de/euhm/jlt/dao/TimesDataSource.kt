@@ -1,6 +1,5 @@
-/*
+/**
  * @file TimesDataSource.kt
- * @author Holger Mueller
  * 
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * Converted from Java to Kotlin by Android Studio Meerkat | 2024.3.1 in March 2025
@@ -85,12 +84,19 @@ class TimesDataSource(context: Context?) {
         return getTimes(id)
     }
 
+    /**
+     * Insert given `times` time into db.
+     * @param times Times to insert into db
+     */
     fun createTimes(times: Times): Times {
         return createTimes(times.timeStart, times.timeEnd, times.homeOffice)
     }
 
-    fun createTimes(tw: TimesWork): Times {
-        return createTimes(tw.timeStart, tw.timeEnd, tw.homeOffice)
+    /**
+     * Insert current TimesWork time into db.
+     */
+    fun createTimes(): Times {
+        return createTimes(TimesWork.timeStart, TimesWork.timeEnd, TimesWork.homeOffice)
     }
 
     private fun updateTimes(id: Long, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Int {
