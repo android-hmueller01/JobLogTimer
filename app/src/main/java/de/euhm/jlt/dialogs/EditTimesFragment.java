@@ -96,7 +96,7 @@ public class EditTimesFragment extends DialogFragment {
 				.setNegativeButton(R.string.button_cancel, (dialog, id) -> {
 					// handle cancel button
 				});
-		if (mTimes.getId() != -1) {
+		if (mTimes.id != -1) {
 			builder.setView(mView)
 					.setNeutralButton(R.string.button_delete, (dialog, id) -> {
 						// handle neutral/delete button
@@ -144,7 +144,7 @@ public class EditTimesFragment extends DialogFragment {
 		}
 		timePicker.setIs24HourView(true);
 
-		cal.setTimeInMillis(times.getTimeEnd());
+		cal.setTimeInMillis(times.timeEnd);
 		timePicker = view.findViewById(R.id.timePickerEnd);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			timePicker.setHour(cal.get(Calendar.HOUR_OF_DAY));
@@ -156,7 +156,7 @@ public class EditTimesFragment extends DialogFragment {
 		timePicker.setIs24HourView(true);
 
 		CheckBox homeOfficeCb = view.findViewById(R.id.homeoffice_cb);
-		homeOfficeCb.setChecked(times.getHomeOffice());
+		homeOfficeCb.setChecked(times.homeOffice);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class EditTimesFragment extends DialogFragment {
 		Calendar cal = Calendar.getInstance();
 
 		// get start time
-		cal.setTimeInMillis(times.getTimeStart());
+		cal.setTimeInMillis(times.timeStart);
 		DatePicker datePicker = view.findViewById(R.id.datePicker1);
 		cal.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
 		cal.set(Calendar.MONTH, datePicker.getMonth());
@@ -186,7 +186,7 @@ public class EditTimesFragment extends DialogFragment {
 			cal.set(Calendar.MINUTE, timePicker.getCurrentMinute());
 		}
 		// set start time
-		times.setTimeStart(cal.getTimeInMillis());
+		times.timeStart = cal.getTimeInMillis();
 
 		// get end time
 		timePicker = view.findViewById(R.id.timePickerEnd);
@@ -198,11 +198,11 @@ public class EditTimesFragment extends DialogFragment {
 			cal.set(Calendar.MINUTE, timePicker.getCurrentMinute());
 		}
 		// set end time
-		times.setTimeEnd(cal.getTimeInMillis());
+		times.timeEnd = cal.getTimeInMillis();
 
 		// get home office setting
 		CheckBox homeOfficeCb = view.findViewById(R.id.homeoffice_cb);
-		times.setHomeOffice(homeOfficeCb.isChecked());
+		times.homeOffice = homeOfficeCb.isChecked();
 
 		return times;
 	}
