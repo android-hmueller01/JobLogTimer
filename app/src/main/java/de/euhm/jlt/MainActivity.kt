@@ -1,6 +1,6 @@
 /**
  * @file MainActivity.kt
- * 
+ *
  * Main activity of JobLogTimer
  *
  * Converted from Java to Kotlin by Android Studio Meerkat | 2024.3.1 in March 2025
@@ -187,9 +187,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         // Construct TimesWork DAO with persistent data
-        mTW = TimesWork(context)
+        //mTW = TimesWork(context)
+        TimesWork.loadTimesWork(context)
 
-        //mTW.timeEnd(-1); // only for debugging, resetting End time
+        //TimesWork.timeEnd = -1L // only for debugging, resetting End time
 
         // Setup FloatingActionButton from android.support.design.widget.FloatingActionButton for API < 21.
         mFab = findViewById(R.id.fab)
@@ -388,7 +389,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // method to efficiently enable/disable items or otherwise dynamically modify the contents.
 
         // show start/end action button
-        if (mTW.workStarted) {
+        if (TimesWork.workStarted) {
             menu.findItem(R.id.action_start).setVisible(false)
             menu.findItem(R.id.action_end).setVisible(true)
         } else {
@@ -414,8 +415,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (id == R.id.action_filter) {
             // prepare to edit filter
             val filterFrag = FilterFragment()
-            filterFrag.setPickerMonth(mTW.filterMonth)
-            filterFrag.setPickerYear(mTW.filterYear)
+            filterFrag.setPickerMonth(TimesWork.filterMonth)
+            filterFrag.setPickerYear(TimesWork.filterYear)
             // Display the edit fragment as the main content.
             supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(0, filterFrag)
@@ -598,10 +599,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // update statistics, it might change ...
         mMainSectionFragment.updateStatisticsView()
         // if work was started it might change the day ...
-        if (mTW.workStarted) {
+        if (TimesWork.workStarted) {
             mMainSectionFragment.updateTimesView()
             // reset alarms and notification
-            AlarmUtils.setAlarms(this, mTW)
+            AlarmUtils.setAlarms(this)
         }
         Toast.makeText(this, R.string.database_delete_positive_result, Toast.LENGTH_SHORT).show()
 
@@ -628,12 +629,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun onCheckboxClicked(view: View) {
         // Check which checkbox was clicked
         if (view.id == R.id.homeoffice_cb) {
-            // save the Home Office check box into mTW dataset
-            mTW.homeOffice = (view as CheckBox).isChecked
-            if (mTW.workStarted) {
+            // save the Home Office check box into TimesWork dataset
+            TimesWork.homeOffice = (view as CheckBox).isChecked
+            if (TimesWork.workStarted) {
                 mMainSectionFragment.updateTimesView()
                 // reset alarms and notification
-                AlarmUtils.setAlarms(this, mTW)
+                AlarmUtils.setAlarms(this)
             }
         } else {
             throw IllegalStateException("Unexpected value: " + view.id)
@@ -642,10 +643,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Suppress("UNUSED_PARAMETER")
     fun showDatePickerDialog(v: View?) {
-        if (mTW.workStarted) {
-            // do not set mTW.timeStart to current time, otherwise we can not cancel ...
+        if (TimesWork.workStarted) {
+            // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
-            if (mTW.timeStart != -1L) cal.timeInMillis = mTW.timeStart
+            if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
             val datePicker = DatePickerFragment()
             datePicker[cal] = R.string.date_text
             datePicker.show(supportFragmentManager, "datePicker")
@@ -656,10 +657,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Suppress("UNUSED_PARAMETER")
     fun showTimePickerDialogStartTime(v: View?) {
-        if (mTW.workStarted) {
-            // do not set mTW.timeStart to current time, otherwise we can not cancel ...
+        if (TimesWork.workStarted) {
+            // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
-            if (mTW.timeStart != -1L) cal.timeInMillis = mTW.timeStart
+            if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
             val timePicker = TimePickerFragment()
             timePicker[cal] = R.string.start_time_set
             timePicker.show(supportFragmentManager, "timePicker")
@@ -670,10 +671,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Suppress("UNUSED_PARAMETER")
     fun showTimePickerDialogEndTime(v: View?) {
-        if (mTW.workStarted) {
-            // do not set mTW.timeEnd to current time, otherwise we can not cancel ...
+        if (TimesWork.workStarted) {
+            // do not set TimesWork.timeEnd to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
-            if (mTW.timeEnd != -1L) cal.timeInMillis = mTW.timeEnd
+            if (TimesWork.timeEnd != -1L) cal.timeInMillis = TimesWork.timeEnd
             val timePicker = TimePickerFragment()
             timePicker[cal] = R.string.end_time_set
             timePicker.show(supportFragmentManager, "timePicker")
@@ -687,20 +688,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // set time depending on titleId
         if (titleId == R.string.start_time_set) {
             val calTimeStart = TimeUtil.getCurrentTime()
-            if (mTW.timeStart != -1L) calTimeStart.timeInMillis = mTW.timeStart
+            if (TimesWork.timeStart != -1L) calTimeStart.timeInMillis = TimesWork.timeStart
             calTimeStart[Calendar.HOUR_OF_DAY] = cal[Calendar.HOUR_OF_DAY]
             calTimeStart[Calendar.MINUTE] = cal[Calendar.MINUTE]
-            mTW.calStart = calTimeStart
+            TimesWork.calStart = calTimeStart
         } else if (titleId == R.string.end_time_set) {
             val calTimeEnd = TimeUtil.getCurrentTime()
-            if (mTW.timeEnd != -1L) calTimeEnd.timeInMillis = mTW.timeEnd
+            if (TimesWork.timeEnd != -1L) calTimeEnd.timeInMillis = TimesWork.timeEnd
             calTimeEnd[Calendar.HOUR_OF_DAY] = cal[Calendar.HOUR_OF_DAY]
             calTimeEnd[Calendar.MINUTE] = cal[Calendar.MINUTE]
-            mTW.calEnd = calTimeEnd
+            TimesWork.calEnd = calTimeEnd
         }
         // update view and alarms ...
         mMainSectionFragment.updateTimesView()
-        AlarmUtils.setAlarms(this, mTW)
+        AlarmUtils.setAlarms(this)
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -708,13 +709,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // set time depending on titleId
         if (titleId == R.string.date_text) {
             val calTimeStart = TimeUtil.getCurrentTime()
-            if (mTW.timeStart != -1L) calTimeStart.timeInMillis = mTW.timeStart
+            if (TimesWork.timeStart != -1L) calTimeStart.timeInMillis = TimesWork.timeStart
             calTimeStart[cal[Calendar.YEAR], cal[Calendar.MONTH]] = cal[Calendar.DAY_OF_MONTH]
-            mTW.calStart = calTimeStart
-            if (mTW.timeEnd != -1L) {
-                val calTimeEnd = mTW.calEnd
+            TimesWork.calStart = calTimeStart
+            if (TimesWork.timeEnd != -1L) {
+                val calTimeEnd = TimesWork.calEnd
                 calTimeEnd[cal[Calendar.YEAR], cal[Calendar.MONTH]] = cal[Calendar.DAY_OF_MONTH]
-                mTW.calEnd = calTimeEnd
+                TimesWork.calEnd = calTimeEnd
             }
         } else {
             throw IllegalStateException("Unexpected value: $titleId")
@@ -722,7 +723,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // update view and alarms ...
         mMainSectionFragment.updateTimesView()
         mMainSectionFragment.updateStatisticsView()
-        AlarmUtils.setAlarms(this, mTW)
+        AlarmUtils.setAlarms(this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -788,7 +789,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // remember, that activity is paused
         CustomApplication.activityPaused()
         // Store TimesWork data in persistent store
-        mTW.saveTimesWork()
+        TimesWork.saveTimesWork(applicationContext)
     }
 
     public override fun onDestroy() {
