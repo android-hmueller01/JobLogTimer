@@ -28,31 +28,30 @@ public class StartStopReceiver extends BroadcastReceiver {
 	private final String LOG_TAG = StartStopReceiver.class.getSimpleName();
 
 	@Override
-	public void onReceive(final Context context, final Intent intent) {
+	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 		Log.v(LOG_TAG, "onReceive() intent '" + action + "'");
 		Prefs prefs = new Prefs(context);
 
 		// Construct/load TimesWork DAO from persistent data
-		TimesWork timesWork = new TimesWork(context);
-		if (timesWork.getWorkStarted()) {
+		if (TimesWork.getWorkStarted()) {
 			// End work ...
-			if (timesWork.getTimeEnd() == -1) {
+			if (TimesWork.getTimeEnd() == -1) {
 				// only use current time, if not set manually
-				timesWork.setTimeEnd(TimeUtil.getCurrentTimeInMillis());
+				TimesWork.setTimeEnd(TimeUtil.getCurrentTimeInMillis());
 			}
-			timesWork.setWorkStarted(false);
+			TimesWork.setWorkStarted(false);
 
 			// write data to database
-			TimesDataSource mDataSource = new TimesDataSource(context);
-			mDataSource.createTimes(timesWork);
-			mDataSource.close();
+			TimesDataSource dataSource = new TimesDataSource(context);
+			dataSource.createTimes();
+			dataSource.close();
 
 			// Store TimesWork DAO to persistent data
-			timesWork.saveTimesWork();
+			TimesWork.saveTimesWork(context);
 
 			// cancel alarms and notification
-			AlarmUtils.setAlarms(context, timesWork);
+			AlarmUtils.setAlarms(context);
 
 			// update views that changes take place
 			context.sendBroadcast(new Intent(Constants.RECEIVER_UPDATE_VIEW));
@@ -63,21 +62,21 @@ public class StartStopReceiver extends BroadcastReceiver {
 			Toast.makeText(context, R.string.work_ended, Toast.LENGTH_SHORT).show();
 		} else {
 			// Start work ...
-			timesWork.setWorkStarted(true);
-			timesWork.setTimeStart(TimeUtil.getCurrentTimeInMillis());
-			timesWork.setTimeEnd(-1);
+			TimesWork.setWorkStarted(true);
+			TimesWork.setTimeStart(TimeUtil.getCurrentTimeInMillis());
+			TimesWork.setTimeEnd(-1);
 			if (prefs.getHomeOfficeUseDefault()) {
 				// use default home office setting from prefs
-				timesWork.setHomeOffice(prefs.getHomeOfficeDefaultSetting());
+				TimesWork.setHomeOffice(prefs.getHomeOfficeDefaultSetting());
 			} // otherwise do not change old timesWork home office value
 			long workedTimeDay = TimeUtil.getFinishedDayWorkTime(context, TimeUtil.getCurrentTime());
-			timesWork.setTimeWorked(workedTimeDay);
+			TimesWork.setTimeWorked(workedTimeDay);
 
 			// Store TimesWork DAO to persistent data
-			timesWork.saveTimesWork();
+			TimesWork.saveTimesWork(context);
 
 			// set alarms and notification
-			AlarmUtils.setAlarms(context, timesWork);
+			AlarmUtils.setAlarms(context);
 
 			// update views that changes take place
 			context.sendBroadcast(new Intent(Constants.RECEIVER_UPDATE_VIEW));
