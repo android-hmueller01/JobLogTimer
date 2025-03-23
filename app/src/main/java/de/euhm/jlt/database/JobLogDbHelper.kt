@@ -12,7 +12,6 @@ package de.euhm.jlt.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.provider.BaseColumns
 import android.util.Log
 import de.euhm.jlt.database.JobLogContract.JobLogTimes
 import de.euhm.jlt.utils.FileUtils
