@@ -22,6 +22,8 @@ object JobLogContract {
 
     /* Inner class that defines the table contents */
     object JobLogTimes : BaseColumns {
+        @Suppress("ConstPropertyName")
+        const val _ID: String = BaseColumns._ID
         const val TABLE_NAME: String = "times"
         const val COLUMN_NAME_TIME_START: String = "start"
         const val COLUMN_NAME_TIME_END: String = "end"
