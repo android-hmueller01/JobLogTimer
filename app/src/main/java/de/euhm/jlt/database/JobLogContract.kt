@@ -1,35 +1,30 @@
-/*
- * @name JobLogContract.java
- * @author hmueller
+/**
+ * @name JobLogContract.kt
  * 
  * based on http://developer.android.com/training/basics/data-storage/databases.html
- * 
- * Licensed under the Apache License, Version 2.0 (the "License")
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Converted from Java to Kotlin by Android Studio Meerkat | 2024.3.1 in March 2025
+ *
+ * MIT License
+ * Copyright (c) 2014-2025 Holger Mueller
  */
-package de.euhm.jlt.database;
+package de.euhm.jlt.database
 
-import android.provider.BaseColumns;
+import android.provider.BaseColumns
 
 /**
  * Defines the schema of the database
  * @author hmueller
- * @version $Rev: 40 $
  */
-public final class JobLogContract {
-    // To prevent someone from accidentally instantiating the contract class,
-    // give it an empty constructor.
-    public JobLogContract() {}
-
-	// If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 2;
-    public static final String DATABASE_NAME = "JobLogTimer.db";
+object JobLogContract {
+    // If you change the database schema, you must increment the database version.
+    const val DATABASE_VERSION: Int = 2
+    const val DATABASE_NAME: String = "JobLogTimer.db"
 
     /* Inner class that defines the table contents */
-    public static abstract class JobLogTimes implements BaseColumns {
-        public static final String TABLE_NAME = "times";
-        public static final String COLUMN_NAME_TIME_START = "start";
-        public static final String COLUMN_NAME_TIME_END = "end";
-        public static final String COLUMN_NAME_HOME_OFFICE = "h_office";
+    object JobLogTimes : BaseColumns {
+        const val TABLE_NAME: String = "times"
+        const val COLUMN_NAME_TIME_START: String = "start"
+        const val COLUMN_NAME_TIME_END: String = "end"
+        const val COLUMN_NAME_HOME_OFFICE: String = "h_office"
     }
 }
