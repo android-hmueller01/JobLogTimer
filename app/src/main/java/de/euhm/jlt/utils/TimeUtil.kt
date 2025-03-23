@@ -20,7 +20,7 @@ import kotlin.math.abs
  *
  * @author hmueller
  */
-open class TimeUtil {
+open class TimeUtil {  // open class can be inherited
     companion object {
         /**
          * Convert time in milliseconds to Calendar.
@@ -150,7 +150,7 @@ open class TimeUtil {
          * @return Normal work end time in milliseconds.
          */
         @JvmStatic
-        fun getNormalWorkEndTime(context: Context?, timeStart: Long, timeWorked: Long, homeOffice: Boolean): Long {
+        fun getNormalWorkEndTime(context: Context, timeStart: Long, timeWorked: Long, homeOffice: Boolean): Long {
             val prefs = Prefs(context)
             var timeEnd = timeStart + prefs.hoursInMillis - timeWorked
             if (homeOffice) {
@@ -197,7 +197,7 @@ open class TimeUtil {
          * @return Maximal work end time in milliseconds.
          */
         @JvmStatic
-        fun getMaxWorkEndTime(context: Context?, timeStart: Long, timeWorked: Long, homeOffice: Boolean): Long {
+        fun getMaxWorkEndTime(context: Context, timeStart: Long, timeWorked: Long, homeOffice: Boolean): Long {
             val prefs = Prefs(context)
             var timeEnd = timeStart + prefs.maxHoursInMillis - timeWorked
             if (homeOffice) {
@@ -240,7 +240,7 @@ open class TimeUtil {
          * @return Worked time in milliseconds.
          */
         @JvmStatic
-        fun getWorkedTime(context: Context?, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Long {
+        fun getWorkedTime(context: Context, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Long {
             val prefs = Prefs(context)
             // calc work time based on start time, end time and break time
             var workedTime = timeEnd - timeStart
@@ -320,7 +320,7 @@ open class TimeUtil {
          * @return Worked time in Milliseconds.
          */
         @JvmStatic
-        fun getWorkedTime(context: Context?, timeStart: Calendar, timeEnd: Calendar, homeOffice: Boolean): Long {
+        fun getWorkedTime(context: Context, timeStart: Calendar, timeEnd: Calendar, homeOffice: Boolean): Long {
             return getWorkedTime(context, timeStart.timeInMillis, timeEnd.timeInMillis, homeOffice)
         }
 
@@ -333,7 +333,7 @@ open class TimeUtil {
          * @return Overtime in Milliseconds.
          */
         @JvmStatic
-        fun getOverTime(context: Context?, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Long {
+        fun getOverTime(context: Context, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Long {
             val prefs = Prefs(context)
             return getWorkedTime(context, timeStart, timeEnd, homeOffice) - prefs.hoursInMillis
         }
@@ -347,7 +347,7 @@ open class TimeUtil {
          * @return Overtime in Milliseconds.
          */
         @JvmStatic
-        fun getOverTime(context: Context?, timeStart: Calendar, timeEnd: Calendar, homeOffice: Boolean): Long {
+        fun getOverTime(context: Context, timeStart: Calendar, timeEnd: Calendar, homeOffice: Boolean): Long {
             return getOverTime(context, timeStart.timeInMillis, timeEnd.timeInMillis, homeOffice)
         }
 
@@ -358,7 +358,7 @@ open class TimeUtil {
          * @return Worked time in Milliseconds.
          */
         @JvmStatic
-        fun getFinishedDayWorkTime(context: Context?, calDay: Calendar): Long {
+        fun getFinishedDayWorkTime(context: Context, calDay: Calendar): Long {
             val calStart = calDay.clone() as Calendar
             val calEnd = Calendar.getInstance()
 
