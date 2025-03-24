@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener,
     OnRequestPermissionsResultCallback {
     private var mTimes: Times? = null // temp. Times for different dialogs
-    private lateinit var mTW: TimesWork // global TimesWork data (static internal data, so same access from all fragments)
+    //private lateinit var mTW: TimesWork // global TimesWork data (static internal data, so same access from all fragments) // TODO: delme
     private var mMainMenu: Menu? = null // saved MainMenu for later use in onKeyUp() and onTabSelected()
     private lateinit var mBackupDbPath: String
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * The [AppSectionsPagerAdapter] that will provide fragments for each of the
      * primary sections of the app. We use a [FragmentPagerAdapter]
      * derivative, which will keep every loaded fragment in memory. If this becomes too memory
-     * intensive, it may be best to switch to a [FragmentStatePagerAdapter].
+     * intensive, it may be best to switch to a FragmentStatePagerAdapter.
      */
     private lateinit var mAppSectionsPagerAdapter: AppSectionsPagerAdapter
 
@@ -166,8 +166,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // set path to Android/data/de.euhm.jlt/files to avoid permission requests
         // mBackupDbPath = getExternalFilesDir(null)!!.absolutePath + File.separatorChar + JobLogContract.DATABASE_NAME
         // path to external storage directory root with name of app
-        mBackupDbPath = Environment.getExternalStorageDirectory().absolutePath +
-                File.separatorChar + resources.getString(R.string.app_name) +
+        mBackupDbPath = Environment.getExternalStorageDirectory().absolutePath + //
+                File.separatorChar + resources.getString(R.string.app_name) + //
                 File.separatorChar + JobLogContract.DATABASE_NAME
 
         // do all the initialization stuff only once, when app gets really started
@@ -274,16 +274,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawerLayout = findViewById(R.id.drawerlayout)
         // Necessary for automatically animated navigation drawer upon open and close.
         // The two strings are not displayed to the user.
-        val toggle: ActionBarDrawerToggle =
-            object : ActionBarDrawerToggle(this,
-                mDrawerLayout,
-                supportToolbar,
-                R.string.drawer_open,
-                R.string.drawer_close) {
-                override fun onDrawerStateChanged(newState: Int) {
-                    mDrawerState = newState
-                }
+        val toggle: ActionBarDrawerToggle = object :
+            ActionBarDrawerToggle(this, mDrawerLayout, supportToolbar, R.string.drawer_open, R.string.drawer_close) {
+            override fun onDrawerStateChanged(newState: Int) {
+                mDrawerState = newState
             }
+        }
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -417,8 +413,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             filterFrag.setPickerYear(TimesWork.filterYear)
             // Display the edit fragment as the main content.
             supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(0, filterFrag)
-                .commit()
+                .add(0, filterFrag).commit()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -645,9 +640,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
             if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
-            val datePicker = DatePickerFragment()
-            datePicker[cal] = R.string.date_text
-            datePicker.show(supportFragmentManager, "datePicker")
+            DatePickerFragment().set(cal, R.string.date_text).show(supportFragmentManager, "datePicker")
         } else {
             Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
         }
@@ -659,9 +652,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
             if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
-            val timePicker = TimePickerFragment()
-            timePicker[cal] = R.string.start_time_set
-            timePicker.show(supportFragmentManager, "timePicker")
+            TimePickerFragment().set(cal, R.string.start_time_set).show(supportFragmentManager, "timePicker")
         } else {
             Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
         }
@@ -673,9 +664,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // do not set TimesWork.timeEnd to current time, otherwise we can not cancel ...
             val cal = TimeUtil.getCurrentTime()
             if (TimesWork.timeEnd != -1L) cal.timeInMillis = TimesWork.timeEnd
-            val timePicker = TimePickerFragment()
-            timePicker[cal] = R.string.end_time_set
-            timePicker.show(supportFragmentManager, "timePicker")
+            TimePickerFragment().set(cal, R.string.end_time_set).show(supportFragmentManager, "timePicker")
         } else {
             Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
         }
@@ -758,6 +747,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
             Constants.PERMISSION_REQUEST_EXACT_ALARM ->
+                // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
                     Log.d(LOG_TAG, "onRequestPermissionsResult(): SCHEDULE_EXACT_ALARM granted")
