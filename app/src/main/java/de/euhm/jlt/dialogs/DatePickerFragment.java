@@ -1,17 +1,18 @@
 /**
- * $Id: DatePickerFragment.java 184 2016-12-21 21:32:19Z hmueller $
+ * @file DatePickerFragment.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 package de.euhm.jlt.dialogs;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
@@ -19,7 +20,6 @@ import java.util.Calendar;
 /**
  * Implements a DialogFragment for picking the date
  * @author hmueller
- * @version $Rev: 184 $
  */
 public class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
@@ -28,24 +28,24 @@ public class DatePickerFragment extends DialogFragment
 		void onFinishDatePickerFragment(Calendar cal, int titleId);
 	}
 
-	private static Calendar mCal = null; // selected date
-	private static int mTitleId = -1; // fragment title id
+	private Calendar mCal = null; // selected date
+	private int mTitleId = -1; // fragment title id
 	private OnDatePickerFragmentListener mListener;
 	
 	public DatePickerFragment() {
 		// create an empty constructor! No args allowed!
 	}
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnDatePickerFragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnDatePickerFragmentListener");
-        }
-    }
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		if (context instanceof OnDatePickerFragmentListener) {
+			mListener = (OnDatePickerFragmentListener) context; // Now it's safe to cast
+		} else {
+			throw new ClassCastException(context + " must implement OnDatePickerFragmentListener");
+		}
+	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		if (mCal == null) {
@@ -60,6 +60,7 @@ public class DatePickerFragment extends DialogFragment
 		// Create a new instance of DatePickerDialog and return it
 		DatePickerDialog datePickerDialog = new DatePickerDialog(
 			getActivity(), this, year, month, day);
+		//  getActivity(), this, year, month, day);
 		//datePickerDialog.setTitle(intTitleId);
 		
 		return datePickerDialog;
