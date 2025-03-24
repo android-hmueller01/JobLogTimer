@@ -1,6 +1,5 @@
 /*
  * @file EditTimesFragment.java
- * @author Holger Mueller
  * 
  * based on http://www.vogella.com/tutorials/AndroidFragments/article.html
  * 
@@ -10,7 +9,6 @@
 package de.euhm.jlt.dialogs;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -43,7 +41,7 @@ public class EditTimesFragment extends DialogFragment {
 
 	private OnEditTimesFragmentListener mListener;
 	private View mView;
-	private static Times mTimes;
+	private Times mTimes;
 
 	public EditTimesFragment() {
 		// create an empty constructor! No args allowed!
@@ -127,7 +125,7 @@ public class EditTimesFragment extends DialogFragment {
 	 * @param view  The current view of the picker
 	 * @param times Times item defines in dao.times
 	 */
-	@TargetApi(23)
+	//@TargetApi(23)
 	private void setTimesPicker(View view, Times times) {
 		Calendar cal = times.getCalStart();
 		DatePicker datePicker = view.findViewById(R.id.datePicker1);
@@ -166,7 +164,7 @@ public class EditTimesFragment extends DialogFragment {
 	 * @param times Current times values
 	 * @return Times with updated values
 	 */
-	@TargetApi(23)
+	//@TargetApi(23)
 	public static Times getTimesPicker(View view, Times times) {
 		Calendar cal = Calendar.getInstance();
 
