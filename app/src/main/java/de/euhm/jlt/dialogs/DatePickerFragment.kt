@@ -49,7 +49,6 @@ class DatePickerFragment : DialogFragment(), OnDateSetListener {
 
         // Create a new instance of DatePickerDialog and return it
         val datePickerDialog = DatePickerDialog(requireActivity(), this, year, month, day)
-
         datePickerDialog.setTitle(mTitleId)
         return datePickerDialog
     }
