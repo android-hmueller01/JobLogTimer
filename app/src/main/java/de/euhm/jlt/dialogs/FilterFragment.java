@@ -1,6 +1,5 @@
-/*
- * @name FilterFragment.java
- * @author hmueller
+/**
+ * @file FilterFragment.java
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +9,6 @@ package de.euhm.jlt.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +34,8 @@ public class FilterFragment extends DialogFragment {
 	}
 
 	private OnFilterFragmentListener mListener;
-	private static int mMonth = 0;
-	private static int mYear = 0;
+	private int mMonth = 0;
+	private int mYear = 0;
 
 	public FilterFragment() {
 		// create an empty constructor! No args allowed!
@@ -56,7 +54,6 @@ public class FilterFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
     }
 
 	@Override
@@ -66,7 +63,7 @@ public class FilterFragment extends DialogFragment {
             throw new NullPointerException("FilterFragment class: setFilter() must be called before onCreateDialog()");
 		}
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         // Get the layout inflater
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -80,24 +77,18 @@ public class FilterFragment extends DialogFragment {
         builder.setView(view)
         	.setTitle(R.string.title_filter)
         	// Add action buttons
-        	.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-        		@Override
-        		public void onClick(DialogInterface dialog, int id) {
-        			// handle Ok button
-        			int month = getPickerMonth(view);
-        			int year= getPickerYear(view);
-        			// Return input to the listener/activity
-        			mListener.onFinishFilterFragment(Constants.BUTTON_OK, month, year);
-        		}
-        	})
-        	.setNegativeButton(R.string.button_clear, new DialogInterface.OnClickListener() {
-        		@Override
-        		public void onClick(DialogInterface dialog, int id) {
-        			// handle clear filter button
-    				// Return input to the listener/activity
-    				mListener.onFinishFilterFragment(Constants.BUTTON_CLEAR, 0, 0);
-        		}
-        	});
+        	.setPositiveButton(R.string.button_ok, (dialog, id) -> {
+				// handle Ok button
+				int month = getPickerMonth(view);
+				int year= getPickerYear(view);
+				// Return input to the listener/activity
+				mListener.onFinishFilterFragment(Constants.BUTTON_OK, month, year);
+			})
+        	.setNegativeButton(R.string.button_clear, (dialog, id) -> {
+				// handle clear filter button
+				// Return input to the listener/activity
+				mListener.onFinishFilterFragment(Constants.BUTTON_CLEAR, 0, 0);
+			});
 
         return builder.create();
     }
@@ -146,13 +137,7 @@ public class FilterFragment extends DialogFragment {
 		monthPicker.setMinValue(1);
 		monthPicker.setMaxValue(12);
 		//monthPicker.setWrapSelectorWheel(false);
-		//monthPicker.setFormatter(value -> String.format(Locale.getDefault(), "%02d", value));
-		monthPicker.setFormatter(new NumberPicker.Formatter() {
-		    @Override
-		    public String format(int value) {
-		        return String.format(Locale.getDefault(), "%02d", value);
-		    }
-		});
+		monthPicker.setFormatter(value -> String.format(Locale.getDefault(), "%02d", value));
 		monthPicker.setValue(mMonth);
 
 		// set year picker
