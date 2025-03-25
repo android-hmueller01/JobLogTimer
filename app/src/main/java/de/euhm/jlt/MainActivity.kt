@@ -199,8 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
             // prepare to edit entry
-            val frag = EditTimesFragment()
-            frag.setTimes(times)
+            val frag = EditTimesFragment().setTimes(times)
             // Display the edit fragment as the main content.
             supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(0, frag).commit()
@@ -450,8 +449,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val times = Times(-1, currentTime, currentTime, false)
 
                 // prepare to edit entry
-                val frag = EditTimesFragment()
-                frag.setTimes(times)
+                val frag = EditTimesFragment().setTimes(times)
                 // Display the edit fragment as the main content.
                 supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .add(0, frag).commit()
