@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener,
     OnRequestPermissionsResultCallback {
     private var mTimes: Times? = null // temp. Times for different dialogs
-    //private lateinit var mTW: TimesWork // global TimesWork data (static internal data, so same access from all fragments) // TODO: delme
     private var mMainMenu: Menu? = null // saved MainMenu for later use in onKeyUp() and onTabSelected()
     private lateinit var mBackupDbPath: String
 
@@ -183,9 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-
-        // Construct TimesWork DAO with persistent data
-        //mTW = TimesWork(context)
+        // Restore data from SharedPreferences to TimesWork DAO persistent data
         TimesWork.loadTimesWork(context)
 
         //TimesWork.timeEnd = -1L // only for debugging, resetting End time
@@ -419,7 +416,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /* removed, as with v0.10 we have no "more" menu any more
- * left commented in case we need it again
+     * left commented in case we need it again
 	@Override
 	public boolean onKeyUp(int keycode, KeyEvent event) {
 	    switch(keycode) {
@@ -433,7 +430,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 	    }
 	    return super.onKeyUp(keycode, event);
 	}
-*//* ******************************************************************
+    */
+
+    /* ******************************************************************
 	 * Navigation drawer menu stuff (onNavigationItemSelected)
 	 * ****************************************************************** */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
