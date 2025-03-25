@@ -76,26 +76,34 @@ class FilterFragment : DialogFragment() {
 
     /**
      * Set the month of the picker. Use current if 0.
-     * @param month Month to set.
+     *
+     * @param month The month to set (1-12), or 0 to use the current month.
+     * @return This [FilterFragment] instance for chaining.
+     * @throws IllegalArgumentException if month is outside the range of 0-12.
      */
     fun setPickerMonth(month: Int): FilterFragment {
-        mMonth = month
-        if (month == 0) {
-            // if zero, use current month
-            mMonth = Calendar.getInstance()[Calendar.MONTH] + 1
+        require(month in 0..12) { "Month must be between 0 and 12." }
+        mMonth = if (month == 0) {
+            // Use current month if 0 is provided.
+            Calendar.getInstance()[Calendar.MONTH] + 1
+        } else {
+            month
         }
         return this
     }
 
     /**
      * Set the year of the picker. Use current if 0.
+     *
      * @param year Year to set.
+     * @return This [FilterFragment] instance for chaining.
      */
     fun setPickerYear(year: Int): FilterFragment {
-        mYear = year
-        if (year == 0) {
+        mYear = if (year == 0) {
             // if zero, use current year
-            mYear = Calendar.getInstance()[Calendar.YEAR]
+            Calendar.getInstance()[Calendar.YEAR]
+        } else {
+            year
         }
         return this
     }
