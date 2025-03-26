@@ -8,8 +8,9 @@ package de.euhm.jlt;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
+
+import androidx.annotation.NonNull;
+
 import de.euhm.jlt.preferences.PreferenceFragment;
 import de.euhm.jlt.preferences.Prefs;
 
@@ -27,7 +28,7 @@ public class SettingsSectionFragment extends PreferenceFragment {
 		super.onAttach(activity);
 	}
 	*/
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 	    super.onAttach(context);
 	}
 
@@ -47,19 +48,15 @@ public class SettingsSectionFragment extends PreferenceFragment {
         // handle inverse enable/disable of "pref_break_atfixtime_key"
         // can not be implemented by an "android:dependency" setting
         findPreference("pref_break_after_hours_enable_key")
-        	.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                    Object newValue) {
-                if (newValue instanceof Boolean) {
-                    Boolean isEnabled = (Boolean)newValue;
-                    getPreferenceScreen()
-                    	.findPreference("pref_break_atfixtime_key")
-                    	.setEnabled(!isEnabled);
-                }
-                return true;
-            }
-        });
+        	.setOnPreferenceChangeListener((preference, newValue) -> {
+				if (newValue instanceof Boolean) {
+					Boolean isEnabled = (Boolean)newValue;
+					getPreferenceScreen()
+						.findPreference("pref_break_atfixtime_key")
+						.setEnabled(!isEnabled);
+				}
+				return true;
+			});
     }
 
 	@Override
