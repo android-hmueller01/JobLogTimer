@@ -14,15 +14,17 @@ import android.app.Application
  * Custom application to keep track of the activity visibility
  * @author hmueller
  */
-object CustomApplication : Application() {
-    var isActivityVisible: Boolean = false
-        private set
+class CustomApplication : Application() {
+    companion object {
+        var isActivityVisible: Boolean = false
+            private set
 
-    fun activityResumed() {
-        isActivityVisible = true
-    }
+        fun activityResumed() {
+            isActivityVisible = true
+        }
 
-    fun activityPaused() {
-        isActivityVisible = false
+        fun activityPaused() {
+            isActivityVisible = false
+        }
     }
 }
