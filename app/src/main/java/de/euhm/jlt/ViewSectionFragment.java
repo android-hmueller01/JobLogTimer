@@ -9,10 +9,12 @@
  */
 package de.euhm.jlt;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -87,6 +89,7 @@ public class ViewSectionFragment extends ListFragment {
 		mContext = context;
 	}
 
+	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -97,7 +100,11 @@ public class ViewSectionFragment extends ListFragment {
 		mDatasource.open();
 
 		// register the update view receiver to update view from service
-		mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW), Context.RECEIVER_NOT_EXPORTED);
+		} else {
+			mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		}
 	}
 
 	@Override
@@ -164,7 +171,7 @@ public class ViewSectionFragment extends ListFragment {
 			// Display the edit fragment as the main content.
 			//.replace(android.R.id.content, new EditTimesFragment())
 			//.addToBackStack(null)
-			getFragmentManager().beginTransaction()
+			getChildFragmentManager().beginTransaction()
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 					.add(0, frag)
 					.commit();
@@ -405,7 +412,7 @@ public class ViewSectionFragment extends ListFragment {
 			mDatasource.open(); // reopen database after import
 			if (result) {
 				// update views that changes take place
-				mContext.sendBroadcast(new Intent(Constants.RECEIVER_UPDATE_VIEW));
+				mContext.sendBroadcast(new Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(mContext.getPackageName()));
 
 				Toast.makeText(mContext, "Imported database " + dbPath, Toast.LENGTH_LONG).show();
 			} else {
