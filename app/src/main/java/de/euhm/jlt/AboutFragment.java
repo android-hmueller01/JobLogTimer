@@ -13,12 +13,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Fragment for showing the about screen
@@ -31,7 +33,7 @@ public class AboutFragment extends DialogFragment {
 	}
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
 
@@ -44,20 +46,21 @@ public class AboutFragment extends DialogFragment {
 	@Override
 	@NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		FragmentActivity activity = requireActivity();
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = activity.getLayoutInflater();
         // Inflate, pass null as the parent view because its going in the dialog layout
         View view = inflater.inflate(R.layout.fragment_about, null);
 
         // set version name defined in Manifest
-        PackageManager pm = getActivity().getPackageManager();
-        String packageName = getActivity().getPackageName();
+        PackageManager pm = activity.getPackageManager();
+        String packageName = activity.getPackageName();
         String versionName = "unknown";
 		try {
 			versionName = pm.getPackageInfo(packageName, 0).versionName;
 		} catch (NameNotFoundException e) {
-			e.printStackTrace();
+			Log.e("AboutFragment", "NameNotFoundException: " + e);
 		}
    		TextView version = view.findViewById(R.id.about_version_val);
         version.setText(versionName);
