@@ -29,7 +29,7 @@ import java.util.Locale
  *
  * @author hmueller
  */
-class ViewTimesListAdapter(context: Context, layoutId: Int, listTimes: MutableList<Times>) :
+class ViewTimesListAdapter(context: Context, layoutId: Int, listTimes: List<Times>) :
     ArrayAdapter<Times>(context, layoutId, listTimes) {
     @Suppress("PrivatePropertyName")
     private val LOG_TAG: String = ViewTimesListAdapter::class.java.simpleName
@@ -43,7 +43,7 @@ class ViewTimesListAdapter(context: Context, layoutId: Int, listTimes: MutableLi
 
         mContext = context
         mLayoutId = layoutId
-        mListTimes = listTimes
+        mListTimes = listTimes as MutableList<Times>
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
