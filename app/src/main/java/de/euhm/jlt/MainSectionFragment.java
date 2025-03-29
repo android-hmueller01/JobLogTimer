@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -77,6 +78,7 @@ public class MainSectionFragment extends Fragment {
 	    mContext = context;
 	}
 
+	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,7 +88,13 @@ public class MainSectionFragment extends Fragment {
 		mTW = new TimesWork(mContext);
 
 		// register the update view receiver to update view from service
-	    mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			mContext.registerReceiver(receiverUpdateView,
+					new IntentFilter(Constants.RECEIVER_UPDATE_VIEW),
+					Context.RECEIVER_NOT_EXPORTED);
+		} else {
+			mContext.registerReceiver(receiverUpdateView, new IntentFilter(Constants.RECEIVER_UPDATE_VIEW));
+		}
 	}
 
 	@Override
@@ -100,7 +108,7 @@ public class MainSectionFragment extends Fragment {
 		    @Override
 		    public boolean onSwipeRight() {
                 //Toast.makeText(mContext, "Right swipe [Previous]", Toast.LENGTH_SHORT).show();
-                Calendar cal = mTW.getStatisticsDate();
+                Calendar cal = TimesWork.getStatisticsDate();
                 cal.add(Calendar.WEEK_OF_YEAR, -1);
                 updateStatisticsView();
 				return true;
@@ -110,10 +118,10 @@ public class MainSectionFragment extends Fragment {
                 //Toast.makeText(mContext, "Left swipe [Next]", Toast.LENGTH_SHORT).show();
 		    	boolean result = false;
 		    	
-                Calendar cal = mTW.getStatisticsDate();
+                Calendar cal = TimesWork.getStatisticsDate();
                 Calendar now = Calendar.getInstance();
                 // do not change cal before we checked if user wants to swipe after current
-                // date, because mTW.getStatisticsDate() returns a static reference!
+                // date, because TimesWork.getStatisticsDate() returns a static reference!
                 now.add(Calendar.WEEK_OF_YEAR, -1);
                 if (cal.before(now)) {
                     cal.add(Calendar.WEEK_OF_YEAR, 1);
@@ -125,7 +133,7 @@ public class MainSectionFragment extends Fragment {
 		    @Override
 		    public boolean onDoubleTap() {
                 //Toast.makeText(mContext, "Double tap [Current Date]", Toast.LENGTH_SHORT).show();
-      		  	mTW.setStatisticsDate(TimeUtil.getCurrentTime());
+      		  	TimesWork.setStatisticsDate(TimeUtil.getCurrentTime());
                 updateStatisticsView();
 				return true;
 		    }
@@ -156,9 +164,9 @@ public class MainSectionFragment extends Fragment {
 		Prefs prefs = new Prefs(mContext);
 		long curTimeMillis = TimeUtil.getCurrentTimeInMillis();
 
-		if (!mTW.getWorkStarted() && (mTW.getTimeStart() != -1) && (mTW.getTimeEnd() != -1)) {
+		if (!TimesWork.getWorkStarted() && (TimesWork.getTimeStart() != -1) && (TimesWork.getTimeEnd() != -1)) {
 			// work is done and times are set
-			curTimeMillis = mTW.getTimeEnd();
+			curTimeMillis = TimesWork.getTimeEnd();
 		}
 
 		// update current time in seconds
@@ -167,17 +175,17 @@ public class MainSectionFragment extends Fragment {
 				getResources().getString(R.string.current_time_text), Calendar.getInstance()));
 
 		// calculate the percentage worked
-		float percentCurrent = (float) (curTimeMillis - mTW.getTimeStart() + mTW.getTimeWorked()) /
-				(float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
-		float percentNormal = (float) (mTW.getNormalWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked()) /
-				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
-		float percentProgressBar = (float) (curTimeMillis - mTW.getTimeStart() + mTW.getTimeWorked()) /
-				(float) (mTW.getMaxWorkEndTime() - mTW.getTimeStart() + mTW.getTimeWorked());
+		float percentCurrent = (float) (curTimeMillis - TimesWork.getTimeStart() + TimesWork.getTimeWorked()) /
+				(float) (mTW.getNormalWorkEndTime() - TimesWork.getTimeStart() + TimesWork.getTimeWorked());
+		float percentNormal = (float) (mTW.getNormalWorkEndTime() - TimesWork.getTimeStart() + TimesWork.getTimeWorked()) /
+				(float) (mTW.getMaxWorkEndTime() - TimesWork.getTimeStart() + TimesWork.getTimeWorked());
+		float percentProgressBar = (float) (curTimeMillis - TimesWork.getTimeStart() + TimesWork.getTimeWorked()) /
+				(float) (mTW.getMaxWorkEndTime() - TimesWork.getTimeStart() + TimesWork.getTimeWorked());
 		
 		TextView tvDate = view.findViewById(R.id.date_val);
 		TextView tvTime = view.findViewById(R.id.start_val);
 		ProgressBar progressBar = view.findViewById(R.id.progress_bar);
-		if (mTW.getTimeStart() == -1) {
+		if (TimesWork.getTimeStart() == -1) {
 			tvDate.setText(" --.--.---- ");
 			tvTime.setText(" --:-- ");
 			progressBar.setSecondaryProgress(0);
@@ -192,16 +200,16 @@ public class MainSectionFragment extends Fragment {
 			tv.setText("-");
 		} else {
 			// view start date and time
-			tvDate.setText(String.format(Locale.getDefault(), " %1$td.%1$tm.%1$tY ", mTW.getCalStart()));
-			tvTime.setText(String.format(Locale.getDefault(), " %tR ", mTW.getCalStart()));
+			tvDate.setText(String.format(Locale.getDefault(), " %1$td.%1$tm.%1$tY ", TimesWork.getCalStart()));
+			tvTime.setText(String.format(Locale.getDefault(), " %tR ", TimesWork.getCalStart()));
 
 			// set home office check box
 			CheckBox homeOfficeCb = view.findViewById(R.id.homeoffice_cb);
-			homeOfficeCb.setChecked(mTW.getHomeOffice());
+			homeOfficeCb.setChecked(TimesWork.getHomeOffice());
 
 			// set the progress bar values
-			String workedTimeString = TimeUtil.formatTimeString(mTW.getTimeWorked() +
-					TimeUtil.getWorkedTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice()));
+			String workedTimeString = TimeUtil.formatTimeString(TimesWork.getTimeWorked() +
+					TimeUtil.getWorkedTime(mContext, TimesWork.getTimeStart(), curTimeMillis, TimesWork.getHomeOffice()));
 			String addProgressBarInfo;
 			int progress;
 			int secondaryProgress;
@@ -209,8 +217,8 @@ public class MainSectionFragment extends Fragment {
 				// we are in over time ...
 				progress = (int) Math.floor(percentNormal * 100);
 				secondaryProgress = (int) Math.floor(percentProgressBar * 100);
-				addProgressBarInfo = "(" + TimeUtil.formatTimeString(mTW.getTimeWorked() +
-						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice())) + ")";
+				addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimesWork.getTimeWorked() +
+						TimeUtil.getOverTime(mContext, TimesWork.getTimeStart(), curTimeMillis, TimesWork.getHomeOffice())) + ")";
 			} else {
 				// we are in normal work time, no secondaryProgress needed
 				progress = (int) Math.floor(percentProgressBar * 100);
@@ -218,8 +226,8 @@ public class MainSectionFragment extends Fragment {
 				if (prefs.getViewPercentEnabled()) {
 					addProgressBarInfo = "(" + (int) Math.floor(percentCurrent * 100) + "%)";
 				} else {
-					addProgressBarInfo = "(" + TimeUtil.formatTimeString(mTW.getTimeWorked() +
-						TimeUtil.getOverTime(mContext, mTW.getTimeStart(), curTimeMillis, mTW.getHomeOffice())) + ")";
+					addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimesWork.getTimeWorked() +
+						TimeUtil.getOverTime(mContext, TimesWork.getTimeStart(), curTimeMillis, TimesWork.getHomeOffice())) + ")";
 				}
 			}
 			progressBar.setSecondaryProgress(secondaryProgress);
@@ -231,7 +239,7 @@ public class MainSectionFragment extends Fragment {
 			
 			// set tick 1 values
 			tv = view.findViewById(R.id.progress_bar_time_1);
-			tv.setText(String.format(Locale.getDefault(), "%tR", mTW.getCalStart()));
+			tv.setText(String.format(Locale.getDefault(), "%tR", TimesWork.getCalStart()));
 			
 			// set tick 2 values
 			v = view.findViewById(R.id.progress_bar_tick_2);
@@ -252,10 +260,10 @@ public class MainSectionFragment extends Fragment {
 		}
 
 		tv = view.findViewById(R.id.end_val);
-		if (mTW.getTimeEnd() == -1) {
+		if (TimesWork.getTimeEnd() == -1) {
 			tv.setText(" --:-- ");
 		} else {
-			tv.setText(String.format(Locale.getDefault(), " %tR ", mTW.getCalEnd()));
+			tv.setText(String.format(Locale.getDefault(), " %tR ", TimesWork.getCalEnd()));
 		}
 	}
 
@@ -340,7 +348,7 @@ public class MainSectionFragment extends Fragment {
 		TextView tv;
 		
 		// weekly statistics
-		calStart = (Calendar) mTW.getStatisticsDate().clone();
+		calStart = (Calendar) TimesWork.getStatisticsDate().clone();
 		calcCalendarWeekRange(calStart, calEnd);
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime);
         Log.d(LOG_TAG, String.format(Locale.getDefault(),
@@ -369,7 +377,7 @@ public class MainSectionFragment extends Fragment {
 	    }
 
         // monthly statistics
-		calStart = (Calendar) mTW.getStatisticsDate().clone();
+		calStart = (Calendar) TimesWork.getStatisticsDate().clone();
 		calcCalendarMonthRange(calStart, calEnd);
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime);
 		Log.d(LOG_TAG, String.format(Locale.getDefault(),
