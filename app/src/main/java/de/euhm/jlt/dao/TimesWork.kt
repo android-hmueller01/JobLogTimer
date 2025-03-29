@@ -32,7 +32,7 @@ class TimesWork(private val mContext: Context) {
      *
      * @return Normal work end time
      */
-    val normalWorkEndTime: Long
+    val normalWorkEndTime: Long  // TODO: make this static and add context parameter
         get() = TimeUtil.getNormalWorkEndTime(mContext, timeStart, timeWorked, homeOffice)
 
     /**
