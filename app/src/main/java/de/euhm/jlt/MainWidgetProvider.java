@@ -49,18 +49,18 @@ public class MainWidgetProvider extends AppWidgetProvider {
 					R.layout.widget_main);
 
 			// is work started?
-			if (timesWork.getWorkStarted()) {
+			if (TimesWork.getWorkStarted()) {
 				// update widget info line
 				long curTimeMillis = TimeUtil.getCurrentTimeInMillis();
-				long workTime = TimeUtil.getWorkedTime(context, timesWork.getTimeStart(), curTimeMillis, timesWork.getHomeOffice());
-				long overTime = TimeUtil.getOverTime(context, timesWork.getTimeStart(), curTimeMillis, timesWork.getHomeOffice());
+				long workTime = TimeUtil.getWorkedTime(context, TimesWork.getTimeStart(), curTimeMillis, TimesWork.getHomeOffice());
+				long overTime = TimeUtil.getOverTime(context, TimesWork.getTimeStart(), curTimeMillis, TimesWork.getHomeOffice());
 				remoteViews.setTextViewText(R.id.widget_info_line1,
 						TimeUtil.formatTimeString24(workTime));
 				remoteViews.setTextViewText(R.id.widget_info_line2, "(" +
 						TimeUtil.formatTimeString24(overTime) + ")");
 				// update the progress bar (worked time)
-				int progress = (int) (100 * (float) (curTimeMillis - timesWork.getTimeStart()) / 
-						(float) (timesWork.getNormalWorkEndTime() - timesWork.getTimeStart()));
+				int progress = (int) (100 * (float) (curTimeMillis - TimesWork.getTimeStart()) /
+						(float) (timesWork.getNormalWorkEndTime() - TimesWork.getTimeStart()));
 				//if (progress > 100) progress = 100;
 				remoteViews.setProgressBar(R.id.widget_progress_bar, 100, progress, false);
 				if (curTimeMillis > timesWork.getNormalWorkEndTime()) {
