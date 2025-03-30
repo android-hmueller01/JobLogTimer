@@ -1,5 +1,5 @@
 /**
- * file PreferenceFragment.java
+ * @file PreferenceFragment.java
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -43,7 +44,7 @@ public abstract class PreferenceFragment extends Fragment {
 	private static final float HC_HORIZONTAL_PADDING = 16;
 
 	@SuppressLint("HandlerLeak")
-	private final Handler mHandler = new Handler() {
+	private final Handler mHandler = new Handler(Looper.getMainLooper()) {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -244,9 +245,6 @@ public abstract class PreferenceFragment extends Fragment {
 			throw new RuntimeException("Content has view with id attribute 'android.R.id.list' that is not a ListView class");
 		}
 		mList = (ListView) rawListView;
-		if (mList == null) {
-			throw new RuntimeException("Your content must have a ListView whose id attribute is 'android.R.id.list'");
-		}
 		mHandler.sendEmptyMessage(MSG_REQUEST_FOCUS);
 	}
 }
