@@ -135,6 +135,7 @@ object TimeUtil { // create a singleton (static) class
      * @param time Time in milliseconds.
      * @return Date string formatted like dd.mm.YYYY.
      */
+    @Suppress("unused")
     @JvmStatic
     fun formatDateString(time: Long): String {
         return String.format(Locale.getDefault(), "%1\$td.%1\$tm.%1\$tY", time)
