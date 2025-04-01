@@ -13,8 +13,8 @@ import android.preference.PreferenceManager;
 /**
  * Helper class to handle preferences
  * @author hmueller
+ * @noinspection SameParameterValue
  */
-@SuppressWarnings("unused")
 public class Prefs {
 	private final SharedPreferences mSharedPreferencesSettings;
 
@@ -40,8 +40,7 @@ public class Prefs {
 	 * @return The preference value if it exists, or defValue.
 	 */
 	private boolean getBoolean(String key, boolean defValue) {
-		boolean result = mSharedPreferencesSettings.getBoolean(key, defValue);
-		return result;
+		return mSharedPreferencesSettings.getBoolean(key, defValue);
 	}
 
 	/**
@@ -65,8 +64,7 @@ public class Prefs {
 	 */
 	private float getFloat(String key, float defValue) {
 		String value = mSharedPreferencesSettings.getString(key, "" + defValue);
-		float result = Float.parseFloat(value);
-		return result;
+		return Float.parseFloat(value);
 	}
 
 	/**
@@ -74,10 +72,10 @@ public class Prefs {
 	 * @param key The name of the preference to retrieve.
 	 * @param defValue Value to return if this preference does not exist.
 	 * @return The preference value if it exists, or defValue.
+     * @noinspection unused
 	 */
 	private String getString(String key, String defValue) {
-		String value = mSharedPreferencesSettings.getString(key, defValue);
-		return value;
+		return mSharedPreferencesSettings.getString(key, defValue);
 	}
 
 	
@@ -125,7 +123,7 @@ public class Prefs {
 	 * @return Break time in milliseconds.
 	 */
 	public long getBreakTimeInMillis() {
-		return (long) (getInteger("pref_break_time_key", 0) * 1000 * 60);
+		return getInteger("pref_break_time_key", 0) * 1000L * 60L;
 	}
 
 	/**
@@ -194,7 +192,7 @@ public class Prefs {
 	 * @return Time in milliseconds before maximal work time.
 	 */
 	public long getMaxHoursWarnBeforeInMillis() {
-		return (long) (getInteger("pref_max_hours_warn_before_key", 0) * 1000 * 60);
+		return getInteger("pref_max_hours_warn_before_key", 0) * 1000L * 60L;
 	}
 
 	/**
