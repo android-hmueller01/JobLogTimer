@@ -30,6 +30,9 @@ import de.euhm.jlt.utils.AlarmUtils
  * > ...\adt\sdk\platform-tools\adb devices
  */
 class OnBootReceiver : BroadcastReceiver() {
+    @Suppress("PrivatePropertyName")
+    private val LOG_TAG: String = OnBootReceiver::class.java.simpleName
+
     override fun onReceive(context: Context, intent: Intent) {
         // test if the received intent is really a BOOT_COMPLETED
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
@@ -40,9 +43,5 @@ class OnBootReceiver : BroadcastReceiver() {
         } else {
             Log.e(LOG_TAG, "getAction() != ACTION_BOOT_COMPLETED. This should never happen!")
         }
-    }
-
-    companion object {
-        private val LOG_TAG: String by lazy { OnBootReceiver::class.java.simpleName }
     }
 }
