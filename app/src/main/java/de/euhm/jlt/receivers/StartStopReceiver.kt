@@ -58,7 +58,7 @@ class StartStopReceiver : BroadcastReceiver() {
             context.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(context.packageName))
 
             // update AppWidgetProvider
-            context.sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE))
+            context.sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).setPackage(context.packageName))
 
             Toast.makeText(context, R.string.work_ended, Toast.LENGTH_SHORT).show()
         } else {
@@ -81,7 +81,7 @@ class StartStopReceiver : BroadcastReceiver() {
             setAlarms(context)
 
             // update views that changes take place
-            context.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW))
+            context.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(context.packageName))
 
             // update AppWidgetProvider
             context.sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).setPackage(context.packageName))
