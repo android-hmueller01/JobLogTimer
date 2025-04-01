@@ -30,7 +30,8 @@
         		android:text="@string/date_text" />
             <TextView
                 android:id="@+id/date_val"
-        		android:gravity="center"
+                android:focusable="true"
+                android:gravity="center"
         		android:background="@color/sysLtGray"
         		android:clickable="true"
         		android:onClick="showDatePickerDialog"
@@ -47,7 +48,8 @@
         		android:text="@string/start_text" />
             <TextView
                 android:id="@+id/start_val"
-        		android:gravity="center"
+                android:focusable="true"
+                android:gravity="center"
         		android:background="@color/sysLtGray"
         		android:clickable="true"
         		android:onClick="showTimePickerDialogStartTime"
@@ -64,7 +66,8 @@
         		android:text="@string/end_text" />
             <TextView
                 android:id="@+id/end_val"
-        		android:gravity="center"
+                android:focusable="true"
+                android:gravity="center"
         		android:background="@color/sysLtGray"
         		android:clickable="true"
         		android:onClick="showTimePickerDialogEndTime"
