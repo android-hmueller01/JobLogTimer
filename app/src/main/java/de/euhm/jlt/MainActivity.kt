@@ -33,6 +33,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -80,6 +81,8 @@ import java.util.Locale
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnEditTimesFragmentListener,
     YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener,
     OnRequestPermissionsResultCallback {
+    @Suppress("PrivatePropertyName")
+    private val LOG_TAG: String = MainActivity::class.java.simpleName
     private var mTimes: Times? = null // temp. Times for different dialogs
     private var mMainMenu: Menu? = null // saved MainMenu for later use in onKeyUp() and onTabSelected()
     private lateinit var mBackupDbPath: String
@@ -104,6 +107,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private lateinit var mDrawerLayout: DrawerLayout
     private var mDrawerState: Int = 0 // state of drawer (s. e.g. DrawerLayout.STATE_SETTLING)
+
+    /**
+     * Used by onBackPressedDispatcher to implement the onBackPressed callback
+     */
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     /**
      * The [FloatingActionButton] that will
@@ -281,6 +289,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val navigationView = findViewById<NavigationView>(R.id.navigation_drawer)
         navigationView.setNavigationItemSelectedListener(this)
+
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // if drawer is open, close it instead of closing the app
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    // Let the system handle the default back behavior (e.g., finish the activity)
+                    finish()
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onStart() {
@@ -391,7 +412,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onPrepareOptionsMenu(menu)
     }
 
-    @SuppressLint("NonConstantResourceId")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -488,16 +508,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         return true
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // if drawer is open, close it instead of closing the app
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
     }
 
     /* ******************************************************************
@@ -754,12 +764,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
+    public override fun onSaveInstanceState(outState: Bundle) {
         // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState)
+        super.onSaveInstanceState(outState)
         if (mTimes != null) {
             // Save the user's current selected time
-            mTimes!!.saveInstanceState(savedInstanceState)
+            mTimes!!.saveInstanceState(outState)
         }
     }
 
@@ -790,8 +800,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     companion object {
-        private val LOG_TAG: String by lazy { MainActivity::class.java.simpleName }
-
         @JvmField
         var mMainSectionFragment: MainSectionFragment = MainSectionFragment()
 
