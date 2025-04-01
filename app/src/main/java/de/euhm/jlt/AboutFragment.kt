@@ -38,11 +38,10 @@ class AboutFragment : DialogFragment() {
         val packageName = activity.packageName
         var versionName = "unknown"
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                versionName = pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+            versionName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName!!
             } else {
-                @Suppress("DEPRECATION")
-                versionName = pm.getPackageInfo(packageName,0).versionName
+                pm.getPackageInfo(packageName,0).versionName!!
             }
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e("AboutFragment", "NameNotFoundException: $e")
