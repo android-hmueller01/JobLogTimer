@@ -94,7 +94,7 @@ class JobLogDbHelper(context: Context) :
         return false
     }
 
-    companion object {
+    internal companion object {
         private const val SQL_TABLE_CREATE = ("CREATE TABLE " + JobLogTimes.TABLE_NAME + " (`" + //
                 JobLogTimes._ID + "` INTEGER PRIMARY KEY, `" + //
                 JobLogTimes.COLUMN_NAME_TIME_START + "` INTEGER, `" + //
