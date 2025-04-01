@@ -297,7 +297,7 @@ open class OnSwipeTouchListener(context: Context, val view: View) : OnTouchListe
     /**
      * Override this to get a single tap event.
      */
-    fun onSingleTap() {
+    open fun onSingleTap() {
     }
 
     /**
