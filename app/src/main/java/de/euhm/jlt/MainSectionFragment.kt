@@ -26,12 +26,16 @@ import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import de.euhm.jlt.dao.Times
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
+import de.euhm.jlt.dialogs.DatePickerFragment
+import de.euhm.jlt.dialogs.TimePickerFragment
 import de.euhm.jlt.preferences.Prefs
+import de.euhm.jlt.utils.AlarmUtils
 import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.LongRef
 import de.euhm.jlt.utils.TimeUtil
@@ -94,6 +98,49 @@ class MainSectionFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_section_main, container, false)
+
+        view.findViewById<TextView>(R.id.date_val).setOnClickListener {
+            if (TimesWork.workStarted) {
+                // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
+                val cal = TimeUtil.getCurrentTime()
+                if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
+                DatePickerFragment().set(cal, R.string.date_text).show(parentFragmentManager, "datePicker")
+            } else {
+                Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        view.findViewById<TextView>(R.id.start_val).setOnClickListener {
+            if (TimesWork.workStarted) {
+                // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
+                val cal = TimeUtil.getCurrentTime()
+                if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
+                TimePickerFragment().set(cal, R.string.start_time_set).show(parentFragmentManager, "timePicker")
+            } else {
+                Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        view.findViewById<TextView>(R.id.end_val).setOnClickListener {
+            if (TimesWork.workStarted) {
+                // do not set TimesWork.timeEnd to current time, otherwise we can not cancel ...
+                val cal = TimeUtil.getCurrentTime()
+                if (TimesWork.timeEnd != -1L) cal.timeInMillis = TimesWork.timeEnd
+                TimePickerFragment().set(cal, R.string.end_time_set).show(parentFragmentManager, "timePicker")
+            } else {
+                Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        view.findViewById<TextView>(R.id.homeoffice_cb).setOnClickListener {
+            // save the Home Office check box into TimesWork dataset
+            TimesWork.homeOffice = (it as CheckBox).isChecked
+            if (TimesWork.workStarted) {
+                updateTimesView()
+                // reset alarms and notification
+                AlarmUtils.setAlarms(mContext)
+            }
+        }
 
         // setup the left/right main statistics swipe gesture
         onSwipeTouchListener = object : OnSwipeTouchListener(mContext, view.findViewById(R.id.layout_main_statistics)) {
