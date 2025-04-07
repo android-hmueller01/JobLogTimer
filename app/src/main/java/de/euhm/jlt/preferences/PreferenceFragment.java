@@ -130,7 +130,7 @@ public abstract class PreferenceFragment extends Fragment {
 		}
 	}
 
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		if (preferenceScreen != null) {
