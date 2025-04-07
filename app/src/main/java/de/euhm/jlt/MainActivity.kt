@@ -28,8 +28,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.View
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -57,13 +55,11 @@ import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.database.JobLogContract
 import de.euhm.jlt.dialogs.ConfirmDialogFragment
 import de.euhm.jlt.dialogs.ConfirmDialogFragment.YesNoListener
-import de.euhm.jlt.dialogs.DatePickerFragment
 import de.euhm.jlt.dialogs.DatePickerFragment.OnDatePickerFragmentListener
 import de.euhm.jlt.dialogs.EditTimesFragment
 import de.euhm.jlt.dialogs.EditTimesFragment.OnEditTimesFragmentListener
 import de.euhm.jlt.dialogs.FilterFragment
 import de.euhm.jlt.dialogs.FilterFragment.OnFilterFragmentListener
-import de.euhm.jlt.dialogs.TimePickerFragment
 import de.euhm.jlt.dialogs.TimePickerFragment.OnTimePickerFragmentListener
 import de.euhm.jlt.receivers.AlarmReceiver
 import de.euhm.jlt.receivers.StartStopReceiver
@@ -626,58 +622,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun onCheckboxClicked(view: View) {
-        // Check which checkbox was clicked
-        if (view.id == R.id.homeoffice_cb) {
-            // save the Home Office check box into TimesWork dataset
-            TimesWork.homeOffice = (view as CheckBox).isChecked
-            if (TimesWork.workStarted) {
-                mMainSectionFragment.updateTimesView()
-                // reset alarms and notification
-                AlarmUtils.setAlarms(this)
-            }
-        } else {
-            throw IllegalStateException("Unexpected value: " + view.id)
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showDatePickerDialog(v: View?) {
-        if (TimesWork.workStarted) {
-            // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
-            val cal = TimeUtil.getCurrentTime()
-            if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
-            DatePickerFragment().set(cal, R.string.date_text).show(supportFragmentManager, "datePicker")
-        } else {
-            Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showTimePickerDialogStartTime(v: View?) {
-        if (TimesWork.workStarted) {
-            // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
-            val cal = TimeUtil.getCurrentTime()
-            if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
-            TimePickerFragment().set(cal, R.string.start_time_set).show(supportFragmentManager, "timePicker")
-        } else {
-            Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showTimePickerDialogEndTime(v: View?) {
-        if (TimesWork.workStarted) {
-            // do not set TimesWork.timeEnd to current time, otherwise we can not cancel ...
-            val cal = TimeUtil.getCurrentTime()
-            if (TimesWork.timeEnd != -1L) cal.timeInMillis = TimesWork.timeEnd
-            TimePickerFragment().set(cal, R.string.end_time_set).show(supportFragmentManager, "timePicker")
-        } else {
-            Toast.makeText(this, R.string.work_not_started, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
     override fun onFinishTimePickerFragment(cal: Calendar, titleId: Int) {
         // set time depending on titleId
         if (titleId == R.string.start_time_set) {
@@ -698,7 +642,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AlarmUtils.setAlarms(this)
     }
 
-    @SuppressLint("NonConstantResourceId")
     override fun onFinishDatePickerFragment(cal: Calendar, titleId: Int) {
         // set time depending on titleId
         if (titleId == R.string.date_text) {
