@@ -325,6 +325,19 @@ object TimeUtil { // create a singleton (static) class
     }
 
     /**
+     * Get worked time of a day (corrected by the break times).
+     * @param context The context used for the preferences values.
+     * @param timeStart Start time in milliseconds.
+     * @param timeEnd End time in milliseconds.
+     * @param homeOffice true if work is in home office (no breaks)
+     * @param timeWorked Time already worked that day in milliseconds.
+     * @return Worked time in milliseconds.
+     */
+    fun getWorkedTime(context: Context, timeStart: Long, timeEnd: Long, homeOffice: Boolean, timeWorked: Long): Long {
+        return getWorkedTime(context, timeStart, timeEnd, homeOffice) + timeWorked
+    }
+
+    /**
      * Get overtime of a working day (corrected by the break times).
      * @param context The context used for the preferences values.
      * @param timeStart Start time in milliseconds.
@@ -349,6 +362,20 @@ object TimeUtil { // create a singleton (static) class
     @JvmStatic
     fun getOverTime(context: Context, timeStart: Calendar, timeEnd: Calendar, homeOffice: Boolean): Long {
         return getOverTime(context, timeStart.timeInMillis, timeEnd.timeInMillis, homeOffice)
+    }
+
+    /**
+     * Get overtime of a working day (corrected by the break times).
+     * @param context The context used for the preferences values.
+     * @param timeStart Start time in milliseconds.
+     * @param timeEnd End time  in milliseconds.
+     * @param homeOffice true if work is in home office (no breaks)
+     * @param timeWorked Time already worked that day in milliseconds.
+     * @return Overtime in Milliseconds.
+     */
+    fun getOverTime(context: Context, timeStart: Long, timeEnd: Long, homeOffice: Boolean, timeWorked: Long): Long {
+        val prefs = Prefs(context)
+        return getWorkedTime(context, timeStart, timeEnd, homeOffice) + timeWorked - prefs.hoursInMillis
     }
 
     /**
