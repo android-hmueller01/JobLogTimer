@@ -64,29 +64,29 @@ class TimesWork(private val mContext: Context) {
 
         // persistent public work data of TimesWork
         // TODO: @JvmStatic can be removed if everything is migrated to Kotlin
-        @JvmStatic
-        var workStarted: Boolean = false // true, if work is started
+        /** true, if work is started */
+        var workStarted: Boolean = false
 
-        @JvmStatic
-        var timeStart: Long = 0L // current start time in milliseconds
+        /** current start time in milliseconds */
+        var timeStart: Long = 0L
 
-        @JvmStatic
-        var timeEnd: Long = 0L // current end time in milliseconds
+        /** current end time in milliseconds */
+        var timeEnd: Long = 0L
 
-        @JvmStatic
-        var timeWorked: Long = 0L // time already worked that day in milliseconds
+        /** time already worked that day in milliseconds */
+        var timeWorked: Long = 0L
 
-        @JvmStatic
-        var homeOffice: Boolean = false // true, if work is in home office
+        /** true, if work is in home office */
+        var homeOffice: Boolean = false
 
-        @JvmStatic
-        var statisticsDate: Calendar = Calendar.getInstance() // Calendar of current statistics view
+        /** Calendar of current statistics view */
+        var statisticsDate: Calendar = Calendar.getInstance()
 
-        @JvmStatic
-        var filterMonth: Int = 0 // view filter month (Jan. = 1), set to 0 to disable
+        /** view filter month (Jan. = 1), set to 0 to disable */
+        var filterMonth: Int = 0
 
-        @JvmStatic
-        var filterYear: Int = 0 // view filter year, set to 0 to disable
+        /** view filter year, set to 0 to disable */
+        var filterYear: Int = 0
 
         /**
          * Get / set the start time of work (Calendar).
