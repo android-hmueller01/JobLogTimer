@@ -22,10 +22,7 @@ import android.widget.RemoteViews
 import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.receivers.StartStopReceiver
 import de.euhm.jlt.utils.Constants
-import de.euhm.jlt.utils.TimeUtil.formatTimeString24
-import de.euhm.jlt.utils.TimeUtil.getCurrentTimeInMillis
-import de.euhm.jlt.utils.TimeUtil.getOverTime
-import de.euhm.jlt.utils.TimeUtil.getWorkedTime
+import de.euhm.jlt.utils.TimeUtil
 
 /**
  * JobLogTimer main widget provider
@@ -49,11 +46,11 @@ class MainWidgetProvider : AppWidgetProvider() {
             // is work started?
             if (TimesWork.workStarted) {
                 // update widget info line
-                val curTimeMillis = getCurrentTimeInMillis()
-                val workTime = getWorkedTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
-                val overTime = getOverTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
-                remoteViews.setTextViewText(R.id.widget_info_line1, formatTimeString24(workTime))
-                remoteViews.setTextViewText(R.id.widget_info_line2, "(" + formatTimeString24(overTime) + ")")
+                val curTimeMillis = TimeUtil.getCurrentTimeInMillis()
+                val workTime = TimeUtil.getWorkedTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
+                val overTime = TimeUtil.getOverTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
+                remoteViews.setTextViewText(R.id.widget_info_line1, TimeUtil.formatTimeString24(workTime))
+                remoteViews.setTextViewText(R.id.widget_info_line2, "(" + TimeUtil.formatTimeString24(overTime) + ")")
                 // update the progress bar (worked time)
                 val progress =
                     (100 * (curTimeMillis - TimesWork.timeStart).toFloat() / (timesWork.normalWorkEndTime - TimesWork.timeStart).toFloat()).toInt()
