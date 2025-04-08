@@ -8,7 +8,7 @@ package de.euhm.jlt.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 /**
  * Helper class to handle preferences
