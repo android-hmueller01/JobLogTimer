@@ -47,8 +47,8 @@ class MainWidgetProvider : AppWidgetProvider() {
             if (TimesWork.workStarted) {
                 // update widget info line
                 val curTimeMillis = TimeUtil.getCurrentTimeInMillis()
-                val workTime = TimeUtil.getWorkedTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
-                val overTime = TimeUtil.getOverTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice)
+                val workTime = TimeUtil.getWorkedTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)
+                val overTime = TimeUtil.getOverTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)
                 remoteViews.setTextViewText(R.id.widget_info_line1, TimeUtil.formatTimeString24(workTime))
                 remoteViews.setTextViewText(R.id.widget_info_line2, "(" + TimeUtil.formatTimeString24(overTime) + ")")
                 // update the progress bar (worked time)
