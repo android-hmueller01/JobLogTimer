@@ -18,9 +18,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import de.euhm.jlt.R
 import de.euhm.jlt.dao.Times
-import de.euhm.jlt.utils.TimeUtil.formatTimeString24
-import de.euhm.jlt.utils.TimeUtil.getOverTime
-import de.euhm.jlt.utils.TimeUtil.getWorkedTime
+import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
 
@@ -72,8 +70,8 @@ class ViewTimesListAdapter(context: Context, layoutId: Int, listTimes: List<Time
         hours.text = String.format(Locale.getDefault(), "%tR - %tR", timeStart, timeEnd)
         duration.text = String.format(Locale.getDefault(),
             "%s (%s)",
-            formatTimeString24(getWorkedTime(mContext, timeStart, timeEnd, times.homeOffice)),
-            formatTimeString24(getOverTime(mContext, timeStart, timeEnd, times.homeOffice)))
+            TimeUtil.formatTimeString24(TimeUtil.getWorkedTime(mContext, timeStart, timeEnd, times.homeOffice)),
+            TimeUtil.formatTimeString24(TimeUtil.getOverTime(mContext, timeStart, timeEnd, times.homeOffice)))
         homeOffice.visibility = if (times.homeOffice) View.VISIBLE else View.INVISIBLE
 
         return cvtView
