@@ -19,11 +19,9 @@ import de.euhm.jlt.R
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.preferences.Prefs
-import de.euhm.jlt.utils.AlarmUtils.setAlarms
+import de.euhm.jlt.utils.AlarmUtils
 import de.euhm.jlt.utils.Constants
-import de.euhm.jlt.utils.TimeUtil.getCurrentTime
-import de.euhm.jlt.utils.TimeUtil.getCurrentTimeInMillis
-import de.euhm.jlt.utils.TimeUtil.getFinishedDayWorkTime
+import de.euhm.jlt.utils.TimeUtil
 
 class StartStopReceiver : BroadcastReceiver() {
     @Suppress("PrivatePropertyName")
@@ -39,7 +37,7 @@ class StartStopReceiver : BroadcastReceiver() {
             // End work ...
             if (TimesWork.timeEnd == -1L) {
                 // only use current time, if not set manually
-                TimesWork.timeEnd = getCurrentTimeInMillis()
+                TimesWork.timeEnd = TimeUtil.getCurrentTimeInMillis()
             }
             TimesWork.workStarted = false
 
@@ -52,7 +50,7 @@ class StartStopReceiver : BroadcastReceiver() {
             TimesWork.saveTimesWork(context)
 
             // cancel alarms and notification
-            setAlarms(context)
+            AlarmUtils.setAlarms(context)
 
             // update views that changes take place
             context.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(context.packageName))
@@ -64,21 +62,21 @@ class StartStopReceiver : BroadcastReceiver() {
         } else {
             // Start work ...
             TimesWork.workStarted = true
-            TimesWork.timeStart = getCurrentTimeInMillis()
+            TimesWork.timeStart = TimeUtil.getCurrentTimeInMillis()
             TimesWork.timeEnd = -1
             if (prefs.homeOfficeUseDefault) {
                 // use default home office setting from prefs
                 TimesWork.homeOffice = prefs.homeOfficeDefaultSetting
             } // otherwise do not change old timesWork home office value
 
-            val workedTimeDay = getFinishedDayWorkTime(context, getCurrentTime())
+            val workedTimeDay = TimeUtil.getFinishedDayWorkTime(context, TimeUtil.getCurrentTime())
             TimesWork.timeWorked = workedTimeDay
 
             // Store TimesWork DAO to persistent data
             TimesWork.saveTimesWork(context)
 
             // set alarms and notification
-            setAlarms(context)
+            AlarmUtils.setAlarms(context)
 
             // update views that changes take place
             context.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(context.packageName))
