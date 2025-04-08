@@ -325,7 +325,7 @@ object TimeUtil { // create a singleton (static) class
     }
 
     /**
-     * Get overtime of a working day(corrected by the break times).
+     * Get overtime of a working day (corrected by the break times).
      * @param context The context used for the preferences values.
      * @param timeStart Start time in milliseconds.
      * @param timeEnd End time  in milliseconds.
