@@ -81,7 +81,6 @@ class MainSectionFragment : Fragment() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         // get current Work Times DAO
         mTW = TimesWork(mContext)
@@ -99,6 +98,7 @@ class MainSectionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_section_main, container, false)
 
+        // register OnClickListener that before defined in main_times.xml by android:onClick
         view.findViewById<TextView>(R.id.date_val).setOnClickListener {
             if (TimesWork.workStarted) {
                 // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
@@ -239,10 +239,8 @@ class MainSectionFragment : Fragment() {
             homeOfficeCb.isChecked = TimesWork.homeOffice
 
             // set the progress bar values
-            val workedTimeString = TimeUtil.formatTimeString(TimesWork.timeWorked + TimeUtil.getWorkedTime(mContext,
-                TimesWork.timeStart,
-                curTimeMillis,
-                TimesWork.homeOffice))
+            val workedTimeString = TimeUtil.formatTimeString(TimeUtil.getWorkedTime(mContext,
+                TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked))
             val addProgressBarInfo: String
             val progress: Int
             val secondaryProgress: Int
@@ -250,11 +248,8 @@ class MainSectionFragment : Fragment() {
                 // we are in over time ...
                 progress = floor((percentNormal * 100).toDouble()).toInt()
                 secondaryProgress = floor((percentProgressBar * 100).toDouble()).toInt()
-                addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimesWork.timeWorked + TimeUtil.getOverTime(
-                    mContext,
-                    TimesWork.timeStart,
-                    curTimeMillis,
-                    TimesWork.homeOffice)) + ")"
+                addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(
+                    mContext, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)) + ")"
             } else {
                 // we are in normal work time, no secondaryProgress needed
                 progress = floor((percentProgressBar * 100).toDouble()).toInt()
@@ -262,10 +257,8 @@ class MainSectionFragment : Fragment() {
                 addProgressBarInfo = if (prefs.viewPercentEnabled) {
                     "(" + floor((percentCurrent * 100).toDouble()).toInt() + "%)"
                 } else {
-                    "(" + TimeUtil.formatTimeString(TimesWork.timeWorked + TimeUtil.getOverTime(mContext,
-                        TimesWork.timeStart,
-                        curTimeMillis,
-                        TimesWork.homeOffice)) + ")"
+                    "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(mContext,
+                        TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)) + ")"
                 }
             }
             progressBar.secondaryProgress = secondaryProgress
@@ -352,11 +345,9 @@ class MainSectionFragment : Fragment() {
         calStart[Calendar.HOUR_OF_DAY] = 0
         calStart[Calendar.MINUTE] = 0
 
-
         // calculate first day of week
         val dayOfWeek = calStart[Calendar.DAY_OF_WEEK]
         calStart.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek)
-
 
         // calculate last day of week
         calEnd.timeInMillis = calStart.timeInMillis
@@ -406,8 +397,7 @@ class MainSectionFragment : Fragment() {
         Log.d(LOG_TAG,
             String.format(Locale.getDefault(),
                 "weekly statistics: %1\$td.%1\$tm.%1\$tY %1\$tR - %2\$td.%2\$tm.%2\$tY %2\$tR",
-                calStart,
-                calEnd))
+                calStart, calEnd))
 
         calStart.add(Calendar.DAY_OF_MONTH, 1) // add one day, to get CW from Monday instead of Sunday
         tv = view.findViewById(R.id.stats_weekly_text)
@@ -439,8 +429,7 @@ class MainSectionFragment : Fragment() {
         Log.d(LOG_TAG,
             String.format(Locale.getDefault(),
                 "monthly statistics: %1\$td.%1\$tm.%1\$tY %1\$tR - %2\$td.%2\$tm.%2\$tY %2\$tR",
-                calStart,
-                calEnd))
+                calStart, calEnd))
 
         tv = view.findViewById(R.id.stats_monthly_text)
         tv.text = String.format(Locale.getDefault(),
