@@ -118,6 +118,7 @@
 	<string name="pref_widget_update_low_battery_title">Widget update on low battery</string>
     <string name="pref_widget_update_low_battery_summary">Disable to save energy under low battery condition.</string>
 
+    <string name="confirm_backup">Replace backup file\n%s?</string>
     <string name="confirm_restore">Replace internal database with backup data from\n%s?</string>
 
     <!-- about fragment -->
