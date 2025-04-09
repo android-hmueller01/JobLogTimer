@@ -33,16 +33,13 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.ListFragment
 import de.euhm.jlt.dao.Times
 import de.euhm.jlt.dao.TimesDataSource
-import de.euhm.jlt.dao.TimesWork.Companion.filterMonth
-import de.euhm.jlt.dao.TimesWork.Companion.filterYear
+import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.dialogs.EditTimesFragment
 import de.euhm.jlt.dialogs.EditTimesFragment.OnEditTimesFragmentListener
 import de.euhm.jlt.listadapter.ViewTimesListAdapter
 import de.euhm.jlt.preferences.Prefs
 import de.euhm.jlt.utils.Constants
-import de.euhm.jlt.utils.TimeUtil.formatTimeString
-import de.euhm.jlt.utils.TimeUtil.getFilterCal
-import de.euhm.jlt.utils.TimeUtil.getWorkedTime
+import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
 
@@ -87,7 +84,6 @@ class ViewSectionFragment : ListFragment() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         // get Times database
         mDatasource = TimesDataSource(mContext)
@@ -180,12 +176,12 @@ class ViewSectionFragment : ListFragment() {
         val listTimes: List<Times>
 
         // build list
-        if (filterMonth == 0 || filterYear == 0) {
+        if (TimesWork.filterMonth == 0 || TimesWork.filterYear == 0) {
             // get all data
             listTimes = mDatasource.allTimes
         } else {
             // get filtered range
-            val cal = getFilterCal(filterMonth, filterYear)
+            val cal = TimeUtil.getFilterCal(TimesWork.filterMonth, TimesWork.filterYear)
             val timeStart = cal.timeInMillis
             // get end of month
             cal[Calendar.DAY_OF_MONTH] = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -211,12 +207,14 @@ class ViewSectionFragment : ListFragment() {
         val strLeft = String.format(Locale.getDefault(), resources.getString(R.string.view_times_info_line_left), 0)
         var strMiddle = ""
         var strFilterActive = ""
-        if (filterMonth != 0 && filterYear != 0) {
+        if (TimesWork.filterMonth != 0 && TimesWork.filterYear != 0) {
             // filter is active, indicate that
             strFilterActive = " " + resources.getString(R.string.view_times_info_line_filter_active)
-            val cal = getFilterCal(filterMonth, filterYear)
-            strMiddle =
-                String.format(Locale.getDefault(), "%s %04d", DateFormat.format("MMM", cal.timeInMillis), filterYear)
+            val cal = TimeUtil.getFilterCal(TimesWork.filterMonth, TimesWork.filterYear)
+            strMiddle = String.format(Locale.getDefault(),
+                "%s %04d",
+                DateFormat.format("MMM", cal.timeInMillis),
+                TimesWork.filterYear)
         }
         viewInfoLineLeft.text = String.format("%s%s", strLeft, strFilterActive)
         viewInfoLineMiddle.text = strMiddle
@@ -233,7 +231,7 @@ class ViewSectionFragment : ListFragment() {
         for (i in 0..<cnt) {
             val ti = la.getItem(i) as Times
             // do only calc worked time and not overtime, as we do not know jet, if we have more entries on the same day
-            workedPerDay += getWorkedTime(mContext, ti.timeStart, ti.timeEnd, ti.homeOffice)
+            workedPerDay += TimeUtil.getWorkedTime(mContext, ti.timeStart, ti.timeEnd, ti.homeOffice)
             // do we have a next value?
             val tiNext = if (i + 1 < cnt) {
                 // yes, use that
@@ -261,8 +259,8 @@ class ViewSectionFragment : ListFragment() {
             (la.getItem(0) as Times).dateString)
         viewInfoLineRight.text = String.format(Locale.getDefault(),
             resources.getString(R.string.view_times_info_line_right),
-            formatTimeString(workedTime),
-            formatTimeString(overTime))
+            TimeUtil.formatTimeString(workedTime),
+            TimeUtil.formatTimeString(overTime))
     }
 
     fun addTimesItem(times: Times) {
@@ -312,8 +310,8 @@ class ViewSectionFragment : ListFragment() {
     }
 
     fun updateFilter(month: Int, year: Int) {
-        filterMonth = month
-        filterYear = year
+        TimesWork.filterMonth = month
+        TimesWork.filterYear = year
 
         // update ListAdapter
         val adapter = listAdapter as? ViewTimesListAdapter?
