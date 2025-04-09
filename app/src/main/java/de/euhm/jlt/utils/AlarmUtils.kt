@@ -58,10 +58,11 @@ object AlarmUtils {
                 // sees the explanation, try again to request the permission.
                 // For Android 12 (API level 31) and above, you need to request this permission using an intent to open the system settings
                 Log.v(LOG_TAG, "setAlarms(): Permission SCHEDULE_EXACT_ALARM not granted. Requesting permission ...")
-                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                 val uri = Uri.fromParts("package", context.packageName, null)
-                intent.setData(uri)
-                context.startActivity(intent)
+                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).setData(uri)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).apply {
+                    context.startActivity(this)
+                }
                 return
             }
         }
@@ -79,7 +80,9 @@ object AlarmUtils {
                     alarmMgr[AlarmManager.RTC_WAKEUP, timesWork.normalWorkEndTime] = pendingIntent
                 } else {
                     Log.d(LOG_TAG, "alarmMgr.setExactAndAllowWhileIdle(RECEIVER_NORMAL_WORK_ALARM)")
-                    alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timesWork.normalWorkEndTime, pendingIntent)
+                    alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                        timesWork.normalWorkEndTime,
+                        pendingIntent)
                 }
             }
 
