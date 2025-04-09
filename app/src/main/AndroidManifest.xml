@@ -11,8 +11,8 @@
 	<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
 		tools:ignore="ScopedStorage" />
 	<!-- needed to set exact alarms -->
-	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-	<uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" /> <!-- (Android 12+) -->
+	<!--uses-permission android:name="android.permission.USE_EXACT_ALARM" / (Android 14+, does not work) -->
 	<!-- Needed by apps targeting Android 13 (API level 33) and higher to post most notifications -->
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
