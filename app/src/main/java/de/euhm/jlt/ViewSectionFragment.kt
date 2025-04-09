@@ -319,55 +319,6 @@ class ViewSectionFragment : ListFragment() {
         updateInfoLine()
     }
 
-    /**
-     * Backup internal database to local storage.<br></br>
-     * Previous backup will be overwritten without warning!
-     *
-     * @param dbPath Path to export to.
-     */
-    fun exportDatabase(dbPath: String) {
-        try {
-            val result = mDatasource.dbHelper.exportDatabase(dbPath)
-            if (result) {
-                Toast.makeText(mContext, "Backed up database to $dbPath", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(mContext, "Failed to backup database.", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(mContext, "Failed to backup database.", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    /**
-     * Restore internal database from local storage (backup).<br></br>
-     * ***WARNING:** This will delete the current database and replace it
-     * with the backup!*
-     *
-     * @param dbPath Path to import from
-     */
-    fun importDatabase(dbPath: String) {
-        try {
-            mDatasource.close() // close database before import
-            val result = mDatasource.dbHelper.importDatabase(dbPath)
-            mDatasource.open() // reopen database after import
-            if (result) {
-                // update views that changes take place
-                mContext.sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(mContext.packageName))
-
-                Toast.makeText(mContext, "Imported database $dbPath", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(mContext, "Failed to import database $dbPath", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(mContext, "Failed to import database $dbPath", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mDatasource.open()
-    }
-
     override fun onPause() {
         super.onPause()
         mDatasource.close()
