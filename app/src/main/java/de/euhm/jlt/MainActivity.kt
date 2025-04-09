@@ -31,11 +31,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -47,10 +46,12 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
 import de.euhm.jlt.dao.Times
+import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.database.JobLogContract
 import de.euhm.jlt.dialogs.ConfirmDialogFragment
@@ -74,9 +75,8 @@ import java.util.Locale
  * Main activity of JobLog
  * @author hmueller
  */
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnEditTimesFragmentListener,
-    YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener,
-    OnRequestPermissionsResultCallback {
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEditTimesFragmentListener,
+    YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener {
     @Suppress("PrivatePropertyName")
     private val LOG_TAG: String = MainActivity::class.java.simpleName
     private var mTimes: Times? = null // temp. Times for different dialogs
@@ -304,41 +304,145 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onStart()
         Log.v(LOG_TAG, "onStart()")
 
+        checkAndRequestPermissions()
+    }
+
+    /**
+     * Backup internal database to local storage.
+     *
+     * Previous backup will be overwritten without warning!
+     *
+     * ExternalStorageManager permission is required.
+     *
+     * @param dbPath Path to export to.
+     */
+    private fun exportDatabase(dbPath: String) {
+        // get Times database
+        val db = TimesDataSource(this)
+        try {
+            val result = db.dbHelper.exportDatabase(dbPath)
+            if (result) {
+                Toast.makeText(this, "Backed up database to $dbPath", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Failed to backup database.", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to backup database.", Toast.LENGTH_LONG).show()
+        }
+        db.close()
+    }
+
+    /**
+     * Restore internal database from local storage (backup).
+     *
+     * ***WARNING:** This will delete the current database and replace it
+     * with the backup!*
+     *
+     * ExternalStorageManager permission is required.
+     *
+     * @param dbPath Path to import from
+     */
+    private fun importDatabase(dbPath: String) {
+        // get Times database
+        val db = TimesDataSource(this)
+        try {
+            val result = db.dbHelper.importDatabase(dbPath)
+            if (result) {
+                // update views that changes take place
+                sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(packageName))
+
+                Toast.makeText(this, "Imported database $dbPath", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Failed to import database $dbPath", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to import database $dbPath", Toast.LENGTH_LONG).show()
+        }
+        db.close()
+    }
+
+    // Register the activity result launcher for multiple permissions
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissions.entries.forEach { entry ->
+                val permissionName = entry.key
+                val isGranted = entry.value
+                when (permissionName) {
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                        if (isGranted) {
+                            Log.d(LOG_TAG, "$permissionName granted")
+                            // Proceed with storage-related functionality
+                        } else {
+                            Log.d(LOG_TAG, "$permissionName denied")
+                            // Explain to the user why the feature is unavailable
+                        }
+                    }
+                    // Handle other permissions here
+                    else -> {
+                        if (isGranted) {
+                            Log.d(LOG_TAG, "$permissionName granted")
+                        } else {
+                            Log.d(LOG_TAG, "$permissionName denied")
+                        }
+                    }
+                }
+            }
+        }
+
+    private fun checkAndRequestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
         // request notification permission on Android 13 and higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    Constants.PERMISSION_REQUEST_POST_NOTIFICATIONS)
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.USE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.USE_EXACT_ALARM)
             }
         }
 
+        // below Android 11 (API level 30), you need to request permission
+        // to read and write from external storage (needed for backup)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }
+
+        // If there are permissions to request, launch the permission request
+        if (permissionsToRequest.isNotEmpty()) {
+            requestMultiplePermissions.launch(permissionsToRequest.toTypedArray())
+        } else {
+            // All permissions already granted, proceed with functionality
+            Log.d(LOG_TAG, "All permissions already granted")
+            // You can now safely use the features requiring the permissions
+        }
+    }
+
+    private fun checkAndRequestExternalStorageManager() {
         // request manage external storage permission to backup and restore database
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 // For Android 11 (API level 30) and above, you need to request this permission using an intent to open the system settings
-                Log.v(LOG_TAG, "onStart(): Permission MANAGE_EXTERNAL_STORAGE not granted")
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                Log.v(LOG_TAG,
+                    "checkAndRequestExternalStorageManager(): Permission MANAGE_EXTERNAL_STORAGE not granted. Requesting ...")
                 val uri = Uri.fromParts("package", packageName, null)
-                intent.setData(uri)
-                startActivity(intent)
-                return
+                Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).setData(uri).apply {
+                    startActivity(this)
+                }
+            } else {
+                Log.v(LOG_TAG, "checkAndRequestExternalStorageManager(): Permission MANAGE_EXTERNAL_STORAGE granted")
             }
-            Log.v(LOG_TAG, "onStart(): Permission MANAGE_EXTERNAL_STORAGE granted")
-        } else {
-            // check if we have permission to read from external storage (needed by MQTT to read cert-file)
-            // and write (needed to write stacktrace if app crashed)
-            // callback method onRequestPermissionsResult gets the result of the request.
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
         }
     }
 
     /* ******************************************************************
-	 * FragmentPagerAdapter to handle tabs
-	 * ****************************************************************** */
+     * FragmentPagerAdapter to handle tabs
+     * ****************************************************************** */
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to one of the primary
      * sections of the app.
@@ -380,8 +484,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     /* ******************************************************************
-	 * Options menu stuff (onOptionsItemSelected)
-	 * ****************************************************************** */
+     * Options menu stuff (onOptionsItemSelected)
+     * ****************************************************************** */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.main, menu)
@@ -391,7 +495,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        // Prepare the Screen's standard options menu to be displayed. 
+        // Prepare the Screen's standard options menu to be displayed.
         // This is called right before the menu is shown, every time it is shown. You can use this
         // method to efficiently enable/disable items or otherwise dynamically modify the contents.
 
@@ -433,24 +537,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     /* removed, as with v0.10 we have no "more" menu any more
      * left commented in case we need it again
-	@Override
-	public boolean onKeyUp(int keycode, KeyEvent event) {
-	    switch(keycode) {
-	    case KeyEvent.KEYCODE_MENU:
-	    	if (mMainMenu != null && 
-	    		mMainMenu.findItem(R.id.action_more) != null) {
-	    		mMainMenu.performIdentifierAction(R.id.action_more, 0);
-	    		return true;
-	    	}
-	    	break;
-	    }
-	    return super.onKeyUp(keycode, event);
-	}
+    @Override
+    public boolean onKeyUp(int keycode, KeyEvent event) {
+        switch(keycode) {
+        case KeyEvent.KEYCODE_MENU:
+            if (mMainMenu != null &&
+                mMainMenu.findItem(R.id.action_more) != null) {
+                mMainMenu.performIdentifierAction(R.id.action_more, 0);
+                return true;
+            }
+            break;
+        }
+        return super.onKeyUp(keycode, event);
+    }
     */
 
     /* ******************************************************************
-	 * Navigation drawer menu stuff (onNavigationItemSelected)
-	 * ****************************************************************** */
+     * Navigation drawer menu stuff (onNavigationItemSelected)
+     * ****************************************************************** */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Close drawer on item click
         mDrawerLayout.closeDrawers()
@@ -471,11 +575,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_item_backup -> {
-                // backup internal database to external file (permission must be granted in onStart())
-                mViewSectionFragment.exportDatabase(mBackupDbPath)
+                checkAndRequestExternalStorageManager()
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                var message = resources.getText(R.string.confirm_backup)
+                    .toString() // text must have a %s to insert the backup path
+                message = String.format(Locale.getDefault(), message, mBackupDbPath)
+
+                // set dialog message
+                alertDialogBuilder.setMessage(message).setCancelable(true)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        // if "Yes" this button is clicked
+                        // backup database to external file (permission must be granted)
+                        exportDatabase(mBackupDbPath)
+                    }
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> // just close the dialog box and do nothing
+                        dialog.cancel()
+                    }
+
+                // create alert dialog and show it
+                val alertDialog = alertDialogBuilder.create()
+                alertDialog.show()
             }
 
             R.id.nav_item_restore -> {
+                checkAndRequestExternalStorageManager()
                 val alertDialogBuilder = AlertDialog.Builder(this)
                 var message = resources.getText(R.string.confirm_restore)
                     .toString() // text must have a %s to insert the backup path
@@ -485,8 +608,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 alertDialogBuilder.setMessage(message).setCancelable(true)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         // if "Yes" this button is clicked
-                        // restore backup database to internal database (permission must be granted in onStart())
-                        mViewSectionFragment.importDatabase(mBackupDbPath)
+                        // restore backup database to internal database (permission must be granted)
+                        importDatabase(mBackupDbPath)
                     }
                     .setNegativeButton(android.R.string.cancel) { dialog, _ -> // just close the dialog box and do nothing
                         dialog.cancel()
@@ -507,8 +630,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /* ******************************************************************
-	 * All listener of class MainActivity
-	 * ****************************************************************** */
+     * All listener of class MainActivity
+     * ****************************************************************** */
     private var mIsPinching = false
 
     /**
@@ -559,7 +682,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 // Do not use an AlertDialog.Builder directly, because it doesn't get recreated
                 // if app gets restarted (after pressing home or rotating)
                 val confirmDialog = ConfirmDialogFragment()
-                confirmDialog.setMessage(resources.getText(R.string.button_delete).toString() + " " + times.dateString)
+                confirmDialog.setMessage(resources.getText(R.string.button_delete)
+                    .toString() + " " + times.dateString)
                 confirmDialog.show(supportFragmentManager, "ConfirmDialogFragment")
             }
 
@@ -661,50 +785,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mMainSectionFragment.updateTimesView()
         mMainSectionFragment.updateStatisticsView()
         AlarmUtils.setAlarms(this)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Handle the permissions request response.
-        when (requestCode) {
-            Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE ->
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(LOG_TAG, "onRequestPermissionsResult(): WRITE_EXTERNAL_STORAGE granted")
-                    // permission was granted, do the backup right now
-                    //mViewSectionFragment.exportDatabase(mBackupDbPath)
-                } else {
-                    Log.e(LOG_TAG, "onRequestPermissionsResult(): WRITE_EXTERNAL_STORAGE denied")
-                }
-
-            Constants.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE ->
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(LOG_TAG, "onRequestPermissionsResult(): READ_EXTERNAL_STORAGE granted")
-                    // permission was granted, do the restore right now
-                    //mViewSectionFragment.importDatabase(mBackupDbPath)
-                } else {
-                    Log.e(LOG_TAG, "onRequestPermissionsResult(): READ_EXTERNAL_STORAGE denied")
-                }
-
-            Constants.PERMISSION_REQUEST_POST_NOTIFICATIONS ->
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    Log.d(LOG_TAG, "onRequestPermissionsResult(): POST_NOTIFICATIONS granted")
-                } else {
-                    Log.e(LOG_TAG, "onRequestPermissionsResult(): POST_NOTIFICATIONS denied")
-                }
-
-            Constants.PERMISSION_REQUEST_EXACT_ALARM ->
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    Log.d(LOG_TAG, "onRequestPermissionsResult(): SCHEDULE_EXACT_ALARM granted")
-                } else {
-                    Log.e(LOG_TAG, "onRequestPermissionsResult(): SCHEDULE_EXACT_ALARM denied")
-                }
-        }
     }
 
     public override fun onSaveInstanceState(outState: Bundle) {
