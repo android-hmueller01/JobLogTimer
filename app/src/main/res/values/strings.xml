@@ -125,8 +125,8 @@
     <string name="title_about">About</string>
     <string name="about_version">Version&#160;</string>
     <string name="about_author">Holger Müller</string>
-    <string name="about_license">Apache License 2.0</string>
-    <string name="about_url">http://holger.euhm.de</string>
+    <string name="about_license">MIT License</string>
+    <string name="about_url">https://holger.euhm.de</string>
 
     <!-- widget -->
     <string name="widget_info_line1">press</string>

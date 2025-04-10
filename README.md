@@ -9,7 +9,7 @@ V0.21b: versionCode 18, 09.04.2025 Mr
 - Updated all depenendencies and gradle
 - Fixed bug that worked time of day before a break is not respected in widget
 - Refactored way of requesting permissions
-- Changed license to MIT
+- Changed license from Apache 2.0 to MIT
 
 V0.20b: versionCode 18, 30.06.2022 Mr
 - Changed some default values of the preferences

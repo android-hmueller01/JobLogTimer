@@ -1,8 +1,8 @@
 /**
  * @file PreferenceFragment.java
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * http://www.apache.org/licenses/LICENSE-2.0
+ * MIT License
+ * Copyright (c) 2014-2025 Holger Mueller
  */
 package de.euhm.jlt.preferences;
 
