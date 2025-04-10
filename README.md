@@ -3,9 +3,18 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
+V0.21b: versionCode 18, 09.04.2025 Mr
+- Ported / migrated code to Kotlin (95%) using AndroidStudio
+- Updated targetSdkVersion to 35 (Android 15)
+- Updated all depenendencies and gradle
+- Fixed bug that worked time of day before a break is not respected in widget
+- Refactored way of requesting permissions
+- Changed license from Apache 2.0 to MIT
 
-V0.20a: versionCode 18, 18.11.2021 Mr
+V0.20b: versionCode 18, 30.06.2022 Mr
 - Changed some default values of the preferences
+- Fixed bug that setting home office is not respected by alarm
+- Updated targetSdkVersion to 33 (Android 13)
 
 V0.19: versionCode 17, 05.11.2021 Mr
 - Added home office function (no forced breaks)

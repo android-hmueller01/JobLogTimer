@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2012 The Android Open Source Project
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-      http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/statistics"
+    xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="RtlSymmetry,TextContrastCheck"
+    android:id="@+id/statistics"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
@@ -33,48 +20,49 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/stats_statistics_text" />
             <TextView
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="right"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="end"
                 android:text="@string/time_worked_text" />
             <TextView
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="left"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="start"
                 android:text="@string/time_overtime_text" />
         </TableRow>
         <TableRow
             android:layout_margin="@dimen/stats_table_row_margin" >
-            <TextView
-                android:id="@+id/stats_weekly_text"
-				android:layout_marginLeft="@dimen/stats_table_margin_left"
-				android:gravity="left"
+
+			<TextView
+				android:id="@+id/stats_weekly_text"
+				android:layout_marginStart="@dimen/stats_table_margin_left"
+				android:gravity="start"
 				android:text="@string/stats_weekly_text" />
             <TextView
                 android:id="@+id/stats_weekly_worked_val"
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="right"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="end"
                 android:text="-001:00" />
             <TextView
                 android:id="@+id/stats_weekly_overtime_val"
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="left"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="start"
                 android:text="-002:00" />
         </TableRow>
         <TableRow
             android:layout_margin="@dimen/stats_table_row_margin" >
             <TextView
                 android:id="@+id/stats_monthly_text"
-				android:layout_marginLeft="@dimen/stats_table_margin_left"
-				android:gravity="left"
+				android:layout_marginStart="@dimen/stats_table_margin_left"
+				android:gravity="start"
 				android:text="@string/stats_monthly_text" />
             <TextView
                 android:id="@+id/stats_monthly_worked_val"
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="right"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="end"
                 android:text="-003:00" />
             <TextView
                 android:id="@+id/stats_monthly_overtime_val"
-				android:paddingLeft="@dimen/stats_table_column_margin"
-				android:gravity="left"
+				android:paddingStart="@dimen/stats_table_column_margin"
+				android:gravity="start"
                 android:text="-004:00" />
         </TableRow>
     </TableLayout>

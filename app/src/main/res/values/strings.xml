@@ -35,7 +35,7 @@
     <string name="button_clear">Clear</string>
     
     <!-- Main / start fragment -->
-    <string name="current_time_text">%1$td.%1$tm.%1$tY - %1tT</string>
+    <string name="current_time_text" formatted="false">%1$td.%1$tm.%1$tY - %1tT</string>
     <string name="date_text">Date</string>
     <string name="start_text">Start</string>
     <string name="start_time_set">Set start time</string>
@@ -118,14 +118,15 @@
 	<string name="pref_widget_update_low_battery_title">Widget update on low battery</string>
     <string name="pref_widget_update_low_battery_summary">Disable to save energy under low battery condition.</string>
 
+    <string name="confirm_backup">Replace backup file\n%s?</string>
     <string name="confirm_restore">Replace internal database with backup data from\n%s?</string>
 
     <!-- about fragment -->
     <string name="title_about">About</string>
     <string name="about_version">Version&#160;</string>
     <string name="about_author">Holger Müller</string>
-    <string name="about_license">Apache License 2.0</string>
-    <string name="about_url">http://holger.euhm.de</string>
+    <string name="about_license">MIT License</string>
+    <string name="about_url">https://holger.euhm.de</string>
 
     <!-- widget -->
     <string name="widget_info_line1">press</string>

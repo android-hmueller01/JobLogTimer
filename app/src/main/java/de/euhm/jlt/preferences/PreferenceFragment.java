@@ -1,8 +1,8 @@
 /**
- * $Id: PreferenceFragment.java 184 2016-12-21 21:32:19Z hmueller $
- * 
- * Licensed under the Apache License, Version 2.0 (the "License")
- * http://www.apache.org/licenses/LICENSE-2.0
+ * @file PreferenceFragment.java
+ *
+ * MIT License
+ * Copyright (c) 2014-2025 Holger Mueller
  */
 package de.euhm.jlt.preferences;
 
@@ -10,9 +10,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import java.lang.reflect.Constructor;
@@ -30,9 +31,9 @@ import java.lang.reflect.Method;
 /**
  * A PreferenceFragment for the support library. Based on the platform's code 
  * with some removed features and a basic ListView layout.
- * 
+ *
  * @author Christophe Beyls
- * https://gist.github.com/cbeyls/7475726
+ * <a href="https://gist.github.com/cbeyls/7475726">...</a>
  */
 public abstract class PreferenceFragment extends Fragment {
 
@@ -43,7 +44,7 @@ public abstract class PreferenceFragment extends Fragment {
 	private static final float HC_HORIZONTAL_PADDING = 16;
 
 	@SuppressLint("HandlerLeak")
-	private final Handler mHandler = new Handler() {
+	private final Handler mHandler = new Handler(Looper.getMainLooper()) {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -69,18 +70,16 @@ public abstract class PreferenceFragment extends Fragment {
 			Constructor<PreferenceManager> c = PreferenceManager.class.getDeclaredConstructor(Activity.class, int.class);
 			c.setAccessible(true);
 			mPreferenceManager = c.newInstance(this.getActivity(), FIRST_REQUEST_CODE);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstanceState) {
 		ListView listView = new ListView(getActivity());
 		listView.setId(android.R.id.list);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			final int horizontalPadding = (int) (HC_HORIZONTAL_PADDING * getResources().getDisplayMetrics().density);
-			listView.setPadding(horizontalPadding, 0, horizontalPadding, 0);
-		}
+		final int horizontalPadding = (int) (HC_HORIZONTAL_PADDING * getResources().getDisplayMetrics().density);
+		listView.setPadding(horizontalPadding, 0, horizontalPadding, 0);
 		return listView;
 	}
 
@@ -111,7 +110,7 @@ public abstract class PreferenceFragment extends Fragment {
 			Method m = PreferenceManager.class.getDeclaredMethod("dispatchActivityStop");
 			m.setAccessible(true);
 			m.invoke(mPreferenceManager);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -127,11 +126,11 @@ public abstract class PreferenceFragment extends Fragment {
 			Method m = PreferenceManager.class.getDeclaredMethod("dispatchActivityDestroy");
 			m.setAccessible(true);
 			m.invoke(mPreferenceManager);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		if (preferenceScreen != null) {
@@ -147,7 +146,7 @@ public abstract class PreferenceFragment extends Fragment {
 			Method m = PreferenceManager.class.getDeclaredMethod("dispatchActivityResult", int.class, int.class, Intent.class);
 			m.setAccessible(true);
 			m.invoke(mPreferenceManager, requestCode, resultCode, data);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -166,7 +165,7 @@ public abstract class PreferenceFragment extends Fragment {
 					postBindPreferences();
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -187,7 +186,7 @@ public abstract class PreferenceFragment extends Fragment {
 			m.setAccessible(true);
 			PreferenceScreen screen = (PreferenceScreen) m.invoke(mPreferenceManager, intent, getPreferenceScreen());
 			setPreferenceScreen(screen);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -198,7 +197,7 @@ public abstract class PreferenceFragment extends Fragment {
 			m.setAccessible(true);
 			PreferenceScreen screen = (PreferenceScreen) m.invoke(mPreferenceManager, getActivity(), resId, getPreferenceScreen());
 			setPreferenceScreen(screen);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -246,9 +245,6 @@ public abstract class PreferenceFragment extends Fragment {
 			throw new RuntimeException("Content has view with id attribute 'android.R.id.list' that is not a ListView class");
 		}
 		mList = (ListView) rawListView;
-		if (mList == null) {
-			throw new RuntimeException("Your content must have a ListView whose id attribute is 'android.R.id.list'");
-		}
 		mHandler.sendEmptyMessage(MSG_REQUEST_FOCUS);
 	}
 }
