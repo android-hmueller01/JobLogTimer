@@ -68,6 +68,7 @@ class TimesDataSource(context: Context) {
      * Check if database is already open.
      * @return Returns true if open.
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val isOpen: Boolean
         get() = (mDatabase.isOpen)
 
