@@ -37,7 +37,7 @@ import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.dialogs.EditTimesFragment
 import de.euhm.jlt.dialogs.EditTimesFragment.OnEditTimesFragmentListener
 import de.euhm.jlt.listadapter.ViewTimesListAdapter
-import de.euhm.jlt.preferences.Prefs
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar

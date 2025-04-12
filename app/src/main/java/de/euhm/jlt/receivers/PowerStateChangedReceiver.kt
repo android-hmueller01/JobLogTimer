@@ -18,7 +18,7 @@ import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import de.euhm.jlt.dao.TimesWork
-import de.euhm.jlt.preferences.Prefs
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.Constants
 
 /**

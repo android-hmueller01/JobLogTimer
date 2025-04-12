@@ -21,7 +21,6 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import de.euhm.jlt.dao.TimesWork
-import de.euhm.jlt.preferences.Prefs
 import de.euhm.jlt.receivers.AlarmReceiver
 
 /**

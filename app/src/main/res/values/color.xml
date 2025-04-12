@@ -14,6 +14,7 @@
     <color name="sysWhite">#FFFFFFFF</color>
     <color name="sysYellow">#FFFFFF00</color>
 
+    <color name="primary">#FFFFFFFF</color>
     <color name="toolbar">#FF0000FF</color>
     <color name="tabLayout">#FF2276FF</color>
     <color name="tabText">@color/sysWhite</color>

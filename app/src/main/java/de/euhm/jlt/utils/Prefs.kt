@@ -7,7 +7,7 @@
  * Copyright (c) 2014-2025 Holger Mueller
  */
 
-package de.euhm.jlt.preferences
+package de.euhm.jlt.utils
 
 import android.content.Context
 import android.content.SharedPreferences

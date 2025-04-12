@@ -18,7 +18,7 @@ import android.widget.Toast
 import de.euhm.jlt.R
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
-import de.euhm.jlt.preferences.Prefs
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.AlarmUtils
 import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.TimeUtil
