@@ -10,7 +10,6 @@ package de.euhm.jlt.utils
 
 import android.content.Context
 import de.euhm.jlt.dao.TimesDataSource
-import de.euhm.jlt.preferences.Prefs
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.abs
