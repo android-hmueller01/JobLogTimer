@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   more info see
   http://stackoverflow.com/documentation/android/124/material-design-for-all-android-versions/
  -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorlayout"
@@ -12,75 +13,75 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawerlayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
-    <!-- set tools:openDrawer="end" to open drawer from the right side -->
-
-    <!-- The LinearLayout with orientation="vertical" moves the ViewPager below the AppBarLayout. -->
-    <LinearLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:orientation="vertical" >
+        tools:openDrawer="start">
+        <!-- set tools:openDrawer="end" to open drawer from the right side -->
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appbarlayout"
+        <!-- The LinearLayout with orientation="vertical" moves the ViewPager below the AppBarLayout. -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay" >
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbarlayout"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/AppTheme.AppBar"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay">
 
-			<com.google.android.material.tabs.TabLayout
-				android:id="@+id/tabLayout"
-				android:layout_width="match_parent"
-				android:layout_height="?attr/actionBarSize"
-				android:layout_gravity="top"
-				android:background="@color/tabLayout"
-				app:tabBackground="@color/tabLayout"
-				app:tabIndicatorColor="@color/toolbar"
-				app:tabIndicatorHeight="4dp"
-				app:tabMode="fixed" />
-        </com.google.android.material.appbar.AppBarLayout>
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/AppTheme.AppBar"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <!-- <android.support.v4.view.ViewPager -->
-        <de.euhm.jlt.CustomViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="top"
+                    android:background="@color/tabLayout"
+                    app:tabBackground="@color/tabLayout"
+                    app:tabIndicatorColor="@color/toolbar"
+                    app:tabIndicatorHeight="4dp"
+                    app:tabMode="fixed" />
+            </com.google.android.material.appbar.AppBarLayout>
 
-	<com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_drawer"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="46dp"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/navigation_drawer" />
-		<!-- to open drawer below toolbar set android:layout_marginTop="?attr/actionBarSize" -->
+            <!-- <android.support.v4.view.ViewPager -->
+            <de.euhm.jlt.CustomViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginTop="46dp"
+            app:headerLayout="@layout/drawer_header"
+            app:menu="@menu/navigation_drawer" />
+        <!-- to open drawer below toolbar set android:layout_marginTop="?attr/actionBarSize" -->
 
-	<com.google.android.material.floatingactionbutton.FloatingActionButton
-	    android:id="@+id/fab"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="bottom|end"
-	    android:layout_margin="16dp"
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
         android:contentDescription="@string/button_add_times"
         android:src="@drawable/ic_action_new"
         app:backgroundTint="@color/toolbar" />
-        <!-- android:src="@android:drawable/btn_plus"  -->
+    <!-- android:src="@android:drawable/btn_plus"  -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
