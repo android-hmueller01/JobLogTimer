@@ -451,23 +451,21 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> mMainSectionFragment
-                1 -> mViewSectionFragment
-                2 -> SettingsSectionFragment()
+                0 -> mMainSectionFragment // MainSectionFragment()
+                1 -> mViewSectionFragment // ViewSectionFragment()
                 else ->                // Unknown section number. Throw exception.
                     throw RuntimeException("Section item " + position + "unknown")
             }
         }
 
         override fun getCount(): Int {
-            return 3
+            return 2
         }
 
         override fun getPageTitle(position: Int): CharSequence {
             when (position) {
                 0 -> return mContext.resources.getString(R.string.tab_main)
                 1 -> return mContext.resources.getString(R.string.tab_view)
-                2 -> return mContext.resources.getString(R.string.tab_settings)
             }
             return ""
         }
@@ -476,7 +474,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
             when (position) {
                 0 -> return R.drawable.ic_tab_start
                 1 -> return R.drawable.ic_tab_view
-                2 -> return R.drawable.ic_tab_settings
             }
             return 0
         }
@@ -620,10 +617,17 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                 alertDialog.show()
             }
 
+            R.id.nav_item_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+
             R.id.nav_item_about -> {
                 // Display the about fragment as the main content.
-                supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .add(0, AboutFragment()).commit()
+                supportFragmentManager
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .add(0, AboutFragment())
+                    .commit()
             }
         }
         return true
