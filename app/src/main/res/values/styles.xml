@@ -18,15 +18,17 @@ http://jgilfelt.github.io/android-actionbarstylegenerator
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <!-- theme UI controls like checkboxes and text fields -->
-		<item name="colorAccent">@color/accent</item>
-		<!-- colorPrimaryDark goes behind the status bar, which is then darkened by the overlay -->
-		<!-- <item name="colorPrimaryDark">@color/sysGreen</item> -->
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+		<!-- theme UI controls like checkboxes and text fields -->
+		<item name="colorAccent">@color/accent</item>
+		<!-- colorPrimaryDark goes behind the status bar, which is then darkened by the overlay -->
+		<item name="colorPrimaryDark">@color/primary</item>
+		<!-- to make the status bar visible in the activity_settings -->
+		<item name="android:windowTranslucentStatus">true</item>
     </style>
 
 	<!-- ThemeOverlay.AppCompat.Dark.ActionBar" makes the text and the icons in the AppBar white. -->
