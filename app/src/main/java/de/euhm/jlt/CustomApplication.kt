@@ -16,6 +16,7 @@ import android.app.Application
  */
 class CustomApplication : Application() {
     companion object {
+        @Suppress("MemberVisibilityCanBePrivate")
         var isActivityVisible: Boolean = false
             private set
 
