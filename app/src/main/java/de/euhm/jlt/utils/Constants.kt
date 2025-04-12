@@ -28,10 +28,7 @@ object Constants {
     const val RECEIVER_START_STOP: String = "de.euhm.jlt.START_STOP"
 
     // Permission Codes
-    const val PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE: Int = 1
-    const val PERMISSION_REQUEST_READ_EXTERNAL_STORAGE: Int = 2
-    const val PERMISSION_REQUEST_POST_NOTIFICATIONS: Int = 3
-    const val PERMISSION_REQUEST_EXACT_ALARM: Int = 4
+    //const val PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE: Int = 1
 
     // Button IDs
     const val BUTTON_OK: Int = 0x100001
