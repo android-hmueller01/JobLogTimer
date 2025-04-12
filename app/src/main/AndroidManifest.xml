@@ -50,6 +50,7 @@
 		<activity
 			android:name=".SettingsActivity"
 			android:label="@string/title_activity_settings"
+			android:parentActivityName=".MainActivity"
 			android:exported="false" />
 
 		<receiver android:name=".MainWidgetProvider"
