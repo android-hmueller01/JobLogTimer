@@ -31,14 +31,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.ListFragment
+import androidx.viewpager2.widget.ViewPager2
 import de.euhm.jlt.dao.Times
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.dialogs.EditTimesFragment
 import de.euhm.jlt.dialogs.EditTimesFragment.OnEditTimesFragmentListener
 import de.euhm.jlt.listadapter.ViewTimesListAdapter
-import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.Constants
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
@@ -54,7 +55,7 @@ class ViewSectionFragment : ListFragment() {
     private lateinit var mDatasource: TimesDataSource // gets used outside the normal initialization
     private lateinit var mContext: Context // gets initialized in onAttach()
     private lateinit var mListView: ListView
-    private lateinit var mViewPager: CustomViewPager
+    private lateinit var mViewPager: ViewPager2
 
     /**
      * A [BroadcastReceiver] to update the view in this fragment.<br></br>
