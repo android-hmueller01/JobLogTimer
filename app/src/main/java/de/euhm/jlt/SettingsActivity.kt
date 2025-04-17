@@ -8,12 +8,14 @@
  */
 package de.euhm.jlt
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
+import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.Prefs
 
 class SettingsActivity : AppCompatActivity() {
@@ -37,6 +39,12 @@ class SettingsActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // update view if settings have been changed
+        sendBroadcast(Intent(Constants.RECEIVER_UPDATE_VIEW).setPackage(packageName))
     }
 }
 
