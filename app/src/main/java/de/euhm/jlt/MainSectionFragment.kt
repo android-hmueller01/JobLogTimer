@@ -34,10 +34,10 @@ import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.dialogs.DatePickerFragment
 import de.euhm.jlt.dialogs.TimePickerFragment
-import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.AlarmUtils
 import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.LongRef
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
@@ -51,7 +51,6 @@ class MainSectionFragment : Fragment() {
     @Suppress("PrivatePropertyName")
     private val LOG_TAG: String = MainSectionFragment::class.java.simpleName
     private lateinit var mContext: Context // gets initialized in onAttach()
-    private lateinit var mTW: TimesWork // gets initialized in onCreate()
     private val mHandlerUpdateTimes = Handler(Looper.getMainLooper())
     private val mHandlerUpdateTimesDelay: Long = 1000
 
@@ -81,9 +80,6 @@ class MainSectionFragment : Fragment() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // get current Work Times DAO
-        mTW = TimesWork(mContext)
 
         // register the update view receiver to update view from service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -207,11 +203,13 @@ class MainSectionFragment : Fragment() {
 
         // calculate the percentage worked
         val percentCurrent =
-            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (mTW.normalWorkEndTime - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.normalWorkEndTime(
+                mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
         val percentNormal =
-            (mTW.normalWorkEndTime - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (mTW.maxWorkEndTime - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (TimesWork.normalWorkEndTime(mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.maxWorkEndTime(
+                mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
         val percentProgressBar =
-            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (mTW.maxWorkEndTime - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.maxWorkEndTime(mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
 
         val tvDate = view.findViewById<TextView>(R.id.date_val)
         val tvTime = view.findViewById<TextView>(R.id.start_val)
@@ -240,16 +238,22 @@ class MainSectionFragment : Fragment() {
 
             // set the progress bar values
             val workedTimeString = TimeUtil.formatTimeString(TimeUtil.getWorkedTime(mContext,
-                TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked))
+                TimesWork.timeStart,
+                curTimeMillis,
+                TimesWork.homeOffice,
+                TimesWork.timeWorked))
             val addProgressBarInfo: String
             val progress: Int
             val secondaryProgress: Int
-            if (curTimeMillis > mTW.normalWorkEndTime) {
+            if (curTimeMillis > TimesWork.normalWorkEndTime(mContext)) {
                 // we are in over time ...
                 progress = floor((percentNormal * 100).toDouble()).toInt()
                 secondaryProgress = floor((percentProgressBar * 100).toDouble()).toInt()
-                addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(
-                    mContext, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)) + ")"
+                addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(mContext,
+                    TimesWork.timeStart,
+                    curTimeMillis,
+                    TimesWork.homeOffice,
+                    TimesWork.timeWorked)) + ")"
             } else {
                 // we are in normal work time, no secondaryProgress needed
                 progress = floor((percentProgressBar * 100).toDouble()).toInt()
@@ -258,7 +262,10 @@ class MainSectionFragment : Fragment() {
                     "(" + floor((percentCurrent * 100).toDouble()).toInt() + "%)"
                 } else {
                     "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(mContext,
-                        TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)) + ")"
+                        TimesWork.timeStart,
+                        curTimeMillis,
+                        TimesWork.homeOffice,
+                        TimesWork.timeWorked)) + ")"
                 }
             }
             progressBar.secondaryProgress = secondaryProgress
@@ -283,7 +290,7 @@ class MainSectionFragment : Fragment() {
             params.leftMargin = pos - v.width / 2
             v.layoutParams = params
             tv = view.findViewById(R.id.progress_bar_time_2)
-            tv.text = String.format(Locale.getDefault(), "%tR", mTW.calNormalWorkEndTime)
+            tv.text = String.format(Locale.getDefault(), "%tR", TimesWork.calNormalWorkEndTime(mContext))
             params = tv.layoutParams as RelativeLayout.LayoutParams
             params.leftMargin = pos - tv.width / 2
             tv.layoutParams = params
@@ -291,7 +298,7 @@ class MainSectionFragment : Fragment() {
 
             // set tick 3 values
             tv = view.findViewById(R.id.progress_bar_time_3)
-            tv.text = String.format(Locale.getDefault(), "%tR", mTW.calMaxWorkEndTime)
+            tv.text = String.format(Locale.getDefault(), "%tR", TimesWork.calMaxWorkEndTime(mContext))
         }
 
         tv = view.findViewById(R.id.end_val)
@@ -397,7 +404,8 @@ class MainSectionFragment : Fragment() {
         Log.d(LOG_TAG,
             String.format(Locale.getDefault(),
                 "weekly statistics: %1\$td.%1\$tm.%1\$tY %1\$tR - %2\$td.%2\$tm.%2\$tY %2\$tR",
-                calStart, calEnd))
+                calStart,
+                calEnd))
 
         calStart.add(Calendar.DAY_OF_MONTH, 1) // add one day, to get CW from Monday instead of Sunday
         tv = view.findViewById(R.id.stats_weekly_text)
@@ -429,7 +437,8 @@ class MainSectionFragment : Fragment() {
         Log.d(LOG_TAG,
             String.format(Locale.getDefault(),
                 "monthly statistics: %1\$td.%1\$tm.%1\$tY %1\$tR - %2\$td.%2\$tm.%2\$tY %2\$tR",
-                calStart, calEnd))
+                calStart,
+                calEnd))
 
         tv = view.findViewById(R.id.stats_monthly_text)
         tv.text = String.format(Locale.getDefault(),

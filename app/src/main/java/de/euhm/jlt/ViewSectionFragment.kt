@@ -320,6 +320,12 @@ class ViewSectionFragment : ListFragment() {
         updateInfoLine()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val adapter = listAdapter as? ViewTimesListAdapter?
+        adapter?.notifyDataSetChanged()
+    }
+
     override fun onPause() {
         super.onPause()
         mDatasource.close()
