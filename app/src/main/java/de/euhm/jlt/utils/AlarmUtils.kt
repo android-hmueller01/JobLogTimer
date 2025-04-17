@@ -45,7 +45,6 @@ object AlarmUtils {
         //Context context = getApplicationContext();
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val prefs = Prefs(context)
-        val timesWork = TimesWork(context)
         var flag = 0
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // needed starting Android 12 (S = 31)
@@ -76,11 +75,11 @@ object AlarmUtils {
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_NORMAL_WORK_ALARM)")
-                    alarmMgr[AlarmManager.RTC_WAKEUP, timesWork.normalWorkEndTime] = pendingIntent
+                    alarmMgr[AlarmManager.RTC_WAKEUP, TimesWork.normalWorkEndTime(context)] = pendingIntent
                 } else {
                     Log.d(LOG_TAG, "alarmMgr.setExactAndAllowWhileIdle(RECEIVER_NORMAL_WORK_ALARM)")
                     alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                        timesWork.normalWorkEndTime,
+                        TimesWork.normalWorkEndTime(context),
                         pendingIntent)
                 }
             }
@@ -90,7 +89,7 @@ object AlarmUtils {
                 alarmIntent = Intent(Constants.RECEIVER_MAX_WORK_ALARM)
                 alarmIntent.setClass(context, AlarmReceiver::class.java)
                 pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, flag)
-                val alarmTime = timesWork.maxWorkEndTime - prefs.maxHoursWarnBeforeInMillis
+                val alarmTime = TimesWork.maxWorkEndTime(context) - prefs.maxHoursWarnBeforeInMillis
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_MAX_WORK_ALARM)")
                     alarmMgr[AlarmManager.RTC_WAKEUP, alarmTime] = pendingIntent
