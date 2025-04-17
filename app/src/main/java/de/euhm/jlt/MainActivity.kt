@@ -27,6 +27,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -39,17 +40,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
+import com.google.android.material.tabs.TabLayoutMediator
 import de.euhm.jlt.dao.Times
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
 
     /**
      * The [AppSectionsPagerAdapter] that will provide fragments for each of the
-     * primary sections of the app. We use a [FragmentPagerAdapter]
+     * primary sections of the app. We use a [FragmentStateAdapter]
      * derivative, which will keep every loaded fragment in memory. If this becomes too memory
      * intensive, it may be best to switch to a FragmentStatePagerAdapter.
      */
@@ -95,7 +97,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
      * The [ViewPager] that will display the primary sections of the app, one at a
      * time.
      */
-    private lateinit var mViewPager: CustomViewPager
+    private lateinit var mViewPager: ViewPager2
 
     /**
      * The [DrawerLayout] that will provide full
@@ -216,19 +218,41 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // Setup the ViewPager.
         mViewPager = findViewById(R.id.pager)
         // Create the adapter that will return a fragment for each of the primary sections of the app.
-        mAppSectionsPagerAdapter = AppSectionsPagerAdapter(supportFragmentManager, context)
-        mViewPager.setAdapter(mAppSectionsPagerAdapter)
+        mAppSectionsPagerAdapter = AppSectionsPagerAdapter(this, context)
+        mViewPager.adapter = mAppSectionsPagerAdapter
 
-        // Setup the TabLayout and connect it to the ViewPager.
-        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-        // setupWithViewPager() does not work very well, so we do all the things oneself (see below)
-        //tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabLayout))
-        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                // When the given tab is selected, switch to the corresponding page in the ViewPager.
-                val position = tab.position
-                mViewPager.setCurrentItem(position)
+        // Setup swiping on statistics layout
+        val recyclerView = mViewPager.getChildAt(0) as RecyclerView
+        recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                if (mViewPager.currentItem == 0) {
+                    val root = rv.rootView
+                    val scrollView: View = root.findViewById(R.id.main_scroll_view)
+                    val statsView: View = root.findViewById(R.id.layout_main_statistics)
+                    val y: Int = e.y.toInt() + scrollView.scrollY
+
+                    if (y in statsView.top..statsView.bottom) {
+                        // Block swipe in this vertical region
+                        return true
+                    }
+                }
+                return false // Let ViewPager2 handle it
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                // no operation
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                // no operation
+            }
+        })
+
+        mViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                // This method is called when a new page becomes selected.
+                // The 'position' parameter indicates the index of the selected page (starting from 0).
+                mViewPager.currentItem = position
                 if (position == 1) {
                     // show FloatingActionButton
                     mFab.show()
@@ -245,30 +269,21 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                     supportActionBar?.show()
                 }
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
         })
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (i in 0..<mAppSectionsPagerAdapter.count) {
+        // Setup the TabLayout and connect it to the ViewPager.
+        val tabLayout: TabLayout = findViewById(R.id.tabLayout)
+        TabLayoutMediator(tabLayout, mViewPager) { tab, position ->
             // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
-            val tab = tabLayout.newTab()
             tab.setCustomView(R.layout.custom_tab_title)
-            val tabView = checkNotNull(tab.customView)
-            val tabTitle = tabView.findViewById<TextView>(R.id.title)
-            val img = tabView.findViewById<ImageView>(R.id.icon)
-            tabTitle.text = mAppSectionsPagerAdapter.getPageTitle(i)
-            val icon = mAppSectionsPagerAdapter.getPageIcon(i)
-            if (icon != 0) img.setImageResource(mAppSectionsPagerAdapter.getPageIcon(i))
-            tabLayout.addTab(tab)
-        }
-
+            val tabView = tab.customView
+            val tabTitle: TextView? = tabView?.findViewById(R.id.title)
+            val tabIcon: ImageView? = tabView?.findViewById(R.id.icon)
+            tabTitle?.text = mAppSectionsPagerAdapter.getPageTitle(position)
+            tabIcon?.setImageResource(mAppSectionsPagerAdapter.getPageIcon(position))
+            //tab.text = mAppSectionsPagerAdapter.getPageTitle(position)
+            //tab.icon = ContextCompat.getDrawable(this, mAppSectionsPagerAdapter.getPageIcon(position))
+        }.attach()
 
         // setup the navigation drawer view from android.support.v4.widget.DrawerLayout for API < 21.
         mDrawerLayout = findViewById(R.id.drawerlayout)
@@ -441,28 +456,25 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
     }
 
     /* ******************************************************************
-     * FragmentPagerAdapter to handle tabs
+     * FragmentStateAdapter to handle tabs
      * ****************************************************************** */
     /**
-     * A [FragmentPagerAdapter] that returns a fragment corresponding to one of the primary
+     * A [FragmentStateAdapter] that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    class AppSectionsPagerAdapter(fm: FragmentManager, private val mContext: Context) :
-        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        override fun getItem(position: Int): Fragment {
+    class AppSectionsPagerAdapter(fragmentActivity: FragmentActivity, private val mContext: Context) :
+        FragmentStateAdapter(fragmentActivity) {
+        override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> mMainSectionFragment // MainSectionFragment()
                 1 -> mViewSectionFragment // ViewSectionFragment()
-                else ->                // Unknown section number. Throw exception.
-                    throw RuntimeException("Section item " + position + "unknown")
+                else -> throw IllegalArgumentException("Invalid position: $position")
             }
         }
 
-        override fun getCount(): Int {
-            return 2
-        }
+        override fun getItemCount(): Int = 2
 
-        override fun getPageTitle(position: Int): CharSequence {
+        fun getPageTitle(position: Int): CharSequence {
             when (position) {
                 0 -> return mContext.resources.getString(R.string.tab_main)
                 1 -> return mContext.resources.getString(R.string.tab_view)
@@ -827,10 +839,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
     }
 
     companion object {
-        @JvmField
         var mMainSectionFragment: MainSectionFragment = MainSectionFragment()
 
-        @JvmField
         var mViewSectionFragment: ViewSectionFragment = ViewSectionFragment()
     }
 }
