@@ -3,6 +3,10 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
+V0.24b: versionCode 18, 17.04.2025 Mr
+- Refactored TimesWork to an object (static class)
+- Updated targetSdkVersion to 36 (Android 16)
+
 V0.23b: versionCode 18, 17.04.2025 Mr
 - Refactored depecated FragmentPagerAdapter to FragmentStateAdapter
 - Send broadcast RECEIVER_UPDATE_VIEW in SettingsActivity.onStop() to update views
