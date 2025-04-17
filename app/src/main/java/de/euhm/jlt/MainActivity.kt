@@ -31,6 +31,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -310,6 +311,12 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                     // Let the system handle the default back behavior (e.g., finish the activity)
                     finish()
                 }
+            }
+
+            override fun handleOnBackStarted(backEvent: BackEventCompat) {
+                // Optional: Handle the start of the back gesture (e.g., for animations)
+                Log.v(LOG_TAG, "handleOnBackStarted()")
+                super.handleOnBackStarted(backEvent)
             }
         }
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)

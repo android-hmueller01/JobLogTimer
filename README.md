@@ -3,6 +3,9 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
+V0.25b: versionCode 18, 17.04.2025 Mr
+- Added handleOnBackStarted() / enableOnBackInvokedCallback
+
 V0.24b: versionCode 18, 17.04.2025 Mr
 - Refactored TimesWork to an object (static class)
 - Updated targetSdkVersion to 36 (Android 16)

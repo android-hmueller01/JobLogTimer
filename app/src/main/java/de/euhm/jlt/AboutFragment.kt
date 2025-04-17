@@ -16,6 +16,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import androidx.activity.BackEventCompat
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.DialogFragment
 
 /**
@@ -41,7 +43,7 @@ class AboutFragment : DialogFragment() {
             versionName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 pm.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName!!
             } else {
-                pm.getPackageInfo(packageName,0).versionName!!
+                pm.getPackageInfo(packageName, 0).versionName!!
             }
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e("AboutFragment", "NameNotFoundException: $e")
@@ -52,7 +54,34 @@ class AboutFragment : DialogFragment() {
         // set the layout for the dialog
         builder.setView(view)
         isCancelable = true
+        val dialog = builder.create()
 
-        return builder.create()
+        // TODO: overrides are not handled correctly
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Your custom back navigation logic here
+                // You can use the FragmentManager to navigate within the fragment
+                // or call requireActivity().finish() to close the activity
+
+                // Example: Pop the back stack if there's anything to pop
+                if (parentFragmentManager.backStackEntryCount > 0) {
+                    parentFragmentManager.popBackStack()
+                } else {
+                    // Otherwise, let the activity handle it (e.g., close the activity)
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+                // Example: dismiss the dialog
+                // dismiss()
+            }
+
+            override fun handleOnBackStarted(backEvent: BackEventCompat) {
+                // Optional: Handle the start of the back gesture in fragment
+                Log.v("AboutFragment", "handleOnBackStarted()")
+                super.handleOnBackStarted(backEvent)
+            }
+        })
+
+        return dialog
     }
 }
