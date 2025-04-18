@@ -56,7 +56,13 @@ class AboutFragment : DialogFragment() {
         isCancelable = true
         val dialog = builder.create()
 
-        // TODO: overrides are not handled correctly
+        // TODO
+        // requireActivity().onBackPressedDispatcher.addCallback(...) works for fragments attached to an activity,
+        // but a DialogFragment shows as a dialog (not part of the activity's back stack) and handles
+        // the back press internally, often via the Dialog itself.
+        // So onBackPressedDispatcher won't be triggered when the back button is pressed if your DialogFragment
+        // is still showing as a dialog — because the dialog consumes the back press first.
+
         requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Your custom back navigation logic here
