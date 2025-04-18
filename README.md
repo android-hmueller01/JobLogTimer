@@ -3,19 +3,16 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
-V0.24b: versionCode 18, 17.04.2025 Mr
-- Refactored TimesWork to an object (static class)
-- Updated targetSdkVersion to 36 (Android 16)
-
-V0.23b: versionCode 18, 17.04.2025 Mr
+V0.23b: versionCode 18, 17.04.2025 Mr (beta, not released)
 - Refactored depecated FragmentPagerAdapter to FragmentStateAdapter
+- Refactored TimesWork to an object (static class)
 - Send broadcast RECEIVER_UPDATE_VIEW in SettingsActivity.onStop() to update views
 
-V0.22b: versionCode 18, 12.04.2025 Mr
+V0.22b: versionCode 18, 12.04.2025 Mr (beta, not released)
 - Moved settings from tab to drawer menu using an activity
 - Now 100% Kotlin code
 
-V0.21b: versionCode 18, 09.04.2025 Mr
+V0.21b: versionCode 18, 09.04.2025 Mr (beta, not released)
 - Ported / migrated code to Kotlin (95%) using AndroidStudio
 - Updated targetSdkVersion to 35 (Android 15)
 - Updated all depenendencies and gradle
@@ -23,7 +20,7 @@ V0.21b: versionCode 18, 09.04.2025 Mr
 - Refactored way of requesting permissions
 - Changed license from Apache 2.0 to MIT
 
-V0.20b: versionCode 18, 30.06.2022 Mr
+V0.20b: versionCode 18, 30.06.2022 Mr (beta, not released)
 - Changed some default values of the preferences
 - Fixed bug that setting home office is not respected by alarm
 - Updated targetSdkVersion to 33 (Android 13)

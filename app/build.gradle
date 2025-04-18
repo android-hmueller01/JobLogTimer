@@ -33,9 +33,9 @@ android {
     defaultConfig {
         applicationId = "de.euhm.jlt"
         minSdk = 21
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 18
-        versionName = "0.24b"
+        versionName = "0.23b"
     }
 
     signingConfigs {
