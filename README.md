@@ -3,6 +3,9 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
+V1.0.0: versionCode 19, 18.04.2025 Mr
+- Released V1.0.0
+
 V0.23b: versionCode 18, 17.04.2025 Mr (beta, not released)
 - Refactored depecated FragmentPagerAdapter to FragmentStateAdapter
 - Refactored TimesWork to an object (static class)
