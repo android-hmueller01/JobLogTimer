@@ -714,6 +714,9 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                     selection = resources.getString(R.string.database_update_positive_result)
                 }
                 // update statistics, it might change ...
+                val workedTimeDay = TimeUtil.getFinishedDayWorkTime(context, TimeUtil.getCurrentTime())
+                mTimesWork.timeWorked = workedTimeDay
+                mMainSectionFragment.updateTimesView()
                 mMainSectionFragment.updateStatisticsView()
                 mTimes = null // mark as handled
             }
@@ -732,10 +735,12 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // user acknowledged the deletion
         mViewSectionFragment.deleteTimesItem(mTimes)
         // update statistics, it might change ...
+        val workedTimeDay = TimeUtil.getFinishedDayWorkTime(applicationContext, TimeUtil.getCurrentTime())
+        mTimesWork.timeWorked = workedTimeDay
+        mMainSectionFragment.updateTimesView()
         mMainSectionFragment.updateStatisticsView()
         // if work was started it might change the day ...
         if (mTimesWork.workStarted) {
-            mMainSectionFragment.updateTimesView()
             // reset alarms and notification
             AlarmUtils.setAlarms(this)
         }
