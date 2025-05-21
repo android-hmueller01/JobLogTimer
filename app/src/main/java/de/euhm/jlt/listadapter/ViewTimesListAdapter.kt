@@ -22,6 +22,8 @@ import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
 
+private val LOG_TAG: String = ViewTimesListAdapter::class.java.simpleName
+
 /**
  * List adapter for Times
  *
@@ -29,9 +31,6 @@ import java.util.Locale
  */
 class ViewTimesListAdapter(context: Context, layoutId: Int, listTimes: List<Times>) :
     ArrayAdapter<Times>(context, layoutId, listTimes) {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = ViewTimesListAdapter::class.java.simpleName
-
     private val mContext: Context
     private val mListTimes: MutableList<Times>
     private val mLayoutId: Int

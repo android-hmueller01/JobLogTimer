@@ -27,10 +27,9 @@ import de.euhm.jlt.utils.Constants
 import java.io.File
 import androidx.core.net.toUri
 
-class AlarmReceiver : BroadcastReceiver() {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = AlarmReceiver::class.java.simpleName
+private val LOG_TAG: String = AlarmReceiver::class.java.simpleName
 
+class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         Log.v(LOG_TAG, "onReceive() intent '$action'")
