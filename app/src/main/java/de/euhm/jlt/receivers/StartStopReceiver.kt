@@ -31,7 +31,7 @@ class StartStopReceiver : BroadcastReceiver() {
         Log.v(LOG_TAG, "onReceive() intent '$action'")
         val prefs = Prefs(context)
         val timesWork = TimesWork(context)
-        // Construct/load TimesWork DAO from persistent data
+
         if (timesWork.workStarted) {
             // End work ...
             if (timesWork.timeEnd == -1L) {
