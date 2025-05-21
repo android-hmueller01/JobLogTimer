@@ -18,36 +18,32 @@ import android.widget.Toast
 import de.euhm.jlt.R
 import de.euhm.jlt.dao.TimesDataSource
 import de.euhm.jlt.dao.TimesWork
-import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.AlarmUtils
 import de.euhm.jlt.utils.Constants
+import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.TimeUtil
 
-class StartStopReceiver : BroadcastReceiver() {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = StartStopReceiver::class.java.simpleName
+private val LOG_TAG: String = StartStopReceiver::class.java.simpleName
 
+class StartStopReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         Log.v(LOG_TAG, "onReceive() intent '$action'")
         val prefs = Prefs(context)
-
+        val timesWork = TimesWork(context)
         // Construct/load TimesWork DAO from persistent data
-        if (TimesWork.workStarted) {
+        if (timesWork.workStarted) {
             // End work ...
-            if (TimesWork.timeEnd == -1L) {
+            if (timesWork.timeEnd == -1L) {
                 // only use current time, if not set manually
-                TimesWork.timeEnd = TimeUtil.getCurrentTimeInMillis()
+                timesWork.timeEnd = TimeUtil.getCurrentTimeInMillis()
             }
-            TimesWork.workStarted = false
+            timesWork.workStarted = false
 
             // write data to database
             val dataSource = TimesDataSource(context)
             dataSource.createTimes()
             dataSource.close()
-
-            // Store TimesWork DAO to persistent data
-            TimesWork.saveTimesWork(context)
 
             // cancel alarms and notification
             AlarmUtils.setAlarms(context)
@@ -61,19 +57,16 @@ class StartStopReceiver : BroadcastReceiver() {
             Toast.makeText(context, R.string.work_ended, Toast.LENGTH_SHORT).show()
         } else {
             // Start work ...
-            TimesWork.workStarted = true
-            TimesWork.timeStart = TimeUtil.getCurrentTimeInMillis()
-            TimesWork.timeEnd = -1
+            timesWork.workStarted = true
+            timesWork.timeStart = TimeUtil.getCurrentTimeInMillis()
+            timesWork.timeEnd = -1
             if (prefs.homeOfficeUseDefault) {
                 // use default home office setting from prefs
-                TimesWork.homeOffice = prefs.homeOfficeDefaultSetting
+                timesWork.homeOffice = prefs.homeOfficeDefaultSetting
             } // otherwise do not change old timesWork home office value
 
             val workedTimeDay = TimeUtil.getFinishedDayWorkTime(context, TimeUtil.getCurrentTime())
-            TimesWork.timeWorked = workedTimeDay
-
-            // Store TimesWork DAO to persistent data
-            TimesWork.saveTimesWork(context)
+            timesWork.timeWorked = workedTimeDay
 
             // set alarms and notification
             AlarmUtils.setAlarms(context)

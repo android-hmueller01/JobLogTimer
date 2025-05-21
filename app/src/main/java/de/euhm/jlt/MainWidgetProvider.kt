@@ -24,12 +24,15 @@ import de.euhm.jlt.receivers.StartStopReceiver
 import de.euhm.jlt.utils.Constants
 import de.euhm.jlt.utils.TimeUtil
 
+private val LOG_TAG: String = MainWidgetProvider::class.java.simpleName
+
 /**
  * JobLogTimer main widget provider
  * @author hmueller
  */
 class MainWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        val timesWork = TimesWork(context)
         var intent: Intent
         var pendingIntent: PendingIntent?
         var flag = 0
@@ -43,20 +46,28 @@ class MainWidgetProvider : AppWidgetProvider() {
             val remoteViews = RemoteViews(context.packageName, R.layout.widget_main)
 
             // is work started?
-            if (TimesWork.workStarted) {
+            if (timesWork.workStarted) {
                 // update widget info line
                 val curTimeMillis = TimeUtil.getCurrentTimeInMillis()
-                val workTime = TimeUtil.getWorkedTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)
-                val overTime = TimeUtil.getOverTime(context, TimesWork.timeStart, curTimeMillis, TimesWork.homeOffice, TimesWork.timeWorked)
+                val workTime = TimeUtil.getWorkedTime(context,
+                    timesWork.timeStart,
+                    curTimeMillis,
+                    timesWork.homeOffice,
+                    timesWork.timeWorked)
+                val overTime = TimeUtil.getOverTime(context,
+                    timesWork.timeStart,
+                    curTimeMillis,
+                    timesWork.homeOffice,
+                    timesWork.timeWorked)
                 remoteViews.setTextViewText(R.id.widget_info_line1, TimeUtil.formatTimeString24(workTime))
                 remoteViews.setTextViewText(R.id.widget_info_line2, "(" + TimeUtil.formatTimeString24(overTime) + ")")
                 // update the progress bar (worked time)
                 val progress =
-                    (100 * (curTimeMillis - TimesWork.timeStart).toFloat() / (TimesWork.normalWorkEndTime(context) - TimesWork.timeStart).toFloat()).toInt()
+                    (100 * (curTimeMillis - timesWork.timeStart).toFloat() / (timesWork.normalWorkEndTime(context) - timesWork.timeStart).toFloat()).toInt()
                 //if (progress > 100) progress = 100;
                 remoteViews.setProgressBar(R.id.widget_progress_bar, 100, progress, false)
-                if (curTimeMillis > TimesWork.normalWorkEndTime(context)) {
-                    if (curTimeMillis > TimesWork.maxWorkEndTime(context)) {
+                if (curTimeMillis > timesWork.normalWorkEndTime(context)) {
+                    if (curTimeMillis > timesWork.maxWorkEndTime(context)) {
                         remoteViews.setViewVisibility(R.id.widget_progress_bar_red, View.VISIBLE)
                     } else {
                         remoteViews.setViewVisibility(R.id.widget_progress_bar_yellow, View.VISIBLE)
@@ -129,9 +140,5 @@ class MainWidgetProvider : AppWidgetProvider() {
         Log.v(LOG_TAG, "onEnabled()")
 
         super.onEnabled(context)
-    }
-
-    companion object {
-        private val LOG_TAG: String = MainWidgetProvider::class.java.simpleName
     }
 }

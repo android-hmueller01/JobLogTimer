@@ -73,16 +73,17 @@ import java.io.File
 import java.util.Calendar
 import java.util.Locale
 
+private val LOG_TAG: String = MainActivity::class.java.simpleName
+
 /**
  * Main activity of JobLog
  * @author hmueller
  */
 class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEditTimesFragmentListener,
     YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = MainActivity::class.java.simpleName
     private var mTimes: Times? = null // temp. Times for different dialogs
     private var mMainMenu: Menu? = null // saved MainMenu for later use in onKeyUp() and onTabSelected()
+    private lateinit var mTimesWork: TimesWork
     private lateinit var mBackupDbPath: String
 
     /**
@@ -188,10 +189,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
             }
         }
 
-        // Restore data from SharedPreferences to TimesWork DAO persistent data
-        TimesWork.loadTimesWork(context)
-
-        //TimesWork.timeEnd = -1L // only for debugging, resetting End time
+        mTimesWork = TimesWork(context)
+        //mTimesWork.timeEnd = -1L // only for debugging, resetting End time
 
         // Setup FloatingActionButton from android.support.design.widget.FloatingActionButton for API < 21.
         mFab = findViewById(R.id.fab)
@@ -509,7 +508,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // method to efficiently enable/disable items or otherwise dynamically modify the contents.
 
         // show start/end action button
-        if (TimesWork.workStarted) {
+        if (mTimesWork.workStarted) {
             menu.findItem(R.id.action_start).setVisible(false)
             menu.findItem(R.id.action_end).setVisible(true)
         } else {
@@ -534,8 +533,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         } else if (id == R.id.action_filter) {
             // prepare to edit filter
             val filterFrag = FilterFragment()
-            filterFrag.setPickerMonth(TimesWork.filterMonth)
-            filterFrag.setPickerYear(TimesWork.filterYear)
+            filterFrag.setPickerMonth(mTimesWork.filterMonth)
+            filterFrag.setPickerYear(mTimesWork.filterYear)
             // Display the edit fragment as the main content.
             supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(0, filterFrag).commit()
@@ -735,7 +734,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // update statistics, it might change ...
         mMainSectionFragment.updateStatisticsView()
         // if work was started it might change the day ...
-        if (TimesWork.workStarted) {
+        if (mTimesWork.workStarted) {
             mMainSectionFragment.updateTimesView()
             // reset alarms and notification
             AlarmUtils.setAlarms(this)
@@ -766,16 +765,16 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // set time depending on titleId
         if (titleId == R.string.start_time_set) {
             val calTimeStart = TimeUtil.getCurrentTime()
-            if (TimesWork.timeStart != -1L) calTimeStart.timeInMillis = TimesWork.timeStart
+            if (mTimesWork.timeStart != -1L) calTimeStart.timeInMillis = mTimesWork.timeStart
             calTimeStart[Calendar.HOUR_OF_DAY] = cal[Calendar.HOUR_OF_DAY]
             calTimeStart[Calendar.MINUTE] = cal[Calendar.MINUTE]
-            TimesWork.calStart = calTimeStart
+            mTimesWork.calStart = calTimeStart
         } else if (titleId == R.string.end_time_set) {
             val calTimeEnd = TimeUtil.getCurrentTime()
-            if (TimesWork.timeEnd != -1L) calTimeEnd.timeInMillis = TimesWork.timeEnd
+            if (mTimesWork.timeEnd != -1L) calTimeEnd.timeInMillis = mTimesWork.timeEnd
             calTimeEnd[Calendar.HOUR_OF_DAY] = cal[Calendar.HOUR_OF_DAY]
             calTimeEnd[Calendar.MINUTE] = cal[Calendar.MINUTE]
-            TimesWork.calEnd = calTimeEnd
+            mTimesWork.calEnd = calTimeEnd
         }
         // update view and alarms ...
         mMainSectionFragment.updateTimesView()
@@ -786,13 +785,13 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         // set time depending on titleId
         if (titleId == R.string.date_text) {
             val calTimeStart = TimeUtil.getCurrentTime()
-            if (TimesWork.timeStart != -1L) calTimeStart.timeInMillis = TimesWork.timeStart
+            if (mTimesWork.timeStart != -1L) calTimeStart.timeInMillis = mTimesWork.timeStart
             calTimeStart[cal[Calendar.YEAR], cal[Calendar.MONTH]] = cal[Calendar.DAY_OF_MONTH]
-            TimesWork.calStart = calTimeStart
-            if (TimesWork.timeEnd != -1L) {
-                val calTimeEnd = TimesWork.calEnd
+            mTimesWork.calStart = calTimeStart
+            if (mTimesWork.timeEnd != -1L) {
+                val calTimeEnd = mTimesWork.calEnd
                 calTimeEnd[cal[Calendar.YEAR], cal[Calendar.MONTH]] = cal[Calendar.DAY_OF_MONTH]
-                TimesWork.calEnd = calTimeEnd
+                mTimesWork.calEnd = calTimeEnd
             }
         } else {
             throw IllegalStateException("Unexpected value: $titleId")
@@ -822,8 +821,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
         super.onPause()
         // remember, that activity is paused
         CustomApplication.activityPaused()
-        // Store TimesWork data in persistent store
-        TimesWork.saveTimesWork(applicationContext)
     }
 
     public override fun onDestroy() {
