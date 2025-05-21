@@ -9,41 +9,99 @@
 package de.euhm.jlt.dao
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 
+
+private const val PREFS_NAME = "JobLogData"
+private const val WORK_STARTED_KEY = "workStarted"
+private const val TIME_START_KEY = "timeStart"
+private const val TIME_END_KEY = "timeEnd"
+private const val TIME_WORKED_KEY = "timeWorked"
+private const val HOME_OFFICE_KEY = "homeOffice"
+private const val STATISTICS_KEY = "statistics"
+private const val FILTER_MONTH_KEY = "filterMonth"
+private const val FILTER_YEAR_KEY = "filterYear"
+
 /**
- * This class is the model and contains the current work times data.
+ * This class contains the current work times data.
  *
  * @author hmueller
  */
-object TimesWork { // create a singleton (static) class
-    private const val PREFS_NAME = "JobLogData"
+class TimesWork(val context: Context) {
+    private var sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /** true, if work is started */
-    var workStarted: Boolean = false
+    var workStarted: Boolean
+        get() = (sharedPreferences.getBoolean(WORK_STARTED_KEY, false))
+        set(value) {
+            sharedPreferences.edit { putBoolean(WORK_STARTED_KEY, value) }
+        }
 
     /** current start time in milliseconds */
-    var timeStart: Long = 0L
+    var timeStart: Long
+        get() = (sharedPreferences.getLong(TIME_START_KEY, -1L))
+        set(value) {
+            sharedPreferences.edit { putLong(TIME_START_KEY, value) }
+        }
 
     /** current end time in milliseconds */
-    var timeEnd: Long = 0L
+    var timeEnd: Long
+        get() = (sharedPreferences.getLong(TIME_END_KEY, -1L))
+        set(value) {
+            sharedPreferences.edit { putLong(TIME_END_KEY, value) }
+        }
 
+    // TODO: do not use this in statistics as db might change and will not reflect that
     /** time already worked that day in milliseconds */
-    var timeWorked: Long = 0L
+    var timeWorked: Long
+        get() = (sharedPreferences.getLong(TIME_WORKED_KEY, -1L))
+        set(value) {
+            sharedPreferences.edit { putLong(TIME_WORKED_KEY, value) }
+        }
 
     /** true, if work is in home office */
-    var homeOffice: Boolean = false
+    var homeOffice: Boolean
+        get() {
+            return (sharedPreferences.getBoolean(HOME_OFFICE_KEY, false))
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean(HOME_OFFICE_KEY, value) }
+        }
 
     /** Calendar of current statistics view */
-    var statisticsDate: Calendar = Calendar.getInstance()
+    var statisticsDate: Calendar
+        get() {
+            val statistics = sharedPreferences.getLong(STATISTICS_KEY, -1L)
+            return if (statistics == -1L) {
+                TimeUtil.getCurrentTime()
+            } else {
+                TimeUtil.millisToCalendar(statistics)
+            }
+        }
+        set(value) {
+            sharedPreferences.edit { putLong(STATISTICS_KEY, value.timeInMillis) }
+        }
 
     /** view filter month (Jan. = 1), set to 0 to disable */
-    var filterMonth: Int = 0
+    var filterMonth: Int
+        get() {
+            return (sharedPreferences.getInt(FILTER_MONTH_KEY, 0))
+        }
+        set(value) {
+            sharedPreferences.edit { putInt(FILTER_MONTH_KEY, value) }
+        }
 
     /** view filter year, set to 0 to disable */
-    var filterYear: Int = 0
+    var filterYear: Int
+        get() {
+            return (sharedPreferences.getInt(FILTER_YEAR_KEY, 0))
+        }
+        set(value) {
+            sharedPreferences.edit { putInt(FILTER_YEAR_KEY, value) }
+        }
 
     /**
      * Get / set the start time of work (Calendar).
@@ -66,49 +124,6 @@ object TimesWork { // create a singleton (static) class
         set(cal) {
             timeEnd = cal.timeInMillis
         }
-
-    /**
-     * Restoring all data from persistent key-value data
-     *
-     * @param context The context used for the preferences values.
-     */
-    fun loadTimesWork(context: Context) {
-        // Restore persistent key-value data
-        val prefData = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        timeStart = prefData.getLong("timeStart", -1)
-        timeEnd = prefData.getLong("timeEnd", -1)
-        timeWorked = prefData.getLong("timeWorked", 0)
-        workStarted = prefData.getBoolean("workStarted", false)
-        homeOffice = prefData.getBoolean("homeOffice", false)
-        val statistics = prefData.getLong("statistics", -1)
-        if (statistics == -1L) {
-            statisticsDate = TimeUtil.getCurrentTime()
-        } else {
-            statisticsDate.timeInMillis = statistics
-        }
-        filterMonth = prefData.getInt("filterMonth", 0)
-        filterYear = prefData.getInt("filterYear", 0)
-    }
-
-    /**
-     * Saving all data in persistent key-value data
-     *
-     * @param context The context used for the preferences values.
-     */
-    fun saveTimesWork(context: Context) {
-        // Store persistent key-value data
-        val prefData = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefData.edit {
-            putLong("timeStart", timeStart)
-            putLong("timeEnd", timeEnd)
-            putLong("timeWorked", timeWorked)
-            putBoolean("homeOffice", homeOffice)
-            putBoolean("workStarted", workStarted)
-            putLong("statistics", statisticsDate.timeInMillis)
-            putInt("filterMonth", filterMonth)
-            putInt("filterYear", filterYear)
-        } // Commit the edits
-    }
 
     /**
      * Calc normal work time based on start time
