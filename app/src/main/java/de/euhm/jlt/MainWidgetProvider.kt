@@ -41,6 +41,13 @@ class MainWidgetProvider : AppWidgetProvider() {
             flag = flag or PendingIntent.FLAG_IMMUTABLE
         }
 
+        // copy TimesWork local (not reading several times from shared preferences)
+        val timeStart = timesWork.timeStart
+        val timeWorked = timesWork.timeWorked
+        val homeOffice = timesWork.homeOffice
+        val normalWorkEndTime = timesWork.normalWorkEndTime(context)
+        val maxWorkEndTime = timesWork.maxWorkEndTime(context)
+
         Log.v(LOG_TAG, "onUpdate()")
         for (currentWidgetId in appWidgetIds) {
             val remoteViews = RemoteViews(context.packageName, R.layout.widget_main)
@@ -49,25 +56,16 @@ class MainWidgetProvider : AppWidgetProvider() {
             if (timesWork.workStarted) {
                 // update widget info line
                 val curTimeMillis = TimeUtil.getCurrentTimeInMillis()
-                val workTime = TimeUtil.getWorkedTime(context,
-                    timesWork.timeStart,
-                    curTimeMillis,
-                    timesWork.homeOffice,
-                    timesWork.timeWorked)
-                val overTime = TimeUtil.getOverTime(context,
-                    timesWork.timeStart,
-                    curTimeMillis,
-                    timesWork.homeOffice,
-                    timesWork.timeWorked)
+                val workTime = TimeUtil.getWorkedTime(context, timeStart, curTimeMillis, homeOffice, timeWorked)
+                val overTime = TimeUtil.getOverTime(context, timeStart, curTimeMillis, homeOffice, timeWorked)
                 remoteViews.setTextViewText(R.id.widget_info_line1, TimeUtil.formatTimeString24(workTime))
                 remoteViews.setTextViewText(R.id.widget_info_line2, "(" + TimeUtil.formatTimeString24(overTime) + ")")
                 // update the progress bar (worked time)
                 val progress =
-                    (100 * (curTimeMillis - timesWork.timeStart).toFloat() / (timesWork.normalWorkEndTime(context) - timesWork.timeStart).toFloat()).toInt()
-                //if (progress > 100) progress = 100;
+                    (100 * (curTimeMillis - timeStart + timeWorked).toDouble() / (normalWorkEndTime - timeStart + timeWorked)).toInt()
                 remoteViews.setProgressBar(R.id.widget_progress_bar, 100, progress, false)
-                if (curTimeMillis > timesWork.normalWorkEndTime(context)) {
-                    if (curTimeMillis > timesWork.maxWorkEndTime(context)) {
+                if (curTimeMillis > normalWorkEndTime) {
+                    if (curTimeMillis > maxWorkEndTime) {
                         remoteViews.setViewVisibility(R.id.widget_progress_bar_red, View.VISIBLE)
                     } else {
                         remoteViews.setViewVisibility(R.id.widget_progress_bar_yellow, View.VISIBLE)
