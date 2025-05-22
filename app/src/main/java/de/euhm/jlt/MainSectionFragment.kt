@@ -43,14 +43,15 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.floor
 
+private val LOG_TAG: String = MainSectionFragment::class.java.simpleName
+
 /**
  * Main section fragment of JobLog
  * @author hmueller
  */
 class MainSectionFragment : Fragment() {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = MainSectionFragment::class.java.simpleName
     private lateinit var mContext: Context // gets initialized in onAttach()
+    private lateinit var mTimesWork: TimesWork // gets initialized in onAttach()
     private val mHandlerUpdateTimes = Handler(Looper.getMainLooper())
     private val mHandlerUpdateTimesDelay: Long = 1000
 
@@ -75,6 +76,7 @@ class MainSectionFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        mTimesWork = TimesWork(context)
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -96,10 +98,10 @@ class MainSectionFragment : Fragment() {
 
         // register OnClickListener that before defined in main_times.xml by android:onClick
         view.findViewById<TextView>(R.id.date_val).setOnClickListener {
-            if (TimesWork.workStarted) {
-                // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
+            if (mTimesWork.workStarted) {
+                // do not set mTimesWork.timeStart to current time, otherwise we can not cancel ...
                 val cal = TimeUtil.getCurrentTime()
-                if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
+                if (mTimesWork.timeStart != -1L) cal.timeInMillis = mTimesWork.timeStart
                 DatePickerFragment().set(cal, R.string.date_text).show(parentFragmentManager, "datePicker")
             } else {
                 Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
@@ -107,10 +109,10 @@ class MainSectionFragment : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.start_val).setOnClickListener {
-            if (TimesWork.workStarted) {
-                // do not set TimesWork.timeStart to current time, otherwise we can not cancel ...
+            if (mTimesWork.workStarted) {
+                // do not set mTimesWork.timeStart to current time, otherwise we can not cancel ...
                 val cal = TimeUtil.getCurrentTime()
-                if (TimesWork.timeStart != -1L) cal.timeInMillis = TimesWork.timeStart
+                if (mTimesWork.timeStart != -1L) cal.timeInMillis = mTimesWork.timeStart
                 TimePickerFragment().set(cal, R.string.start_time_set).show(parentFragmentManager, "timePicker")
             } else {
                 Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
@@ -118,10 +120,10 @@ class MainSectionFragment : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.end_val).setOnClickListener {
-            if (TimesWork.workStarted) {
-                // do not set TimesWork.timeEnd to current time, otherwise we can not cancel ...
+            if (mTimesWork.workStarted) {
+                // do not set mTimesWork.timeEnd to current time, otherwise we can not cancel ...
                 val cal = TimeUtil.getCurrentTime()
-                if (TimesWork.timeEnd != -1L) cal.timeInMillis = TimesWork.timeEnd
+                if (mTimesWork.timeEnd != -1L) cal.timeInMillis = mTimesWork.timeEnd
                 TimePickerFragment().set(cal, R.string.end_time_set).show(parentFragmentManager, "timePicker")
             } else {
                 Toast.makeText(mContext, R.string.work_not_started, Toast.LENGTH_LONG).show()
@@ -130,8 +132,8 @@ class MainSectionFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.homeoffice_cb).setOnClickListener {
             // save the Home Office check box into TimesWork dataset
-            TimesWork.homeOffice = (it as CheckBox).isChecked
-            if (TimesWork.workStarted) {
+            mTimesWork.homeOffice = (it as CheckBox).isChecked
+            if (mTimesWork.workStarted) {
                 updateTimesView()
                 // reset alarms and notification
                 AlarmUtils.setAlarms(mContext)
@@ -142,8 +144,9 @@ class MainSectionFragment : Fragment() {
         onSwipeTouchListener = object : OnSwipeTouchListener(mContext, view.findViewById(R.id.layout_main_statistics)) {
             override fun onSwipeRight(): Boolean {
                 //Toast.makeText(mContext, "Right swipe [Previous]", Toast.LENGTH_SHORT).show();
-                val cal = TimesWork.statisticsDate
+                val cal = mTimesWork.statisticsDate
                 cal.add(Calendar.WEEK_OF_YEAR, -1)
+                mTimesWork.statisticsDate = cal
                 updateStatisticsView()
                 return true
             }
@@ -152,13 +155,14 @@ class MainSectionFragment : Fragment() {
                 //Toast.makeText(mContext, "Left swipe [Next]", Toast.LENGTH_SHORT).show();
                 var result = false
 
-                val cal = TimesWork.statisticsDate
+                val cal = mTimesWork.statisticsDate
                 val now = Calendar.getInstance()
                 // do not change cal before we checked if user wants to swipe after current
-                // date, because TimesWork.getStatisticsDate() returns a static reference!
+                // date, because mTimesWork.getStatisticsDate() returns a static reference!
                 now.add(Calendar.WEEK_OF_YEAR, -1)
                 if (cal.before(now)) {
                     cal.add(Calendar.WEEK_OF_YEAR, 1)
+                    mTimesWork.statisticsDate = cal
                     updateStatisticsView()
                     result = true
                 }
@@ -167,7 +171,7 @@ class MainSectionFragment : Fragment() {
 
             override fun onDoubleTap(): Boolean {
                 //Toast.makeText(mContext, "Double tap [Current Date]", Toast.LENGTH_SHORT).show();
-                TimesWork.statisticsDate = TimeUtil.getCurrentTime()
+                mTimesWork.statisticsDate = TimeUtil.getCurrentTime()
                 updateStatisticsView()
                 return true
             }
@@ -191,9 +195,9 @@ class MainSectionFragment : Fragment() {
         val prefs = Prefs(mContext)
         var curTimeMillis = TimeUtil.getCurrentTimeInMillis()
 
-        if (!TimesWork.workStarted && (TimesWork.timeStart != -1L) && (TimesWork.timeEnd != -1L)) {
+        if (!mTimesWork.workStarted && (mTimesWork.timeStart != -1L) && (mTimesWork.timeEnd != -1L)) {
             // work is done and times are set
-            curTimeMillis = TimesWork.timeEnd
+            curTimeMillis = mTimesWork.timeEnd
         }
 
         // update current time in seconds
@@ -203,18 +207,18 @@ class MainSectionFragment : Fragment() {
 
         // calculate the percentage worked
         val percentCurrent =
-            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.normalWorkEndTime(
-                mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (curTimeMillis - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat() / (mTimesWork.normalWorkEndTime(
+                mContext) - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat()
         val percentNormal =
-            (TimesWork.normalWorkEndTime(mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.maxWorkEndTime(
-                mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (mTimesWork.normalWorkEndTime(mContext) - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat() / (mTimesWork.maxWorkEndTime(
+                mContext) - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat()
         val percentProgressBar =
-            (curTimeMillis - TimesWork.timeStart + TimesWork.timeWorked).toFloat() / (TimesWork.maxWorkEndTime(mContext) - TimesWork.timeStart + TimesWork.timeWorked).toFloat()
+            (curTimeMillis - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat() / (mTimesWork.maxWorkEndTime(mContext) - mTimesWork.timeStart + mTimesWork.timeWorked).toFloat()
 
         val tvDate = view.findViewById<TextView>(R.id.date_val)
         val tvTime = view.findViewById<TextView>(R.id.start_val)
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_bar)
-        if (TimesWork.timeStart == -1L) {
+        if (mTimesWork.timeStart == -1L) {
             tvDate.text = " --.--.---- "
             tvTime.text = " --:-- "
             progressBar.secondaryProgress = 0
@@ -229,31 +233,31 @@ class MainSectionFragment : Fragment() {
             tv.text = "-"
         } else {
             // view start date and time
-            tvDate.text = String.format(Locale.getDefault(), " %1\$td.%1\$tm.%1\$tY ", TimesWork.calStart)
-            tvTime.text = String.format(Locale.getDefault(), " %tR ", TimesWork.calStart)
+            tvDate.text = String.format(Locale.getDefault(), " %1\$td.%1\$tm.%1\$tY ", mTimesWork.calStart)
+            tvTime.text = String.format(Locale.getDefault(), " %tR ", mTimesWork.calStart)
 
             // set home office check box
             val homeOfficeCb = view.findViewById<CheckBox>(R.id.homeoffice_cb)
-            homeOfficeCb.isChecked = TimesWork.homeOffice
+            homeOfficeCb.isChecked = mTimesWork.homeOffice
 
             // set the progress bar values
             val workedTimeString = TimeUtil.formatTimeString(TimeUtil.getWorkedTime(mContext,
-                TimesWork.timeStart,
+                mTimesWork.timeStart,
                 curTimeMillis,
-                TimesWork.homeOffice,
-                TimesWork.timeWorked))
+                mTimesWork.homeOffice,
+                mTimesWork.timeWorked))
             val addProgressBarInfo: String
             val progress: Int
             val secondaryProgress: Int
-            if (curTimeMillis > TimesWork.normalWorkEndTime(mContext)) {
+            if (curTimeMillis > mTimesWork.normalWorkEndTime(mContext)) {
                 // we are in over time ...
                 progress = floor((percentNormal * 100).toDouble()).toInt()
                 secondaryProgress = floor((percentProgressBar * 100).toDouble()).toInt()
                 addProgressBarInfo = "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(mContext,
-                    TimesWork.timeStart,
+                    mTimesWork.timeStart,
                     curTimeMillis,
-                    TimesWork.homeOffice,
-                    TimesWork.timeWorked)) + ")"
+                    mTimesWork.homeOffice,
+                    mTimesWork.timeWorked)) + ")"
             } else {
                 // we are in normal work time, no secondaryProgress needed
                 progress = floor((percentProgressBar * 100).toDouble()).toInt()
@@ -262,10 +266,10 @@ class MainSectionFragment : Fragment() {
                     "(" + floor((percentCurrent * 100).toDouble()).toInt() + "%)"
                 } else {
                     "(" + TimeUtil.formatTimeString(TimeUtil.getOverTime(mContext,
-                        TimesWork.timeStart,
+                        mTimesWork.timeStart,
                         curTimeMillis,
-                        TimesWork.homeOffice,
-                        TimesWork.timeWorked)) + ")"
+                        mTimesWork.homeOffice,
+                        mTimesWork.timeWorked)) + ")"
                 }
             }
             progressBar.secondaryProgress = secondaryProgress
@@ -279,7 +283,7 @@ class MainSectionFragment : Fragment() {
 
             // set tick 1 values
             tv = view.findViewById(R.id.progress_bar_time_1)
-            tv.text = String.format(Locale.getDefault(), "%tR", TimesWork.calStart)
+            tv.text = String.format(Locale.getDefault(), "%tR", mTimesWork.calStart)
 
 
             // set tick 2 values
@@ -290,7 +294,7 @@ class MainSectionFragment : Fragment() {
             params.leftMargin = pos - v.width / 2
             v.layoutParams = params
             tv = view.findViewById(R.id.progress_bar_time_2)
-            tv.text = String.format(Locale.getDefault(), "%tR", TimesWork.calNormalWorkEndTime(mContext))
+            tv.text = String.format(Locale.getDefault(), "%tR", mTimesWork.calNormalWorkEndTime(mContext))
             params = tv.layoutParams as RelativeLayout.LayoutParams
             params.leftMargin = pos - tv.width / 2
             tv.layoutParams = params
@@ -298,14 +302,14 @@ class MainSectionFragment : Fragment() {
 
             // set tick 3 values
             tv = view.findViewById(R.id.progress_bar_time_3)
-            tv.text = String.format(Locale.getDefault(), "%tR", TimesWork.calMaxWorkEndTime(mContext))
+            tv.text = String.format(Locale.getDefault(), "%tR", mTimesWork.calMaxWorkEndTime(mContext))
         }
 
         tv = view.findViewById(R.id.end_val)
-        if (TimesWork.timeEnd == -1L) {
+        if (mTimesWork.timeEnd == -1L) {
             tv.text = " --:-- "
         } else {
-            tv.text = String.format(Locale.getDefault(), " %tR ", TimesWork.calEnd)
+            tv.text = String.format(Locale.getDefault(), " %tR ", mTimesWork.calEnd)
         }
     }
 
@@ -398,7 +402,7 @@ class MainSectionFragment : Fragment() {
 
 
         // weekly statistics
-        var calStart = TimesWork.statisticsDate.clone() as Calendar
+        var calStart = mTimesWork.statisticsDate.clone() as Calendar
         calcCalendarWeekRange(calStart, calEnd)
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime)
         Log.d(LOG_TAG,
@@ -431,7 +435,7 @@ class MainSectionFragment : Fragment() {
         }
 
         // monthly statistics
-        calStart = TimesWork.statisticsDate.clone() as Calendar
+        calStart = mTimesWork.statisticsDate.clone() as Calendar
         calcCalendarMonthRange(calStart, calEnd)
         calcTimesInRange(overTimes, calStart, calEnd, workedTime, overTime)
         Log.d(LOG_TAG,

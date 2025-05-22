@@ -44,16 +44,17 @@ import de.euhm.jlt.utils.TimeUtil
 import java.util.Calendar
 import java.util.Locale
 
+private val LOG_TAG: String = ViewSectionFragment::class.java.simpleName
+
 /**
  * Fragment for viewing the times database
  *
  * @author hmueller
  */
 class ViewSectionFragment : ListFragment() {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = ViewSectionFragment::class.java.simpleName
     private lateinit var mDatasource: TimesDataSource // gets used outside the normal initialization
     private lateinit var mContext: Context // gets initialized in onAttach()
+    private lateinit var mTimesWork: TimesWork // gets initialized in onAttach()
     private lateinit var mListView: ListView
     private lateinit var mViewPager: ViewPager2
 
@@ -80,6 +81,7 @@ class ViewSectionFragment : ListFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        mTimesWork = TimesWork(context)
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -177,12 +179,12 @@ class ViewSectionFragment : ListFragment() {
         val listTimes: List<Times>
 
         // build list
-        if (TimesWork.filterMonth == 0 || TimesWork.filterYear == 0) {
+        if (mTimesWork.filterMonth == 0 || mTimesWork.filterYear == 0) {
             // get all data
             listTimes = mDatasource.allTimes
         } else {
             // get filtered range
-            val cal = TimeUtil.getFilterCal(TimesWork.filterMonth, TimesWork.filterYear)
+            val cal = TimeUtil.getFilterCal(mTimesWork.filterMonth, mTimesWork.filterYear)
             val timeStart = cal.timeInMillis
             // get end of month
             cal[Calendar.DAY_OF_MONTH] = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -208,14 +210,14 @@ class ViewSectionFragment : ListFragment() {
         val strLeft = String.format(Locale.getDefault(), resources.getString(R.string.view_times_info_line_left), 0)
         var strMiddle = ""
         var strFilterActive = ""
-        if (TimesWork.filterMonth != 0 && TimesWork.filterYear != 0) {
+        if (mTimesWork.filterMonth != 0 && mTimesWork.filterYear != 0) {
             // filter is active, indicate that
             strFilterActive = " " + resources.getString(R.string.view_times_info_line_filter_active)
-            val cal = TimeUtil.getFilterCal(TimesWork.filterMonth, TimesWork.filterYear)
+            val cal = TimeUtil.getFilterCal(mTimesWork.filterMonth, mTimesWork.filterYear)
             strMiddle = String.format(Locale.getDefault(),
                 "%s %04d",
                 DateFormat.format("MMM", cal.timeInMillis),
-                TimesWork.filterYear)
+                mTimesWork.filterYear)
         }
         viewInfoLineLeft.text = String.format("%s%s", strLeft, strFilterActive)
         viewInfoLineMiddle.text = strMiddle
@@ -311,8 +313,8 @@ class ViewSectionFragment : ListFragment() {
     }
 
     fun updateFilter(month: Int, year: Int) {
-        TimesWork.filterMonth = month
-        TimesWork.filterYear = year
+        mTimesWork.filterMonth = month
+        mTimesWork.filterYear = year
 
         // update ListAdapter
         val adapter = listAdapter as? ViewTimesListAdapter?

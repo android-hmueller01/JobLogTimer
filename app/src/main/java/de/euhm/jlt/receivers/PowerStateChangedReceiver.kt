@@ -21,6 +21,8 @@ import de.euhm.jlt.dao.TimesWork
 import de.euhm.jlt.utils.Prefs
 import de.euhm.jlt.utils.Constants
 
+private val LOG_TAG: String = PowerStateChangedReceiver::class.java.simpleName
+
 /**
  * The manifest Receiver is used to detect changes in battery state.
  * When the system broadcasts a "Battery Low" warning we turn off
@@ -38,9 +40,6 @@ import de.euhm.jlt.utils.Constants
  * > ...\adt\sdk\platform-tools\adb devices
  */
 class PowerStateChangedReceiver : BroadcastReceiver() {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = PowerStateChangedReceiver::class.java.simpleName
-
     override fun onReceive(context: Context, intent: Intent) {
         var flag = 0
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -61,7 +60,7 @@ class PowerStateChangedReceiver : BroadcastReceiver() {
                 // cancel alarm under low battery conditions
                 alarmMgr.cancel(pendingIntent)
                 Log.v(LOG_TAG, "Widget update alarm canceled, because of low battery state.")
-            } else if (TimesWork.workStarted) {
+            } else if (TimesWork(context).workStarted) {
                 // work is started and battery state is good again
                 // update the widget with an alarm, but do not wake up device ...
                 context.sendBroadcast(alarmIntent)

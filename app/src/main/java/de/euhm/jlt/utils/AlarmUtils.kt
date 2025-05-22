@@ -40,6 +40,7 @@ object AlarmUtils {
     fun setAlarms(context: Context) {
         // see http://android-er.blogspot.de/2010/10/simple-example-of-alarm-service-using.html
         // or http://android-er.blogspot.de/2011/05/using-alarmmanager-to-start-scheduled.html
+        val timesWork = TimesWork(context)
         var alarmIntent: Intent
         var pendingIntent: PendingIntent?
         //Context context = getApplicationContext();
@@ -65,7 +66,7 @@ object AlarmUtils {
             }
         }
 
-        if (TimesWork.workStarted) {
+        if (timesWork.workStarted) {
             // set alarm
             if (prefs.endHoursWarnEnabled) {
                 // set an alarm to normal work hour, use explicit intent by specifying the receiver class
@@ -75,11 +76,11 @@ object AlarmUtils {
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_NORMAL_WORK_ALARM)")
-                    alarmMgr[AlarmManager.RTC_WAKEUP, TimesWork.normalWorkEndTime(context)] = pendingIntent
+                    alarmMgr[AlarmManager.RTC_WAKEUP, timesWork.normalWorkEndTime(context)] = pendingIntent
                 } else {
                     Log.d(LOG_TAG, "alarmMgr.setExactAndAllowWhileIdle(RECEIVER_NORMAL_WORK_ALARM)")
                     alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                        TimesWork.normalWorkEndTime(context),
+                        timesWork.normalWorkEndTime(context),
                         pendingIntent)
                 }
             }
@@ -89,7 +90,7 @@ object AlarmUtils {
                 alarmIntent = Intent(Constants.RECEIVER_MAX_WORK_ALARM)
                 alarmIntent.setClass(context, AlarmReceiver::class.java)
                 pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, flag)
-                val alarmTime = TimesWork.maxWorkEndTime(context) - prefs.maxHoursWarnBeforeInMillis
+                val alarmTime = timesWork.maxWorkEndTime(context) - prefs.maxHoursWarnBeforeInMillis
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Log.d(LOG_TAG, "alarmMgr.set(RECEIVER_MAX_WORK_ALARM)")
                     alarmMgr[AlarmManager.RTC_WAKEUP, alarmTime] = pendingIntent

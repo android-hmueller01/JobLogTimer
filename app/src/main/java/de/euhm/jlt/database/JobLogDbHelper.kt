@@ -20,14 +20,14 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 
+private val LOG_TAG: String = JobLogDbHelper::class.java.simpleName
+
 /**
  * Defines the schema of the database
  * @author hmueller
  */
 class JobLogDbHelper(context: Context) :
     SQLiteOpenHelper(context, JobLogContract.DATABASE_NAME, null, JobLogContract.DATABASE_VERSION) {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = JobLogDbHelper::class.java.simpleName
     private val dbFilePath: String =
         context.getDatabasePath(JobLogContract.DATABASE_NAME).absolutePath // = "/data/data/{package_name}/databases/database.db";
 
@@ -100,7 +100,7 @@ class JobLogDbHelper(context: Context) :
                 JobLogTimes.COLUMN_NAME_TIME_START + "` INTEGER, `" + //
                 JobLogTimes.COLUMN_NAME_TIME_END + "` INTEGER, `" + //
                 JobLogTimes.COLUMN_NAME_HOME_OFFICE + "` BOOLEAN)")
-        private const val SQL_TABLE_DELETE = ("DROP TABLE IF EXISTS " + JobLogTimes.TABLE_NAME)
+        //private const val SQL_TABLE_DELETE = ("DROP TABLE IF EXISTS " + JobLogTimes.TABLE_NAME)
         private const val SQL_TABLE_UPGRADE_1 =
             ("ALTER TABLE " + JobLogTimes.TABLE_NAME + " ADD `" + JobLogTimes.COLUMN_NAME_HOME_OFFICE + "` BOOLEAN DEFAULT 0")
     }

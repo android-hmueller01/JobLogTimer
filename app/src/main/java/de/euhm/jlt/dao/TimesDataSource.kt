@@ -1,6 +1,6 @@
 /**
  * @file TimesDataSource.kt
- * 
+ *
  * based on http://www.vogella.com/tutorials/AndroidSQLite/article.html#databasetutorial
  * Converted from Java to Kotlin by Android Studio Meerkat | 2024.3.1 in March 2025
  *
@@ -18,6 +18,8 @@ import android.util.Log
 import de.euhm.jlt.database.JobLogContract.JobLogTimes
 import de.euhm.jlt.database.JobLogDbHelper
 
+private val LOG_TAG: String = TimesDataSource::class.java.simpleName
+
 /**
  * This is the DAO (Data Access Object).
  * It maintains the database connection, supports adding new entries and fetching, updating, deleting data.
@@ -28,8 +30,7 @@ import de.euhm.jlt.database.JobLogDbHelper
  * @param context Context
  */
 class TimesDataSource(context: Context) {
-    @Suppress("PrivatePropertyName")
-    private val LOG_TAG: String = TimesDataSource::class.java.simpleName
+    private val mTimesWork = TimesWork(context)
 
     /**
      * @return The dbHelper
@@ -97,7 +98,7 @@ class TimesDataSource(context: Context) {
      * Insert current TimesWork time into db.
      */
     fun createTimes(): Times {
-        return createTimes(TimesWork.timeStart, TimesWork.timeEnd, TimesWork.homeOffice)
+        return createTimes(mTimesWork.timeStart, mTimesWork.timeEnd, mTimesWork.homeOffice)
     }
 
     private fun updateTimes(id: Long, timeStart: Long, timeEnd: Long, homeOffice: Boolean): Int {
