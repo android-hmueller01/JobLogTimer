@@ -67,7 +67,7 @@
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:layout_marginTop="46dp"
+            android:layout_marginTop="50dp"
             app:headerLayout="@layout/drawer_header"
             app:menu="@menu/navigation_drawer" />
         <!-- to open drawer below toolbar set android:layout_marginTop="?attr/actionBarSize" -->

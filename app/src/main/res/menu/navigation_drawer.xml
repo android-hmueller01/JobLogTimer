@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- removed, as it will fail if list tab (ViewSectionFragment) was not opened yet
    	<group>
     	<item
         	android:id="@+id/nav_item_add_times"
         	android:title="@string/button_add_times"
         	android:icon="@drawable/ic_action_new"/>
 	</group>
+	-->
 
 	<item android:title="@string/drawer_database">
         <menu

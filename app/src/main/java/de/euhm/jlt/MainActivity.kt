@@ -79,8 +79,8 @@ private val LOG_TAG: String = MainActivity::class.java.simpleName
  * Main activity of JobLog
  * @author hmueller
  */
-class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEditTimesFragmentListener,
-    YesNoListener, OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener {
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEditTimesFragmentListener, YesNoListener,
+    OnDatePickerFragmentListener, OnTimePickerFragmentListener, OnFilterFragmentListener {
     private var mTimes: Times? = null // temp. Times for different dialogs
     private var mMainMenu: Menu? = null // saved MainMenu for later use in onKeyUp() and onTabSelected()
     private lateinit var mTimesWork: TimesWork
@@ -569,7 +569,9 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
 
         // Get item ID to determine what to do on user click
         val itemId = item.itemId
-        when (itemId) {
+        when (itemId) {//
+            /*
+            // removed, as it will fail if list tab (ViewSectionFragment) was not opened yet
             R.id.nav_item_add_times -> {
                 // prepare to add a new SQL row
                 val currentTime = TimeUtil.getCurrentTimeInMillis()
@@ -581,6 +583,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                 supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .add(0, frag).commit()
             }
+            */
 
             R.id.nav_item_backup -> {
                 checkAndRequestExternalStorageManager()
@@ -634,10 +637,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
 
             R.id.nav_item_about -> {
                 // Display the about fragment as the main content.
-                supportFragmentManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .add(0, AboutFragment())
+                supportFragmentManager//
+                    .beginTransaction()//
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)//
+                    .add(0, AboutFragment())//
                     .commit()
             }
         }
@@ -697,8 +700,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, OnEd
                 // Do not use an AlertDialog.Builder directly, because it doesn't get recreated
                 // if app gets restarted (after pressing home or rotating)
                 val confirmDialog = ConfirmDialogFragment()
-                confirmDialog.setMessage(resources.getText(R.string.button_delete)
-                    .toString() + " " + times.dateString)
+                confirmDialog.setMessage(resources.getText(R.string.button_delete).toString() + " " + times.dateString)
                 confirmDialog.show(supportFragmentManager, "ConfirmDialogFragment")
             }
 
