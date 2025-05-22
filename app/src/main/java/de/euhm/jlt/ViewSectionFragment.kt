@@ -267,10 +267,10 @@ class ViewSectionFragment : ListFragment() {
     }
 
     fun addTimesItem(times: Times) {
-        mDatasource.createTimes(times)
+        val timesCreated = mDatasource.createTimes(times)
         val adapter = listAdapter as? ViewTimesListAdapter?
         adapter?.setNotifyOnChange(false) // do not notify changes yet
-        adapter?.add(times)
+        adapter?.add(timesCreated)
         adapter?.sort()
         adapter?.notifyDataSetChanged() // now update the changed data
         updateInfoLine()
