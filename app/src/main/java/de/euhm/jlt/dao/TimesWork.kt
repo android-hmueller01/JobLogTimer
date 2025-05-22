@@ -54,7 +54,6 @@ class TimesWork(val context: Context) {
             sharedPreferences.edit { putLong(TIME_END_KEY, value) }
         }
 
-    // TODO: do not use this in statistics as db might change and will not reflect that
     /** time already worked that day in milliseconds */
     var timeWorked: Long
         get() = (sharedPreferences.getLong(TIME_WORKED_KEY, -1L))
