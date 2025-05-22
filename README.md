@@ -9,6 +9,7 @@ V1.1.0: versionCode 20, 22.05.2025 Mr
 - Fix addTimesItem not adding the correct id to the list
 - Fixed incorrect values shown in updateTimesView
 - Fixed progress bar representation (difference in widget and app)
+- Removed add-times from drawer (will fail if list tab wasn't opened yet)
 
 V1.0.0: versionCode 19, 18.04.2025 Mr
 - Released V1.0.0
