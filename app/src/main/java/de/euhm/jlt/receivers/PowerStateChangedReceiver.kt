@@ -42,7 +42,7 @@ private val LOG_TAG: String = PowerStateChangedReceiver::class.java.simpleName
 class PowerStateChangedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         var flag = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // needed starting Android 12 (S = 31)
             flag = flag or PendingIntent.FLAG_IMMUTABLE
         }
