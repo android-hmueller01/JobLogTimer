@@ -3,6 +3,10 @@
 The Android App JobLogTimer keeps track of the time you work and alarms your to go home.
 
 # ChangeLog
+V1.1.1: versionCode 20, 06.10.2025 Mr
+- Updated targetSdkVersion to 36 (Android 16)
+- Updated all depenendencies and gradle
+
 V1.1.0: versionCode 20, 22.05.2025 Mr
 - Fix widget update failures
 - Fix timeWorked calculation if database data was changed
